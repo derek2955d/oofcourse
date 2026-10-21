@@ -3,7 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { categories } from "@/lib/data";
 import { metadata } from "@/lib/seo";
-import { Catalog, normalizeQuery } from "@/components/catalog";
+import { Catalog } from "@/components/catalog";
+import { normalizeQuery } from "@/lib/query";
 export function generateStaticParams() {
   return categories.map((c) => ({ slug: c.slug }));
 }
@@ -45,8 +46,8 @@ export default async function Category({
       <p className="eyebrow">THE {c.name.toUpperCase()} EDIT</p>
       <h1 className="page-title">{c.name}</h1>
       <p className="page-intro">
-        {c.description} Browse original demo concepts, with illustrative prices
-        only.
+        {c.description} Browse original demo concepts, without live prices or
+        purchasing links.
       </p>
       <Catalog
         fixedCategory={slug}

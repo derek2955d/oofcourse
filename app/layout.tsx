@@ -3,6 +3,7 @@ import { Header } from "@/components/header";
 import { DemoNotice, Footer } from "@/components/site";
 import { siteUrl } from "@/lib/seo";
 import "./globals.css";
+import { SavedProvider } from "@/components/saved";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
     template: "%s | OofCourse",
   },
   description:
-    "Discover thoughtfully selected everyday finds across tech, home, travel, and wellness. Explore the clearly labeled OofCourse demo.",
+    "Family-friendly finds for real life. Explore clearly labeled multi-retailer demo concepts for home, kids, and everyday living.",
   robots: {
     index: process.env.SITE_INDEXABLE === "true",
     follow: process.env.SITE_INDEXABLE === "true",
@@ -37,24 +38,26 @@ export default function RootLayout({
         <a href="#main" className="skip-link">
           Skip to content
         </a>
-        <Header />
-        <DemoNotice />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "WebSite",
-              name: "OofCourse",
-              url: siteUrl,
-              inLanguage: "en-US",
-              description:
-                "An independent shopping discovery website. Phase 1 demo collection.",
-            }),
-          }}
-        />
-        <main id="main">{children}</main>
-        <Footer />
+        <SavedProvider>
+          <Header />
+          <DemoNotice />
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "WebSite",
+                name: "OofCourse",
+                url: siteUrl,
+                inLanguage: "en-US",
+                description:
+                  "An independent shopping discovery website. Phase 1 demo collection.",
+              }),
+            }}
+          />
+          <main id="main">{children}</main>
+          <Footer />
+        </SavedProvider>
       </body>
     </html>
   );

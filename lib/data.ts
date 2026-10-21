@@ -3,144 +3,250 @@ export type Category = {
   name: string;
   description: string;
   icon: string;
+  color: string;
 };
 export const categories: Category[] = [
   {
-    slug: "tech",
-    name: "Tech & Electronics",
-    description: "Small upgrades. Smarter everyday.",
-    icon: "⌘",
-  },
-  {
     slug: "home",
     name: "Home & Kitchen",
-    description: "Make yourself right at home.",
-    icon: "⌂",
+    description: "Little things that make a home.",
+    icon: "home",
+    color: "#FFF1DF",
+  },
+  {
+    slug: "tech",
+    name: "Electronics",
+    description: "Make your everyday a little smarter.",
+    icon: "tech",
+    color: "#EAF4FF",
+  },
+  {
+    slug: "toys",
+    name: "Toys & Kids",
+    description: "More play. More possibilities.",
+    icon: "toys",
+    color: "#F0EDFF",
+  },
+  {
+    slug: "baby",
+    name: "Baby",
+    description: "Thoughtful finds for little beginnings.",
+    icon: "baby",
+    color: "#FFF0EE",
+  },
+  {
+    slug: "beauty",
+    name: "Beauty & Personal Care",
+    description: "A little care, just for you.",
+    icon: "beauty",
+    color: "#FCEEF4",
   },
   {
     slug: "outdoors",
-    name: "Outdoors & Travel",
-    description: "Good things for getting out.",
-    icon: "✧",
+    name: "Sports & Outdoors",
+    description: "Good things for getting outside.",
+    icon: "outdoors",
+    color: "#EAF7EE",
   },
   {
-    slug: "wellness",
-    name: "Health & Wellness",
-    description: "A little more you time.",
-    icon: "✳",
+    slug: "pets",
+    name: "Pet Supplies",
+    description: "For your favorite four-legged family.",
+    icon: "pets",
+    color: "#FFF3E6",
+  },
+  {
+    slug: "essentials",
+    name: "Everyday Essentials",
+    description: "The useful things you reach for daily.",
+    icon: "essentials",
+    color: "#EAF5F3",
   },
 ];
+export type RetailerSlug = "amazon" | "walmart";
+export const retailers = [
+  {
+    slug: "amazon" as const,
+    name: "Amazon",
+    description:
+      "Explore example products organized for Amazon. No approved offers or retailer links are connected.",
+    color: "#FFF4E2",
+  },
+  {
+    slug: "walmart" as const,
+    name: "Walmart",
+    description:
+      "Explore example products organized for Walmart. No approved offers or retailer links are connected.",
+    color: "#EAF4FF",
+  },
+];
+export const productStatuses = [
+  "draft",
+  "pending_review",
+  "published",
+  "unverified",
+  "expired",
+  "archived",
+] as const;
+export type ProductStatus = (typeof productStatuses)[number];
 export type Product = {
   id: string;
   name: string;
   slug: string;
   description: string;
+  features: string[];
   category: string;
+  retailer: RetailerSlug;
   merchant: string;
   imageUrl: string;
+  imageLicense: string;
+  sourceId: string;
   affiliateUrl: string | null;
-  currentPrice: number;
-  originalPrice: number;
-  discountPercentage: number;
-  status: "demo" | "active" | "expired";
+  currentPrice: number | null;
+  originalPrice: number | null;
+  discountPercentage: number | null;
+  status: ProductStatus;
+  isDemo: boolean;
+  priceVerified: boolean;
+  affiliateApproved: boolean;
   createdAt: string;
-  expiresAt: string;
-  lastCheckedAt: string;
+  expiresAt: string | null;
+  lastCheckedAt: string | null;
   featured: boolean;
   trending: boolean;
   color: string;
   kind: string;
 };
 const items = [
-  ["Studio Wireless Headphones", "tech", 59.99, 99.99, "headphones", "#e8e8dc"],
-  ["Everyday Pour-Over Set", "home", 24.99, 39.99, "coffee", "#e9d9c6"],
-  ["Trailside Daypack · 22L", "outdoors", 34.99, 59.99, "backpack", "#dce6d6"],
-  ["Ambient Desk Lamp", "home", 29.99, 49.99, "lamp", "#e9dfcf"],
-  ["Pocket Bluetooth Speaker", "tech", 22.99, 39.99, "speaker", "#dce4eb"],
-  ["Cloud Yoga Mat", "wellness", 19.99, 34.99, "mat", "#e4dce9"],
-  ["Everyday Insulated Tumbler", "outdoors", 16.99, 27.99, "bottle", "#d9e3de"],
-  ["Minimal Wireless Keyboard", "tech", 39.99, 64.99, "keyboard", "#e6e5e1"],
-  ["Sunday Ceramic Mug Set", "home", 18.99, 29.99, "mugs", "#e9d9d2"],
-  ["Go-Anywhere Packing Cubes", "outdoors", 21.99, 34.99, "cubes", "#dbe2e8"],
-  ["Recovery Massage Roller", "wellness", 14.99, 24.99, "roller", "#e6dfd4"],
-  ["Compact Charging Stand", "tech", 27.99, 44.99, "charger", "#dbe4dd"],
+  ["Everyday Pour-Over Set", "home", "coffee", "amazon"],
+  ["Sunday Ceramic Mug Set", "home", "mugs", "walmart"],
+  ["Studio Wireless Headphones", "tech", "headphones", "amazon"],
+  ["Pocket Bluetooth Speaker", "tech", "speaker", "walmart"],
+  ["Little Builder Block Set", "toys", "blocks", "walmart"],
+  ["Weekend Art Kit", "toys", "art", "amazon"],
+  ["Soft Cotton Baby Blanket", "baby", "blanket", "amazon"],
+  ["Little Steps Stacking Cups", "baby", "cups", "walmart"],
+  ["Everyday Care Organizer", "beauty", "organizer", "walmart"],
+  ["Gentle Morning Brush Set", "beauty", "brush", "amazon"],
+  ["Trailside Daypack · 22L", "outdoors", "backpack", "amazon"],
+  ["Everyday Insulated Tumbler", "outdoors", "bottle", "walmart"],
+  ["Cozy Pet Bed", "pets", "petbed", "walmart"],
+  ["Playtime Rope Toy", "pets", "rope", "amazon"],
+  ["Reusable Market Tote", "essentials", "tote", "amazon"],
+  ["Everyday Storage Basket", "essentials", "basket", "walmart"],
 ] as const;
 export const products: Product[] = items.map(
-  ([name, category, price, original, kind, color], i) => ({
+  ([name, category, kind, retailer], i) => ({
     id: `demo-${i + 1}`,
     name,
     slug: name
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/-$/, ""),
-    description: `A thoughtfully chosen ${name.toLowerCase()} for your everyday routine. This original concept is a demonstration listing, not an actual merchant product or offer. Prices, savings, and availability shown are fictional examples for testing the site.`,
+    description: `A ${name.toLowerCase()} concept for a more thoughtful everyday. This original illustration demonstrates how a listing could look; it is not an actual ${retailer === "amazon" ? "Amazon" : "Walmart"} product, endorsement, or available offer.`,
+    features: [
+      "An original concept for everyday family life",
+      "Explore the category to compare other ideas",
+      "Check fit, materials, safety, and merchant terms before any future purchase",
+    ],
     category,
-    merchant: "Demo merchant",
+    retailer,
+    merchant: retailer === "amazon" ? "Amazon" : "Walmart",
     imageUrl: `/illustrations/${kind}.svg`,
+    imageLicense: "Original OofCourse SVG concept artwork",
+    sourceId: `demo-source-${retailer}`,
     affiliateUrl: null,
-    currentPrice: price,
-    originalPrice: original,
-    discountPercentage: Math.round((1 - price / original) * 100),
-    status: i === 11 ? "expired" : "demo",
-    createdAt: `2026-10-${String(15 + Math.floor(i / 2)).padStart(2, "0")}T12:00:00Z`,
-    expiresAt: "2026-11-01T00:00:00Z",
-    lastCheckedAt: "2026-10-20T12:00:00Z",
-    featured: i < 4,
-    trending: i >= 4 && i < 8,
-    color,
+    currentPrice: null,
+    originalPrice: null,
+    discountPercentage: null,
+    status: i === 15 ? "expired" : "unverified",
+    isDemo: true,
+    priceVerified: false,
+    affiliateApproved: false,
+    createdAt: `2026-10-${String(14 + Math.floor(i / 3)).padStart(2, "0")}T12:00:00Z`,
+    expiresAt: null,
+    lastCheckedAt: null,
+    featured: i % 2 === 0 && i < 8,
+    trending: i >= 8 && i < 12,
+    color: categories.find((c) => c.slug === category)!.color,
     kind,
   }),
 );
+export type ProductQuery = {
+  q?: string;
+  category?: string;
+  retailer?: string;
+  sort?: string;
+};
 export function selectProducts({
   q = "",
   category = "",
+  retailer = "",
   sort = "newest",
-}: {
-  q?: string;
-  category?: string;
-  sort?: string;
-}) {
-  const words = q.toLowerCase().trim().split(/\s+/).filter(Boolean);
+}: ProductQuery) {
+  const words = q.trim().toLowerCase().split(/\s+/).filter(Boolean);
   return products
     .filter(
       (p) =>
         words.every((w) =>
-          `${p.name} ${p.description} ${categories.find((c) => c.slug === p.category)?.name}`
+          `${p.name} ${categories.find((c) => c.slug === p.category)?.name} ${p.merchant}`
             .toLowerCase()
             .includes(w),
         ) &&
-        (!category || p.category === category),
+        (!category || p.category === category) &&
+        (!retailer || p.retailer === retailer),
     )
     .sort((a, b) =>
-      sort === "price-asc"
-        ? a.currentPrice - b.currentPrice
-        : sort === "price-desc"
-          ? b.currentPrice - a.currentPrice
-          : sort === "savings"
-            ? b.discountPercentage - a.discountPercentage
-            : b.createdAt.localeCompare(a.createdAt),
+      sort === "name"
+        ? a.name.localeCompare(b.name)
+        : b.createdAt.localeCompare(a.createdAt) || a.id.localeCompare(b.id),
     );
 }
 export function safeAffiliateUrl(p: Product, now = Date.now()): string | null {
   if (
-    p.status !== "active" ||
+    p.isDemo ||
+    p.status !== "published" ||
+    !p.affiliateApproved ||
     !p.affiliateUrl ||
-    !Number.isFinite(Date.parse(p.expiresAt)) ||
-    Date.parse(p.expiresAt) <= now
+    !p.lastCheckedAt ||
+    !p.expiresAt
+  )
+    return null;
+  const checked = Date.parse(p.lastCheckedAt),
+    expires = Date.parse(p.expiresAt);
+  if (
+    !Number.isFinite(checked) ||
+    !Number.isFinite(expires) ||
+    checked > now ||
+    now - checked > 86400000 ||
+    expires <= now
   )
     return null;
   try {
     const url = new URL(p.affiliateUrl);
+    const hosts =
+      p.retailer === "amazon"
+        ? ["amazon.com", "www.amazon.com", "amzn.to"]
+        : ["walmart.com", "www.walmart.com"];
     return url.protocol === "https:" &&
       !url.username &&
       !url.password &&
-      ["amazon.com", "www.amazon.com", "amzn.to"].includes(url.hostname)
+      !url.port &&
+      hosts.includes(url.hostname)
       ? url.href
       : null;
   } catch {
     return null;
   }
-} // A future live-data adapter must verify affiliate enrollment and merchant data before setting active status.
+}
+export function displayPrice(p: Product) {
+  return !p.isDemo && p.priceVerified && p.currentPrice !== null
+    ? new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+      }).format(p.currentPrice)
+    : null;
+}
 export const money = (n: number) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(
     n,

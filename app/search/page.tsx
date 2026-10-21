@@ -1,4 +1,5 @@
-import { Catalog, normalizeQuery } from "@/components/catalog";
+import { Catalog } from "@/components/catalog";
+import { normalizeQuery } from "@/lib/query";
 import { metadata } from "@/lib/seo";
 export async function generateMetadata({
   searchParams,

@@ -1,9 +1,10 @@
-import { Catalog, normalizeQuery } from "@/components/catalog";
+import { Catalog } from "@/components/catalog";
+import { normalizeQuery } from "@/lib/query";
 import { metadata } from "@/lib/seo";
 export const generateMetadata = () =>
   metadata(
     "All Deals",
-    "Explore all 12 OofCourse demo finds. Search, filter by category, and sort illustrative offers.",
+    "Explore all OofCourse demo finds. Search, filter by category, and sort illustrative offers.",
     "/deals",
     true,
   );

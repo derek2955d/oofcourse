@@ -5,59 +5,100 @@ import {
   products,
   selectProducts,
   safeAffiliateUrl,
+  displayPrice,
 } from "../lib/data";
-test("demo catalog has complete, unique and consistent records", () => {
-  assert.equal(products.length, 12);
-  assert.equal(new Set(products.map((p) => p.slug)).size, 12);
+import { parseSaved } from "../lib/saved";
+import { normalizeQuery } from "../lib/query";
+import { shouldCollectAnalytics } from "../lib/analytics";
+test("eight categories and sixteen provenance-labeled demo concepts, without invented commerce data", () => {
+  assert.equal(categories.length, 8);
+  assert.equal(products.length, 16);
+  assert.equal(new Set(products.map((p) => p.slug)).size, 16);
   for (const p of products) {
     assert.ok(categories.some((c) => c.slug === p.category));
-    assert.equal(
-      p.discountPercentage,
-      Math.round((1 - p.currentPrice / p.originalPrice) * 100),
-    );
-    assert.ok(p.lastCheckedAt && p.createdAt && p.expiresAt);
+    assert.equal(p.isDemo, true);
+    assert.equal(p.currentPrice, null);
+    assert.equal(p.originalPrice, null);
+    assert.equal(p.discountPercentage, null);
+    assert.equal(p.lastCheckedAt, null);
     assert.equal(safeAffiliateUrl(p), null);
+    assert.equal(displayPrice(p), null);
+    assert.ok(p.imageLicense && p.sourceId);
   }
 });
-test("search is case insensitive, trims whitespace, and combines with categories", () => {
-  assert.equal(selectProducts({ q: "  HEADPHONES  " }).length, 1);
+test("keyword, category, retailer and empty-state filters compose", () => {
+  assert.equal(selectProducts({ q: " HEADPHONES " }).length, 1);
   assert.equal(selectProducts({ q: "headphones", category: "home" }).length, 0);
-  assert.equal(selectProducts({ q: "no-such-product" }).length, 0);
-  assert.equal(selectProducts({ category: "wellness" }).length, 2);
+  assert.equal(selectProducts({ retailer: "amazon" }).length, 8);
+  assert.equal(
+    selectProducts({ category: "baby", retailer: "walmart" }).length,
+    1,
+  );
+  assert.equal(selectProducts({ q: "zzzznotfound" }).length, 0);
 });
-test("sort order reflects price and savings", () => {
-  for (const sort of ["price-asc", "price-desc", "savings"]) {
-    const result = selectProducts({ sort });
-    for (let i = 1; i < result.length; i++)
-      assert.ok(
-        sort === "price-asc"
-          ? result[i - 1].currentPrice <= result[i].currentPrice
-          : sort === "price-desc"
-            ? result[i - 1].currentPrice >= result[i].currentPrice
-            : result[i - 1].discountPercentage >= result[i].discountPercentage,
-      );
-  }
+test("authorized sorting is limited to date and name", () => {
+  const result = selectProducts({ sort: "name" });
+  assert.equal(result[0].name, "Cozy Pet Bed");
+  const recent = selectProducts({ sort: "newest" });
+  for (let i = 1; i < recent.length; i++)
+    assert.ok(recent[i - 1].createdAt >= recent[i].createdAt);
+  assert.equal(
+    normalizeQuery({ sort: "savings", q: ["bad"], saved: "1" }).sort,
+    "newest",
+  );
 });
-test("affiliate gate rejects demo, expired, unsafe and unapproved destinations", () => {
-  const p = { ...products[0], affiliateUrl: "https://www.amazon.com/example" };
-  assert.equal(safeAffiliateUrl(p), null);
+test("affiliate gate rejects demo, stale, unsafe, and cross-retailer links", () => {
+  const now = Date.parse("2026-10-21T12:00:00Z");
   const active = {
-    ...p,
-    status: "active" as const,
-    expiresAt: "2099-01-01T00:00:00Z",
+    ...products[0],
+    isDemo: false,
+    status: "published" as const,
+    affiliateApproved: true,
+    affiliateUrl: "https://www.amazon.com/example",
+    lastCheckedAt: "2026-10-21T11:00:00Z",
+    expiresAt: "2026-10-22T00:00:00Z",
   };
-  assert.ok(safeAffiliateUrl(active));
+  assert.ok(safeAffiliateUrl(active, now));
   for (const affiliateUrl of [
     "javascript:alert(1)",
     "http://amazon.com/x",
     "https://amazon.com.evil.test/x",
     "https://user:pass@amazon.com/x",
-    "garbage",
+    "https://www.walmart.com/x",
   ])
-    assert.equal(safeAffiliateUrl({ ...active, affiliateUrl }), null);
+    assert.equal(safeAffiliateUrl({ ...active, affiliateUrl }, now), null);
+  assert.equal(safeAffiliateUrl({ ...active, isDemo: true }, now), null);
   assert.equal(
-    safeAffiliateUrl({ ...active, expiresAt: "2020-01-01T00:00:00Z" }),
+    safeAffiliateUrl({ ...active, lastCheckedAt: "2026-10-19T00:00:00Z" }, now),
     null,
   );
-  assert.equal(safeAffiliateUrl({ ...active, expiresAt: "invalid" }), null);
+  assert.equal(
+    safeAffiliateUrl({ ...active, lastCheckedAt: "2099-01-01T00:00:00Z" }, now),
+    null,
+  );
+  assert.equal(
+    safeAffiliateUrl(
+      {
+        ...active,
+        retailer: "walmart",
+        affiliateUrl: "https://www.walmart.com/example",
+      },
+      now,
+    ),
+    "https://www.walmart.com/example",
+  );
+});
+test("saved storage recovers safely from malformed data", () => {
+  assert.deepEqual(parseSaved("not json"), []);
+  assert.deepEqual(parseSaved("{}"), []);
+  assert.deepEqual(parseSaved('["demo-1","demo-1",null,42,"demo-2"]'), [
+    "demo-1",
+    "demo-2",
+  ]);
+});
+test("analytics remain opt-in and require a configured provider", () => {
+  assert.equal(shouldCollectAnalytics("unknown", true), false);
+  assert.equal(shouldCollectAnalytics("declined", true), false);
+  assert.equal(shouldCollectAnalytics("granted", false), false);
+  assert.equal(shouldCollectAnalytics("granted", true), true);
 });

@@ -20,16 +20,17 @@ export default function About() {
       </p>
       <h2>Less noise. More everyday value.</h2>
       <p>
-        Our goal is to help US shoppers discover useful things across tech,
-        home, travel, and wellness. Clear product information and transparent
-        affiliate relationships are part of that goal.
+        Our goal is to help US shoppers discover useful things across home,
+        electronics, kids, baby, personal care, outdoors, pets, and everyday
+        essentials. Clear product information and transparent affiliate
+        relationships are part of that goal.
       </p>
       <h2>Where we are today</h2>
       <p>
-        This is our Phase 1 demonstration website. Every product is an original
-        concept illustration with fictional example prices. We have not
-        connected live merchant offers, Amazon’s API, customer ratings, or a
-        checkout.
+        This is our multi-retailer demonstration website. Every product is an
+        original concept illustration without live prices or discounts. We have
+        not connected live merchant offers, Amazon or Walmart product-data APIs,
+        customer ratings, or a checkout.
       </p>
       <h2>How we plan to earn</h2>
       <p>

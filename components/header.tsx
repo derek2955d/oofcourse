@@ -1,41 +1,76 @@
 "use client";
 import Link from "next/link";
-import { Search, Menu, X, ArrowUpRight } from "lucide-react";
+import { Search, Menu, X, ArrowRight, ShieldCheck } from "lucide-react";
 import { useState } from "react";
-import { categories } from "@/lib/data";
+import { usePathname } from "next/navigation";
+import { SavedNav } from "./saved";
+export function Brand() {
+  return (
+    <Link href="/" className="brand" aria-label="OofCourse home">
+      <span className="brand-oo" aria-hidden="true">
+        <i />
+        <i />
+      </span>
+      <span>
+        OofCourse<span className="brand-period">.</span>
+      </span>
+    </Link>
+  );
+}
+const links = [
+  ["/deals", "Deals"],
+  ["/categories", "Categories"],
+  ["/stores", "Stores"],
+  ["/guides", "Buying Guides"],
+];
 export function Header() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
   return (
     <>
       <div className="announcement">
-        A little discovery. A lot of possibility.{" "}
         <span>
-          Meet your next everyday favorite <ArrowUpRight size={12} />
+          Great Deals? <strong>Of Course!</strong>
         </span>
+        <span>Thoughtful finds for every kind of family.</span>
+        <Link href="/about">
+          Get to know us <ArrowRight size={12} />
+        </Link>
       </div>
       <header className="site-header">
         <div className="container header-main">
-          <Link href="/" className="brand" aria-label="OofCourse home">
-            <span className="brand-mark">
-              o<span>o</span>f<span className="brand-dot">✳</span>
-            </span>
-            OofCourse<span className="brand-period">.</span>
-          </Link>
-          <form action="/search" className="search-bar" role="search">
-            <Search size={19} />
+          <Brand />
+          <nav className="desktop-nav" aria-label="Main navigation">
+            {links.map(([href, label]) => (
+              <Link
+                key={href}
+                href={href}
+                aria-current={pathname === href ? "page" : undefined}
+              >
+                {label}
+              </Link>
+            ))}
+          </nav>
+          <form className="header-search" action="/search" role="search">
             <input
               type="search"
               name="q"
               aria-label="Search deals"
-              placeholder="What’s on your wishlist?"
+              placeholder="Search everyday finds"
+              maxLength={200}
             />
             <button aria-label="Submit search">
-              <ArrowUpRight size={19} />
+              <Search size={19} />
             </button>
           </form>
-          <Link href="/deals" className="header-link">
-            Explore deals <ArrowUpRight size={16} />
+          <Link
+            href="/search"
+            className="compact-search"
+            aria-label="Search all finds"
+          >
+            <Search size={20} />
           </Link>
+          <SavedNav />
           <button
             className="mobile-toggle"
             onClick={() => setOpen(!open)}
@@ -46,36 +81,43 @@ export function Header() {
             {open ? <X /> : <Menu />}
           </button>
         </div>
-        <nav className="container desktop-nav" aria-label="Main navigation">
-          <Link href="/deals" className="nav-all">
-            All deals
-          </Link>
-          {categories.map((c) => (
-            <Link href={`/category/${c.slug}`} key={c.slug}>
-              {c.name}
-            </Link>
-          ))}
-          <span className="nav-note">
-            <span className="tiny-dot" /> Good finds, thoughtfully picked.
-          </span>
-        </nav>
         {open && (
           <nav
             id="mobile-nav"
-            className="mobile-nav"
+            className="mobile-nav container"
             aria-label="Mobile navigation"
-            onClick={() => setOpen(false)}
           >
-            <Link href="/deals">All deals</Link>
-            {categories.map((c) => (
-              <Link href={`/category/${c.slug}`} key={c.slug}>
-                {c.name}
+            {links.map(([href, label]) => (
+              <Link key={href} href={href} onClick={() => setOpen(false)}>
+                {label}
+                <ArrowRight size={16} />
               </Link>
             ))}
-            <Link href="/about">About us</Link>
+            <Link href="/saved" onClick={() => setOpen(false)}>
+              Saved finds <ArrowRight size={16} />
+            </Link>
+            <form action="/search" onSubmit={() => setOpen(false)}>
+              <label htmlFor="mobile-search" className="sr-only">
+                Search finds
+              </label>
+              <input
+                id="mobile-search"
+                name="q"
+                placeholder="What are you looking for?"
+              />
+              <button aria-label="Search mobile menu">
+                <Search size={20} />
+              </button>
+            </form>
           </nav>
         )}
       </header>
+      <div className="trust-line">
+        <ShieldCheck size={14} />
+        <span>
+          Independent discovery. Clear information. A little more everyday good.
+        </span>
+      </div>
     </>
   );
 }

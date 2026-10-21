@@ -13,3 +13,5 @@ docker exec "$container" pg_isready -U postgres
 docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 < tests/database/auth-fixture.sql
 docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 < supabase/migrations/202610210001_initial_schema.sql
 docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 < tests/database/rls.sql
+docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 < supabase/migrations/202610210002_multi_retailer.sql
+docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 < tests/database/multi-retailer.sql
