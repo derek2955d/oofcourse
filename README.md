@@ -44,6 +44,8 @@ Browser tests use the environment's `/usr/bin/chromium` by default. Set `PLAYWRI
 
 Database tests require Docker. They launch a disposable PostgreSQL 17 container with no network or exposed ports, create a minimal Supabase auth fixture, apply the actual migration, and test anonymous visibility, denied public writes, regular-user isolation, administrator CRUD, privilege-escalation denial, expiration, stale checks, and disabled-source hiding. They do not contact or modify Supabase.
 
+`npm run typecheck` generates Next.js route types before running TypeScript, so it also works on a fresh checkout. `next-env.d.ts` is framework-generated and intentionally ignored.
+
 ## Architecture
 
 ```text
