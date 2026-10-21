@@ -18,8 +18,8 @@ export default async function Deals({
       <p className="eyebrow">THE GOOD-FINDS DIRECTORY</p>
       <h1 className="page-title">Find your next favorite.</h1>
       <p className="page-intro">
-        Everyday things, thoughtfully selected. Explore our demo collection —
-        all prices and savings are examples, with no live offers.
+        Useful ideas for the whole family. Explore clearly labeled demo concepts
+        organized by category and retailer, without live prices or buying links.
       </p>
       <Catalog query={normalizeQuery(await searchParams)} />
     </div>

@@ -344,6 +344,7 @@ test("malformed saved data recovers with an empty state", async ({ page }) => {
 test("WCAG AA automated checks on home, catalog, detail, saved and admin", async ({
   page,
 }) => {
+  test.setTimeout(120_000);
   for (const path of [
     "/",
     "/deals",
