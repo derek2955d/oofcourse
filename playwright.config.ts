@@ -3,7 +3,8 @@ export default defineConfig({
   testDir: "./tests/browser",
   fullyParallel: true,
   timeout: 60000,
-  workers: 2,
+  // Route sweeps and axe share limited cloud CPU; run serially for stable checks.
+  workers: 1,
   use: {
     baseURL: "http://127.0.0.1:3100",
     launchOptions: {

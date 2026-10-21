@@ -89,7 +89,7 @@ npm run test:e2e
 npm run test:db
 ```
 
-`typecheck` generates Next route types first, including on a clean checkout; generated `next-env.d.ts` is ignored. Browser tests launch the production server on **3100** to avoid a dev server on 3000. Chromium defaults to `/usr/bin/chromium`; override `PLAYWRIGHT_EXECUTABLE_PATH` if needed. Tests run at **390, 768 and 1440 px**, including saved persistence, real filters, retailer collections, details, guides, local admin isolation and accessibility. Screenshots are saved in ignored `test-results/home-{en,zh}-{mobile,tablet,desktop}.png` and `admin-zh-*.png`.
+`typecheck` generates Next route types first, including on a clean checkout; generated `next-env.d.ts` is ignored. Browser tests launch the production server on **3100** to avoid a dev server on 3000. Chromium defaults to `/usr/bin/chromium`; override `PLAYWRIGHT_EXECUTABLE_PATH` if needed. Tests use one worker to avoid CPU contention between route sweeps and axe in this cloud environment. Tests run at **390, 768 and 1440 px**, including saved persistence, real filters, retailer collections, details, guides, local admin isolation and accessibility. Screenshots are saved in ignored `test-results/home-{en,zh}-{mobile,tablet,desktop}.png` and `admin-zh-*.png`.
 
 Database tests require Docker, run in a disposable PostgreSQL 17 container without network/exposed ports, apply all three actual migrations, and check RLS, administrator isolation, cross-retailer rejection, exact destination hosts, stale links, program approval revocation and private audit records. The auth fixture never touches a real Supabase project.
 
