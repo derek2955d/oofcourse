@@ -3,7 +3,7 @@ import { metadata } from "@/lib/seo";
 export const generateMetadata = () =>
   metadata(
     "Privacy Policy",
-    "Learn what the OofCourse demo collects, what remains disconnected, and how future privacy practices will be reviewed.",
+    "Learn how OofCourse uses local browser storage for favorites and its demo workspace, and which services are not connected.",
     "/privacy",
   );
 export default function Privacy() {
@@ -13,54 +13,64 @@ export default function Privacy() {
       title="Your privacy matters."
     >
       <p>
-        This policy describes the current Phase 1 OofCourse demonstration. It
-        must be reviewed and updated before live data collection, affiliate
-        tracking, or accounts are enabled.
+        This policy describes the current OofCourse demonstration. It must be
+        reviewed before live affiliate operations, analytics, or public
+        submission collection begin.
       </p>
-      <h2>Information in this demo</h2>
+      <h2>Saved finds and browser storage</h2>
       <p>
-        We do not offer accounts, checkout, email subscriptions, or contact
-        submission forms. We do not intentionally collect names, emails, or
-        payment information. Newsletter and contact sections are non-collecting
-        placeholders.
+        When you save a find, its demo product ID is stored on your device under{" "}
+        <code>oofcourse:saved:v1</code>. The local admin sandbox stores your
+        demo edits under <code>oofcourse:admin-demo:v2</code>. These records are
+        not sent to a database or analytics provider. Clear saved finds on the
+        Saved page, reset the demo workspace on Admin, or clear your browser’s
+        site data to remove them. Storage may be unavailable in private
+        browsing, and it does not synchronize across devices. Do not enter
+        credentials or personal information into demo editor fields.
       </p>
-      <h2>Technical information</h2>
+      <h2>Accounts and administration</h2>
       <p>
-        Your hosting provider may process IP addresses, request URLs, browser
-        information, and access logs to serve pages, maintain security, and
-        diagnose errors. Search terms are included in page URLs and can appear
-        in browser history or hosting logs. Do not put personal or sensitive
-        information into search.
+        Visitors do not need an account. Supabase is not connected by default.
+        If the site operator configures Supabase later, administrator sign-in
+        uses Supabase Auth and necessary session cookies, with server
+        authorization and Row Level Security. Administrator credentials are sent
+        only to the configured authentication service, never stored in local
+        demo records. Operator access, retention, and processing terms must be
+        reviewed before enabling a hosted database.
       </p>
-      <h2>Cookies and analytics</h2>
+      <h2>Information we are not collecting</h2>
       <p>
-        The application does not add analytics, advertising scripts, marketing
-        cookies, or browser storage. Hosting infrastructure may use necessary
-        technical mechanisms. Any future analytics, cookie consent, or affiliate
-        tracking configuration will require a separate review.
+        No newsletter signup, contact submission, checkout, marketing cookies,
+        third-party analytics, advertising scripts, or user profiling is
+        enabled. A typed analytics contract and private database schema prepare
+        for future integration; they do not collect events. Merchant clicks are
+        not purchases, and no orders or commissions are inferred.
       </p>
-      <h2>Third parties and links</h2>
+      <h2>Hosting and URLs</h2>
       <p>
-        All product illustrations are hosted locally. No live affiliate
-        purchasing links, Amazon API integration, or Supabase database
-        connections are active. Future third-party destinations will have their
-        own privacy policies.
+        Hosting infrastructure may process IP addresses, browser details,
+        request paths, timestamps, and access logs to deliver pages and protect
+        the service. Search keywords and filter choices appear in URLs and can
+        be stored in browser history or hosting logs. Do not include sensitive
+        information in search. Infrastructure log retention depends on the
+        hosting configuration and requires review before real operations.
       </p>
-      <h2>Retention and privacy requests</h2>
+      <h2>Images and external services</h2>
       <p>
-        No application database of visitor profiles exists in this phase.
-        Infrastructure log retention depends on the deployed hosting
-        configuration and must be documented before launch. A verified privacy
-        contact channel is not yet configured; it will be published on the
-        Contact page before the site starts collecting submissions.
+        Images are hosted locally. The family lifestyle image is originally
+        AI-generated; product illustrations are original concept artwork, not
+        merchant content. No live Amazon or Walmart product-data API, affiliate
+        ordering system, or visitor analytics provider is connected. Future
+        external destinations will apply their own privacy policies.
       </p>
-      <h2>Children and changes</h2>
+      <h2>Privacy requests and children</h2>
       <p>
-        OofCourse is intended for general adult shopping discovery and is not
-        directed to children under 13. This policy will be updated as the
-        service changes. The full policy, responsible operator details, and
-        applicable consumer privacy rights must be reviewed before production
-        operation.
+        A verified support and privacy contact is not yet configured and will be
+        published on Contact before collection of submissions. OofCourse is
+        intended for adult shopping decisions, not directed to children under
+        13. No children’s accounts or profiles are offered. Operator details,
+        applicable consumer privacy rights, retention rules, and any consent
+        requirements must be finalized before commercial launch.
       </p>
     </Information>
   );

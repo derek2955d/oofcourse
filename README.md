@@ -1,10 +1,10 @@
-# OofCourse
+# OofCourse — family-friendly shopping discovery
 
-**Great Deals? Of Course!** A US English, mobile-first shopping discovery site built with Next.js App Router, TypeScript, React Server Components, and Tailwind CSS 4.
+**Great Deals? Of Course!** A US English, multi-retailer discovery website. The Family Friendly redesign uses Next.js 16 App Router, React 19, TypeScript and Tailwind CSS 4, with optional Supabase Auth and database administration.
 
-## Run in the cloud
+## Start
 
-Use Node.js 24 LTS and npm 11 (the verified environment: Node 24.19.0, npm 11.9.0).
+Verified toolchain: Node.js 24 LTS, npm 11.
 
 ```bash
 cd /workspace/oofcourse
@@ -12,87 +12,81 @@ npm ci --cache /workspace/.npm-cache
 npm run dev
 ```
 
-For production: `npm run build`, then `npm run start`. Both servers bind to `0.0.0.0:3000`. No environment values or database are needed for Phase 1. The platform may provide its own authorized preview surface; this README does not imply a public deployment exists.
+Production: `npm run build` then `npm run start`. The normal port is 3000. Public browsing and the local demo admin need **no credentials**. This cloud task is already isolated: use the existing checkout; do not create a Git worktree unless requested.
 
-This cloud task is already isolated. Use the existing checkout; do not create another Git worktree unless explicitly requested.
+## Implemented experience
 
-## Features and routes
+- Original navy/blue/green identity, double-o wordmark, SVG favicon, mobile-first design.
+- Homepage with original family lifestyle image, working hero search, eight categories, featured concepts, independent retailer collections, editorial guides and a non-collecting newsletter placeholder.
+- `/deals`, `/search`: real keyword/category/retailer filtering, newest/name sorting, URL state, clear filters, empty states and saved-only filtering.
+- `/categories`, `/category/[slug]`: Home & Kitchen, Electronics, Toys & Kids, Baby, Beauty & Personal Care, Sports & Outdoors, Pet Supplies, Everyday Essentials.
+- `/stores`, `/stores/amazon`, `/stores/walmart`: internal **demo collections**, never represented as official stores or approved affiliate offers. Future retailer card has no fake shopping link.
+- `/deals/[slug]`: original illustrations, descriptions, considerations, retailer/source/status details, honest verification state, saves and related ideas.
+- `/saved`: localStorage favorites across reloads, un-save, clear, filtering, empty and storage-failure states. No account needed; saves stay in this browser.
+- `/guides` plus five substantive original guides: kitchens, smart homes, family shopping, small spaces, seasonal planning. No invented product tests or rankings.
+- `/about`, `/contact`, `/privacy`, `/affiliate-disclosure`, `/terms`.
+- `/admin`: interactive local demo workspace by default; optional authenticated database workspace when explicitly configured.
 
-- `/`: original editorial homepage, featured demo finds, trending edit, categories, recently added, and non-collecting newsletter placeholder.
-- `/deals`: all 12 demo records, category filters, keyword search, price/savings/date sorting, reset, and empty states.
-- `/category/[slug]`: tech, home, outdoors, wellness; filters compose with the category.
-- `/deals/[slug]`: original local illustration, demo pricing, dates, source notes, unavailable purchase state, related finds.
-- `/search?q=...`: shareable, server-rendered search with case-insensitive multiword matching.
-- `/about`, `/contact`, `/privacy`, `/affiliate-disclosure`: honest Phase 1 information.
-- `/admin`: read-only placeholder. No login, credentials, mutation APIs, or product editing exist.
-- Unknown routes return a custom 404; application errors provide retry UI.
+## Demo integrity and sourcing
 
-Forms use GET so search, filtering, and sorting work without JavaScript. Only the responsive menu requires client state. Search terms are part of URLs; do not enter sensitive information.
+All 16 public records are original concepts, not retailer products. Prices, discounts, verification times, expiration dates, ratings, inventory and affiliate URLs are null. No fictitious commerce numbers are rendered. The two retailer labels only demonstrate organization and filtering. Every record carries an original-artwork license and its own retailer-specific demo source ID.
 
-## Checks
+`public/images/family-kitchen.webp` is an original AI-generated lifestyle illustration, optimized to WebP (about 201 KB). It is not a real customer testimonial or retailer photograph. Product SVGs are self-authored original concept illustrations; no merchant photography, scraped content, paid fonts, or third-party image hotlinks are used. Lucide icons retain their package's ISC license.
+
+`safeAffiliateUrl` rejects demo/unpublished records, absent approval, expired or stale/future verification, unsafe schemes, URL credentials and cross-retailer hosts. Only approved exact Amazon/Walmart HTTPS destinations are prepared. Future actual links are named “View at Amazon” or “View at Walmart”, with an external indicator, `sponsored nofollow noopener noreferrer`, and nearby commission disclosure. This gate is a safeguard, not proof of affiliate enrollment. Review official program material usage, API/caching/time rules and approved hosts before enabling any live record. The public data adapter intentionally remains demo-only even if administration is connected.
+
+## Supabase: implemented versus pending
+
+No remote Supabase project, account, or database has been created or connected in this session. `.env.example` contains names only, never credentials.
+
+Apply both SQL migrations, in order, to a **new development project**:
+
+1. `202610210001_initial_schema.sql`: categories, products, sources, checks, protected admin membership.
+2. `202610210002_multi_retailer.sql`: retailers, affiliate links, explicit product lifecycle, administrator roles, source/retailer foreign keys, link-host enforcement, public-offer freshness gates, private event schema and admin audit log. Legacy active records become unverified for review.
+
+Then supply `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` securely through environment settings. Create an administrator through Supabase Auth, and provision `admin_users(user_id, role='admin')` through a trusted SQL/server path. Never offer public self-registration for privileged membership. The implemented admin uses the publishable client with the user's session and RLS, **not a service-role key**.
+
+When both values are configured, `/admin` requires Supabase Auth sign-in, calls `auth.getUser()` server-side, and verifies an explicit admin role. All save/archive server actions repeat authorization and validate input with Zod. Product, category, retailer, affiliate-link and source editors support create/update; products support review statuses and archive. The lifecycle is Draft, Pending Review, Published, Unverified, Expired and Archived. Public reads require source/retailer approval, same-retailer provenance, a current approved link, a licensed non-demo product, and a check within 24 hours. RLS denies public writes and nonadmin management. Source and link tables contain no credentials. Privileged writes are audited privately.
+
+**Hosted Auth integration has not been exercised without a real project and provisioned administrator.** Isolated PostgreSQL tests validate actual migrations and RLS against a minimal auth fixture, not the entire hosted auth service. Do not apply `tests/database/auth-fixture.sql` to Supabase. Production activation still needs session-expiry/refresh testing, rate-limiting/CAPTCHA policy for privileged login, operational alerts, backups, an explicit expiry-checking job, and program-specific price permissions. Public ingestion is deliberately not wired to the database yet.
+
+### Local admin mode
+
+If Supabase is absent, a clearly labeled sandbox supports create/edit/review/archive for demo products and management of categories, retailers, sources and links. It stores data under `oofcourse:admin-demo:v2`, never changes the public catalog, never authenticates a user, and never sends mutations to a server/database. “Published” in this mode is a **local demo state only**. Reset restores the original sandbox fixtures. Do not enter personal information or credentials in demo fields.
+
+## Privacy and analytics
+
+Favorites use `oofcourse:saved:v1`; local admin edits use `oofcourse:admin-demo:v2`. Both stay on the device. The Privacy page explains use and deletion. Normal visitors have no accounts or session cookies; future connected administrator auth uses necessary Supabase session cookies.
+
+No analytics SDK, provider, event sink, tracking cookies, newsletter intake or marketing script is enabled. `lib/analytics.ts` defines a future consent-gated event contract; SQL prepares private page/search/product/category/save/merchant-click event storage without raw search terms, IPs, emails or stable visitor IDs. No events are currently emitted. Admin shows **Not collecting**, not fake statistics. Merchant clicks must never be treated as orders or commission; official program reports are the source of those outcomes. Any provider or Google Search Console setup requires verified ownership, privacy review and applicable notice/consent. Search terms in URLs can appear in browser history and hosting logs.
+
+## SEO and accessibility
+
+Canonical origin: `https://oofcourse.com`. Unique metadata, Open Graph image, sitemap, robots, semantic navigation, visible focus, skip link, accessible forms/buttons/dialog, reduced-motion handling and mobile layouts are included. `WebSite` JSON-LD is truthful; no fabricated Product/Offer/Review markup is generated.
+
+Keep `SITE_INDEXABLE=false` on demos and previews. It defaults to noindex and disallows crawling. Deal/category/retailer collection/search/saved/admin routes remain noindex, and demo records never enter the sitemap. Editorial guides contain original content. Before production indexing, review content and update live-data indexing rules, policies and operator/support details. Index flags are build-time settings and require rebuilding. Noindex is not access control.
+
+Automated axe WCAG 2 A/AA and 2.1 A/AA checks complement interaction and overflow tests. These checks do not establish full WCAG conformance: manual assistive-technology, zoom, real-device and usability review remains necessary.
+
+## Verification
 
 ```bash
-npm run lint
 npm run typecheck
+npm run lint
 npm test
 npm run build
 npm run test:e2e
 npm run test:db
 ```
 
-Browser tests use the environment's `/usr/bin/chromium` by default. Set `PLAYWRIGHT_EXECUTABLE_PATH` to another installed Chromium path if needed. On a machine without Chromium, run `npx playwright install chromium` and configure the path to that installed browser. Browser tests automatically start the production server if none is running, so build first. Tests cover desktop/mobile, actual search submissions, category and sort interactions, reset/empty states, product navigation, metadata, index protection, missing routes, and admin mutation rejection. Screenshots appear in ignored `test-results/`.
+`typecheck` generates Next route types first, including on a clean checkout; generated `next-env.d.ts` is ignored. Browser tests launch the production server on **3100** to avoid a dev server on 3000. Chromium defaults to `/usr/bin/chromium`; override `PLAYWRIGHT_EXECUTABLE_PATH` if needed. Tests run at **390, 768 and 1440 px**, including saved persistence, real filters, retailer collections, details, guides, local admin isolation and accessibility. Screenshots are saved in ignored `test-results/family-home-{mobile,tablet,desktop}.png` and `family-admin-*.png`.
 
-Database tests require Docker. They launch a disposable PostgreSQL 17 container with no network or exposed ports, create a minimal Supabase auth fixture, apply the actual migration, and test anonymous visibility, denied public writes, regular-user isolation, administrator CRUD, privilege-escalation denial, expiration, stale checks, and disabled-source hiding. They do not contact or modify Supabase.
+Database tests require Docker, run in a disposable PostgreSQL 17 container without network/exposed ports, apply both actual migrations, and check RLS, administrator isolation, cross-retailer rejection, exact destination hosts, stale links, program approval revocation and private audit records. The auth fixture never touches a real Supabase project.
 
-`npm run typecheck` generates Next.js route types before running TypeScript, so it also works on a fresh checkout. `next-env.d.ts` is framework-generated and intentionally ignored.
+## Deployment and permissions
 
-## Architecture
+Repository: `https://github.com/derek2955d/oofcourse` (private status verified through GitHub API during this upgrade). Existing production: `https://oofcourse.vercel.app/`, originally deployed from `main`.
 
-```text
-app/                         Server-rendered pages, metadata, error handling
-components/                  Shared layout, cards, search/filter forms, mobile menu
-lib/data.ts                  Typed demo data and pure filtering / link safeguards
-lib/seo.ts                   Canonical and page metadata helpers
-public/illustrations/        Original self-authored SVG concept artwork
-supabase/migrations/         Future database schema and RLS
-scripts/test-database.sh     Isolated migration / permission verification
-tests/                       Data, security, browser, and database checks
-```
+This upgrade belongs on `feat/family-friendly-shopping` so the connected `main` branch does not automatically change production before approval. Vercel may create a branch preview automatically. Deployment URLs must be obtained from actual GitHub/Vercel status, never guessed. Review the preview before merging. No Cloudflare DNS changes, new production domains or paid subscriptions are authorized by this upgrade.
 
-Illustrations are original project assets; no merchant product photographs, scraped pages, third-party fonts, or paid media are used. Lucide icons are supplied under their package's ISC license. Demo concepts are not actual branded products.
-
-## Data and affiliate safeguards
-
-`lib/data.ts` is the current data adapter. Each record includes ID, name, slug, description, category, merchant, local image URL, nullable affiliate URL, example current/original prices, computed discount, status, created/expiration/last-check dates, and editorial flags. All displayed values are fictional and labeled. Dates are demonstration metadata, not actual merchant checks. There are no ratings, reviews, inventory claims, API connections, or live purchasing links.
-
-`safeAffiliateUrl` only accepts explicitly active, unexpired records with HTTPS URLs on an explicit approved host list and no URL credentials. Demo and expired records cannot produce a buying link. Future active records must come from a reviewed, authorized live-data adapter; do not relabel fixture data as live. Expand merchant hosts only after source and affiliate approval. Outbound affiliate links carry `sponsored nofollow noopener noreferrer` and a nearby disclosure. This is a validation safeguard, not proof of Associates enrollment or official API approval.
-
-## SEO and indexing
-
-The canonical origin is `https://oofcourse.com`; DNS is unchanged. Each page has its own title, description, canonical and Open Graph data. An original social image, favicon, robots file, sitemap and truthful `WebSite` JSON-LD are included. There is no Product/Offer/Review schema for demo data.
-
-By default `SITE_INDEXABLE` is absent or `false`, all pages are `noindex,nofollow`, and robots disallows the site. Leave it false on previews. Deal, category, search and admin routes are explicitly noindex even if the site-level flag is enabled, and demo listings are excluded from the sitemap. Before production, replace demo data, implement reviewed live-data indexing rules and update the sitemap. This flag is read at build time: rebuild after changing it. Noindex is not access control; previews are readable by anyone with access to their deployment unless hosting protection is configured.
-
-## Supabase preparation
-
-`.env.example` documents optional future configuration. There is no live client or database dependency in Phase 1. Never commit `.env.local`, tokens, Supabase service-role keys or server credentials. Publishable keys are only safe when RLS is correctly enforced; service-role keys must remain server-only and bypass RLS.
-
-Apply `supabase/migrations/202610210001_initial_schema.sql` only to a new development project after reviewing it. It defines categories, products, deal sources, deal checks and admin membership, constraints, indexes and update timestamps. Products default to demo drafts. Public reads require an active, non-demo, unexpired record checked in the last 24 hours and an enabled, affiliate-approved source. Public clients cannot mutate data or inspect operational checks. Authenticated nonadmins cannot write. Privileged admin membership is provisioned through a trusted SQL/server path, never through self-service clients. Admin policies support future controlled management, but no application admin endpoints exist yet.
-
-The migration was designed for Supabase's existing `auth.users` and `auth.uid()`; isolated PostgreSQL tests use fixtures for these. They validate the schema and RLS logic, not hosted Supabase integration or the complete auth service. Do not apply the fixture SQL in Supabase. Phase 2 must add real auth integration tests, rate limits, source validation, audit records, and a scheduled expiry/checking job. Do not store credentials or unsanitized provider responses in `deal_sources` or `deal_checks`.
-
-## Vercel preview
-
-Import the GitHub repository in Vercel; use Next.js defaults, Node.js 24, root directory `.`, install `npm ci`, build `npm run build`. No Supabase values are required. Keep `SITE_INDEXABLE=false`. Deploy a `.vercel.app` preview first; do not attach the production domain or modify Cloudflare DNS in Phase 1. Verify its build and the key routes after deployment. GitHub repository privacy and Vercel authorization must be verified through their official account settings; no visibility changes are performed by this project.
-
-## Before real operations (Phase 2)
-
-1. Establish a real operator/support/privacy contact and review public policies.
-2. Create an isolated Supabase development project; apply migration and verify RLS with real auth.
-3. Add secure authenticated admin management and audited source ingestion.
-4. Obtain affiliate approval and legitimate merchant-data access; implement price freshness and expiry checks.
-5. Replace demo content and review price/discount presentation and program rules.
-6. Enable production indexing only after a content, accessibility, privacy and security review.
-7. Add newsletter collection only after backend, consent, retention and unsubscribe flows exist.
-
-No paid services, production resource changes, or Cloudflare DNS edits are part of this phase.
+Use Vercel Next.js defaults, Node 24, root `.`, `npm ci`, `npm run build`, and `SITE_INDEXABLE=false`. No Supabase credentials are needed for preview. Before commercial operation, confirm hosting-plan eligibility and affiliate approvals, finish real auth/content integration and legal/support details, and perform a production readiness review.

@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-export const alt = "OofCourse — Great Deals? Of Course!";
+export const alt = "OofCourse — Family-friendly finds for real life";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export default function OG() {
@@ -8,30 +8,32 @@ export default function OG() {
       style={{
         width: "100%",
         height: "100%",
-        background: "#e6e9da",
+        background: "#eaf4ff",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
         padding: 85,
-        color: "#203b2e",
+        color: "#12254a",
       }}
     >
-      <div style={{ fontSize: 34, fontWeight: 700, marginBottom: 45 }}>
+      <div style={{ fontSize: 36, fontWeight: 700, marginBottom: 45 }}>
         OofCourse.
       </div>
       <div
         style={{
-          fontSize: 82,
+          fontSize: 79,
           fontWeight: 700,
-          lineHeight: 1.05,
-          letterSpacing: -4,
+          lineHeight: 1.1,
+          letterSpacing: -3,
         }}
       >
-        Great Deals?
+        Family-friendly finds
       </div>
-      <div style={{ fontSize: 82, lineHeight: 1.1 }}>Of Course!</div>
-      <div style={{ fontSize: 22, marginTop: 40 }}>
-        Thoughtful finds for your everyday. · Demo collection
+      <div style={{ fontSize: 79, lineHeight: 1.1, color: "#197548" }}>
+        for real life.
+      </div>
+      <div style={{ fontSize: 24, marginTop: 40 }}>
+        Great Deals? Of Course! · Independent discovery · Demo collection
       </div>
     </div>,
     size,

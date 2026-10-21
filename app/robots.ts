@@ -6,7 +6,14 @@ export default function robots(): MetadataRoute.Robots {
         ? {
             userAgent: "*",
             allow: "/",
-            disallow: ["/admin", "/deals", "/category/", "/search"],
+            disallow: [
+              "/admin",
+              "/deals",
+              "/category/",
+              "/stores/",
+              "/search",
+              "/saved",
+            ],
           }
         : { userAgent: "*", disallow: "/" },
     sitemap: "https://oofcourse.com/sitemap.xml",

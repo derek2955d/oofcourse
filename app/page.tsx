@@ -1,200 +1,232 @@
 import Link from "next/link";
 import Image from "next/image";
 import {
-  ArrowUpRight,
-  ArrowRight,
-  BadgeCheck,
   Search,
-  Sparkles,
+  ArrowRight,
+  ArrowUpRight,
+  ShieldCheck,
+  Heart,
+  ShoppingBag,
+  Check,
 } from "lucide-react";
 import { categories, products } from "@/lib/data";
 import { Newsletter, ProductCard, SectionHeading } from "@/components/site";
+import { CategoryIcon } from "@/components/icons";
+import { StoreCards } from "@/components/stores";
+import { GuideCards } from "@/components/guides";
 import { metadata } from "@/lib/seo";
 export const generateMetadata = () =>
   metadata(
-    "Great Deals? Of Course!",
-    "Thoughtful finds for everyday living. Explore demo deals in tech, home, travel, and wellness.",
+    "Family-friendly finds for real life",
+    "Discover useful products, smart savings, and everyday favorites from retailers you know. Explore the OofCourse multi-retailer demo.",
     "/",
   );
 export default function Home() {
   return (
-    <div className="container home">
-      <section className="hero">
-        <div className="hero-copy">
-          <p className="eyebrow">
-            <span className="tiny-dot" /> GOOD FINDS. GREAT FEELING.
-          </p>
-          <h1>
-            Your next favorite.
-            <br />
-            For a little <span>less.</span>
-            <svg viewBox="0 0 230 18" aria-hidden="true">
-              <path
-                d="M3 13 Q110 -3 224 8"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="5"
-                strokeLinecap="round"
+    <>
+      <div className="container home">
+        <section className="hero">
+          <div className="hero-copy">
+            <p className="eyebrow">
+              <span className="green-dot" /> A LITTLE MORE GOOD IN YOUR EVERYDAY
+            </p>
+            <h1>
+              Family-friendly finds
+              <br className="wide-break" /> for <span>real life.</span>
+            </h1>
+            <p>
+              Discover useful products, smart savings, and everyday favorites
+              from retailers you know.
+            </p>
+            <form action="/search" role="search" className="hero-search">
+              <Search size={21} />
+              <input
+                name="q"
+                type="search"
+                aria-label="Search family finds"
+                placeholder="What would make your day a little easier?"
+                maxLength={200}
               />
-            </svg>
-          </h1>
-          <p>
-            Life’s full of good things. We help you find the ones
-            <br className="desktop-break" /> worth bringing home — without the
-            full price.
-          </p>
-          <div className="hero-actions">
-            <Link href="/deals" className="button primary">
-              Discover the finds <ArrowUpRight size={18} />
-            </Link>
-            <span>Good taste. Better prices.</span>
+              <button aria-label="Search family finds" type="submit">
+                <ArrowRight size={22} />
+              </button>
+            </form>
+            <div className="popular-searches">
+              <span>A few ideas:</span>
+              <Link href="/category/home">Kitchen essentials</Link>
+              <Link href="/category/toys">Kids & play</Link>
+              <Link href="/category/essentials">Everyday basics</Link>
+            </div>
+            <div className="hero-proof">
+              <span>
+                <Check size={15} />
+                Useful by nature
+              </span>
+              <span>
+                <Check size={15} />
+                Independent by choice
+              </span>
+            </div>
           </div>
-          <div className="hero-proof">
-            <span>
-              <BadgeCheck size={16} /> Thoughtfully curated
-            </span>
-            <span>
-              <Sparkles size={16} /> Always transparent
-            </span>
-          </div>
-        </div>
-        <div className="hero-art">
-          <span className="hero-orbit orbit-one" />
-          <span className="hero-orbit orbit-two" />
-          <div className="hero-label">
-            THE EVERYDAY EDIT <span>01 / 04</span>
-          </div>
-          <Image
-            className="hero-headphones"
-            src="/illustrations/headphones.svg"
-            alt="Original illustration of sage green wireless headphones"
-            width={440}
-            height={350}
-            priority
-          />
-          <div className="hero-sticker">
-            GOOD
-            <br />
-            FINDS<span>✳</span>
-          </div>
-          <div className="hero-float">
-            <span className="tiny-dot" /> A little upgrade, a better everyday.
-          </div>
-          <div className="hero-caption">
-            <span>
-              Sound good? <strong>Of course.</strong>
-            </span>
-            <Link
-              href={`/deals/${products[0].slug}`}
-              aria-label="Explore demo headphones"
-            >
-              <ArrowUpRight size={25} />
-            </Link>
-          </div>
-        </div>
-      </section>
-      <section className="value-strip" aria-label="Our approach">
-        <span>
-          <Search size={19} />
-          <strong>We do the discovering.</strong> You do the enjoying.
-        </span>
-        <span>
-          <BadgeCheck size={19} /> Independent picks. Clear information.
-        </span>
-        <span>
-          <Sparkles size={19} /> Little upgrades. Everyday happiness.
-        </span>
-      </section>
-      <section className="section">
-        <SectionHeading
-          eyebrow="THE SHORTLIST"
-          title="Good finds, right now."
-          href="/deals"
-        />
-        <div className="product-grid">
-          {products
-            .filter((p) => p.featured)
-            .map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-        </div>
-      </section>
-      <section className="categories-section">
-        <SectionHeading
-          eyebrow="FIND YOUR KIND OF GOOD"
-          title="A little something for every day."
-        />
-        <div className="category-grid">
-          {categories.map((c, i) => (
-            <Link
-              href={`/category/${c.slug}`}
-              className={`category-tile category-${i}`}
-              key={c.slug}
-            >
-              <span className="category-symbol">{c.icon}</span>
+          <div className="hero-art">
+            <Image
+              src="/images/family-kitchen.webp"
+              alt="Original AI-generated lifestyle scene of a family preparing breakfast in a bright kitchen"
+              fill
+              priority
+              sizes="(max-width: 760px) 100vw, 50vw"
+            />
+            <div className="hero-image-label">
+              <span className="green-dot" />
+              FOR THE LITTLE MOMENTS THAT MATTER
+            </div>
+            <div className="hero-note">
+              <span className="hero-note-icon">
+                <Heart size={21} />
+              </span>
               <div>
-                <h3>{c.name}</h3>
-                <p>{c.description}</p>
+                <strong>Good finds. Happier everyday.</strong>
+                <span>A little less searching. A little more living.</span>
               </div>
-              <ArrowUpRight size={21} />
+            </div>
+          </div>
+        </section>
+        <div className="value-strip">
+          <span>
+            <ShieldCheck size={19} />
+            <strong>Independent & transparent</strong>
+          </span>
+          <span>
+            <ShoppingBag size={19} />
+            Familiar retailers. Thoughtful discovery.
+          </span>
+          <span>
+            <Heart size={19} />
+            Made for your everyday
+          </span>
+        </div>
+        <section className="section category-section">
+          <SectionHeading
+            title="What’s on your list?"
+            description="Find a little something for every corner of life."
+            href="/categories"
+            link="All categories"
+          />
+          <div className="category-grid">
+            {categories.map((c) => (
+              <Link
+                className="category-tile"
+                href={`/category/${c.slug}`}
+                key={c.slug}
+              >
+                <span className="category-icon" style={{ background: c.color }}>
+                  <CategoryIcon name={c.icon} />
+                </span>
+                <h3>{c.name}</h3>
+              </Link>
+            ))}
+          </div>
+        </section>
+        <section className="section">
+          <SectionHeading
+            eyebrow="THE EVERYDAY EDIT"
+            title="Good finds for busy lives."
+            description="A few useful ideas, picked with real life in mind."
+            href="/deals"
+          />
+          <div className="product-grid">
+            {products
+              .filter((p) => p.featured)
+              .map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+          </div>
+        </section>
+        <section className="section store-section">
+          <SectionHeading
+            title="Familiar stores. Fresh discoveries."
+            description="Your favorite places to shop, brought a little closer."
+            href="/stores"
+            link="Explore stores"
+          />
+          <StoreCards />
+        </section>
+      </div>
+      <section className="family-banner">
+        <div className="container banner-inner">
+          <div>
+            <p className="eyebrow">SMARTER SHOPPING STARTS HERE</p>
+            <h2>
+              Big on useful.
+              <br />
+              Little on unnecessary.
+            </h2>
+            <p>
+              A home that works for you. Things your family will actually use.
+              <br />
+              That’s our kind of good find.
+            </p>
+            <Link
+              href="/guides/family-shopping-guides"
+              className="button primary"
+            >
+              Find your shopping rhythm
+              <ArrowUpRight size={18} />
             </Link>
-          ))}
+          </div>
+          <div className="banner-visual">
+            <div className="banner-ring" />
+            <Image
+              src="/illustrations/tote.svg"
+              alt="Original illustration of a reusable market tote"
+              width={350}
+              height={290}
+            />
+            <span className="banner-caption">
+              <Check size={16} /> Made for the everyday
+            </span>
+          </div>
         </div>
       </section>
-      <section className="section">
-        <SectionHeading
-          eyebrow="WORTH A SECOND LOOK"
-          title="The everyday favorites."
-          href="/deals?sort=savings"
-          link="Explore the edit"
-        />
-        <div className="product-grid">
-          {products
-            .filter((p) => p.trending)
-            .map((p) => (
+      <div className="container">
+        <section className="section">
+          <SectionHeading
+            eyebrow="A LITTLE INSPIRATION"
+            title="Helpful reads for thoughtful choices."
+            description="Less guesswork. More confidence in your next find."
+            href="/guides"
+            link="All buying guides"
+          />
+          <GuideCards />
+        </section>
+        <section className="section">
+          <SectionHeading
+            eyebrow="FRESH PERSPECTIVES"
+            title="A few more to explore."
+            href="/deals?sort=newest"
+          />
+          <div className="product-grid">
+            {products.slice(8, 12).map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
-        </div>
-      </section>
-      <section className="editorial">
-        <div className="editorial-art">
-          <span>
-            less scrolling.
-            <br />
-            <em>more finding.</em>
-          </span>
-          <span className="editorial-star">✳</span>
-        </div>
-        <div>
-          <p className="eyebrow">A LITTLE MORE INTENTIONAL</p>
-          <h2>
-            Good deals.
-            <br />
-            Even better decisions.
-          </h2>
-          <p>
-            We believe a great find should make your day better. So we’re
-            building a place for useful things, honest information, and a little
-            joy in the everyday.
-          </p>
-          <Link href="/about" className="text-link">
-            Get to know OofCourse <ArrowRight size={17} />
+          </div>
+        </section>
+        <section className="our-promise">
+          <ShieldCheck size={32} />
+          <div>
+            <h2>Good information comes first.</h2>
+            <p>
+              Demo concepts today. Clear sources, honest status, and properly
+              disclosed links before any live offers tomorrow.
+            </p>
+          </div>
+          <Link href="/affiliate-disclosure" className="text-link">
+            Our approach
+            <ArrowRight size={17} />
           </Link>
-        </div>
-      </section>
-      <section className="section">
-        <SectionHeading
-          eyebrow="FRESH ON THE SHELF"
-          title="Recently discovered."
-          href="/deals?sort=newest"
-        />
-        <div className="product-grid">
-          {products.slice(8).map((p) => (
-            <ProductCard key={p.id} product={p} />
-          ))}
-        </div>
-      </section>
-      <Newsletter />
-    </div>
+        </section>
+        <Newsletter />
+      </div>
+    </>
   );
 }

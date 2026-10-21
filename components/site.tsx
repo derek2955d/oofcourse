@@ -1,61 +1,95 @@
 import Link from "next/link";
 import Image from "next/image";
+import { ArrowUpRight, ArrowRight, ShieldCheck, Info } from "lucide-react";
 import {
-  ArrowUpRight,
-  ArrowRight,
-  Check,
-  ShieldCheck,
-  Sparkles,
-} from "lucide-react";
-import { categories, money, Product } from "@/lib/data";
+  categories,
+  Product,
+  safeAffiliateUrl,
+  displayPrice,
+} from "@/lib/data";
+import { SaveButton } from "./saved";
+import { Brand } from "./header";
 export function DemoNotice() {
   return (
     <div className="demo-notice">
-      <Sparkles size={14} />
+      <Info size={15} />
       <span>
-        <strong>You’re exploring a demo.</strong> All products, prices, and
-        savings are illustrative. No live offers or purchases.
+        <strong>A little transparency:</strong> You’re browsing demo concepts.
+        No live prices, verified offers, or buying links.
       </span>
       <Link href="/affiliate-disclosure">
-        Learn more <ArrowUpRight size={12} />
+        How it works <ArrowUpRight size={13} />
       </Link>
     </div>
   );
 }
+export function RetailerBadge({ retailer }: { retailer: string }) {
+  return (
+    <span className={`retailer-badge ${retailer}`}>
+      <span className="retailer-dot" />
+      {retailer === "amazon" ? "Amazon" : "Walmart"}
+      <span className="retailer-demo"> · Demo</span>
+    </span>
+  );
+}
+export function MerchantLink({ product: p }: { product: Product }) {
+  const url = safeAffiliateUrl(p);
+  return url ? (
+    <div className="merchant-link">
+      <a
+        href={url}
+        rel="sponsored nofollow noopener noreferrer"
+        target="_blank"
+        className="button primary"
+      >
+        View at {p.merchant}
+        <ArrowUpRight size={17} />
+      </a>
+      <small>
+        Affiliate link. We may earn a commission on qualifying purchases.
+      </small>
+    </div>
+  ) : null;
+}
 export function ProductCard({ product: p }: { product: Product }) {
+  const price = displayPrice(p);
   return (
     <article className="product-card">
-      <Link
-        href={`/deals/${p.slug}`}
-        className="product-image"
-        style={{ backgroundColor: p.color }}
-      >
-        <span className="discount">
-          {p.status === "expired"
-            ? "EXPIRED DEMO"
-            : `−${p.discountPercentage}% DEMO`}
-        </span>
-        <Image
-          src={p.imageUrl}
-          alt={`Original concept illustration of ${p.name}`}
-          width={320}
-          height={260}
-        />
-        <span className="image-arrow">
-          <ArrowUpRight size={17} />
-        </span>
-      </Link>
-      <div className="product-meta">
-        <span>{categories.find((c) => c.slug === p.category)?.name}</span>
-        <span>Demo listing</span>
+      <div className="product-visual" style={{ backgroundColor: p.color }}>
+        <Link href={`/deals/${p.slug}`} className="product-image">
+          <span className="demo-pill">DEMO CONCEPT</span>
+          <Image
+            src={p.imageUrl}
+            alt={`Original concept illustration of ${p.name}`}
+            width={360}
+            height={290}
+          />
+        </Link>
+        <SaveButton id={p.id} name={p.name} />
       </div>
-      <h3>
-        <Link href={`/deals/${p.slug}`}>{p.name}</Link>
-      </h3>
-      <p className="product-price">
-        {money(p.currentPrice)} <del>{money(p.originalPrice)}</del>
-        <span>Example price</span>
-      </p>
+      <div className="product-body">
+        <div className="product-meta">
+          <span>{categories.find((c) => c.slug === p.category)?.name}</span>
+          <span className="status-label">
+            {p.status === "expired" ? "Expired demo" : "Not verified"}
+          </span>
+        </div>
+        <h3>
+          <Link href={`/deals/${p.slug}`}>{p.name}</Link>
+        </h3>
+        <RetailerBadge retailer={p.retailer} />
+        <div className="product-bottom">
+          <span className="price-note">{price || "Price not connected"}</span>
+          <Link
+            href={`/deals/${p.slug}`}
+            className="card-details"
+            aria-label={`Details for ${p.name}`}
+          >
+            Details <ArrowRight size={14} />
+          </Link>
+        </div>
+        <MerchantLink product={p} />
+      </div>
     </article>
   );
 }
@@ -63,18 +97,21 @@ export function SectionHeading({
   eyebrow,
   title,
   href,
-  link = "View all deals",
+  link = "Explore all finds",
+  description,
 }: {
   eyebrow?: string;
   title: string;
   href?: string;
   link?: string;
+  description?: string;
 }) {
   return (
     <div className="section-heading">
       <div>
         {eyebrow && <p className="eyebrow">{eyebrow}</p>}
         <h2>{title}</h2>
+        {description && <p className="section-description">{description}</p>}
       </div>
       {href && (
         <Link className="text-link" href={href}>
@@ -89,20 +126,15 @@ export function Newsletter() {
   return (
     <section className="newsletter">
       <div>
-        <p className="eyebrow">THE GOOD-FINDS CLUB</p>
-        <h2>A better kind of inbox.</h2>
-        <p>Thoughtful finds. Fresh inspiration. Zero noise.</p>
+        <p className="eyebrow">A LITTLE GOOD IN YOUR INBOX</p>
+        <h2>Less searching. More finding.</h2>
+        <p>We’re putting together something useful. No inbox clutter.</p>
       </div>
       <div className="newsletter-placeholder">
-        <div>
-          <span>Something good is on its way</span>
-          <span className="coming-soon">
-            Coming soon <ArrowUpRight size={14} />
-          </span>
-        </div>
-        <small>
-          Newsletter preview only. We aren’t collecting email addresses.
-        </small>
+        <span className="coming-soon">
+          The good-finds newsletter · Coming soon
+        </span>
+        <small>We aren’t collecting email addresses yet.</small>
       </div>
     </section>
   );
@@ -113,51 +145,61 @@ export function Footer() {
       <div className="container">
         <div className="footer-top">
           <div>
-            <Link href="/" className="brand">
-              OofCourse<span className="brand-period">.</span>
-            </Link>
-            <p>Great Deals? Of Course!</p>
-            <p className="footer-description">
-              A thoughtful place to discover your next everyday favorite.
+            <Brand />
+            <p className="footer-slogan">Great Deals? Of Course!</p>
+            <p>
+              Thoughtful finds for real life.
+              <br />
+              An independent shopping discovery website.
             </p>
+            <span className="independent-badge">
+              <ShieldCheck size={15} />
+              Transparency, always.
+            </span>
           </div>
           <div>
             <strong>Discover</strong>
-            <Link href="/deals">All deals</Link>
-            <Link href="/category/tech">Tech & Electronics</Link>
-            <Link href="/category/home">Home & Kitchen</Link>
+            <Link href="/deals">All finds</Link>
+            <Link href="/categories">Categories</Link>
+            <Link href="/stores">Stores</Link>
+            <Link href="/guides">Buying guides</Link>
+            <Link href="/saved">Saved finds</Link>
           </div>
           <div>
-            <strong>OofCourse</strong>
-            <Link href="/about">Our story</Link>
-            <Link href="/contact">Contact</Link>
-            <Link href="/affiliate-disclosure">Affiliate disclosure</Link>
+            <strong>Explore categories</strong>
+            {categories.slice(0, 4).map((c) => (
+              <Link key={c.slug} href={`/category/${c.slug}`}>
+                {c.name}
+              </Link>
+            ))}
+            <Link href="/categories">View all categories</Link>
           </div>
-          <div className="footer-promise">
-            <ShieldCheck size={26} />
-            <strong>Transparency comes first.</strong>
-            <p>
-              Demo listings today. Clear, independent recommendations always.
-            </p>
+          <div>
+            <strong>Here to help</strong>
+            <Link href="/about">About us</Link>
+            <Link href="/contact">Contact</Link>
+            <Link href="/privacy">Privacy policy</Link>
+            <Link href="/affiliate-disclosure">Affiliate disclosure</Link>
+            <Link href="/terms">Terms of use</Link>
           </div>
         </div>
         <div className="affiliate-note">
-          As an Amazon Associate I earn from qualifying purchases. This
-          statement is reserved for future qualifying affiliate links; no Amazon
-          API or live affiliate offers are connected in this demo. OofCourse is
-          independently operated and is not affiliated with or endorsed by
-          Amazon.
+          OofCourse does not sell products, process payments, or handle shipping
+          and returns. Amazon and Walmart are independent retailers; their names
+          here identify demo organization only. No affiliate enrollment,
+          retailer partnership, or live offer is claimed. Future approved
+          affiliate links will be clearly disclosed.{" "}
+          <Link href="/affiliate-disclosure">Read our full disclosure.</Link>
         </div>
         <div className="footer-bottom">
           <span>
-            © {new Date().getFullYear()} OofCourse. All rights reserved.
+            © {new Date().getFullYear()} OofCourse. Thoughtfully built for the
+            everyday.
           </span>
           <div>
-            <Link href="/privacy">Privacy policy</Link>
+            <Link href="/privacy">Your privacy</Link>
             <Link href="/admin">Admin</Link>
-            <span>
-              Made for the everyday <Check size={13} />
-            </span>
+            <span>US · English</span>
           </div>
         </div>
       </div>
