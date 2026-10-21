@@ -77,7 +77,7 @@ test("bilingual search, composed filters, sorting and empty state work", async (
 });
 test("favorites survive language changes and reload; mobile navigation works", async ({
   page,
-}, info) => {
+}) => {
   await page.goto("/en/deals");
   await page
     .getByRole("button", {
@@ -101,7 +101,7 @@ test("favorites survive language changes and reload; mobile navigation works", a
   await expect(
     page.getByRole("heading", { name: "Your favorites start here." }),
   ).toBeVisible();
-  if (info.project.name !== "desktop") {
+  if ((page.viewportSize()?.width || 1440) <= 760) {
     await page.getByRole("button", { name: "Open navigation" }).click();
     await page
       .getByRole("navigation", { name: "Mobile navigation" })

@@ -20,6 +20,7 @@ export function GuideCards({
           <article className="guide-card" key={g.slug}>
             <Link
               className="guide-image"
+              aria-label={g.title}
               href={`/guides/${g.slug}`}
               style={{ background: g.color }}
             >
