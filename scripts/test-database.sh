@@ -15,3 +15,6 @@ docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 < supabase/migra
 docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 < tests/database/rls.sql
 docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 < supabase/migrations/202610210002_multi_retailer.sql
 docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 < tests/database/multi-retailer.sql
+
+docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 < supabase/migrations/202610210003_bilingual_offers.sql
+docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 < tests/database/offers.sql

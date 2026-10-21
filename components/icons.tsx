@@ -7,6 +7,7 @@ import {
   TentTree,
   PawPrint,
   ShoppingBag,
+  Shirt,
 } from "lucide-react";
 export function CategoryIcon({
   name,
@@ -19,6 +20,7 @@ export function CategoryIcon({
     (
       {
         home: Home,
+        fashion: Shirt,
         tech: Headphones,
         toys: Blocks,
         baby: Baby,

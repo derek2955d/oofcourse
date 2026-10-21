@@ -1,14 +1,24 @@
+import { categoryChinese } from "./i18n/catalog";
 import { categories, products, retailers } from "./data";
-export type DemoRecord = Record<string, string | boolean | null> & {
+export type DemoRecord = Record<string, string | number | boolean | null> & {
   id: string;
 };
 export type AdminTab =
-  "products" | "categories" | "retailers" | "affiliate_links" | "deal_sources";
+  | "products"
+  | "categories"
+  | "retailers"
+  | "affiliate_links"
+  | "deal_sources"
+  | "offers";
 export type AdminRecords = Record<AdminTab, DemoRecord[]>;
 export const demoAdminRecords: AdminRecords = {
   products: products.map((p) => ({
     id: p.id,
     name: p.name,
+    name_zh: p.nameZh,
+    content_scope: "neutral",
+    content_retailer_id: null,
+    description_zh: p.descriptionZh,
     slug: p.slug,
     description: p.description,
     category_id: p.category,
@@ -25,6 +35,7 @@ export const demoAdminRecords: AdminRecords = {
   categories: categories.map((c) => ({
     id: c.slug,
     name: c.name,
+    name_zh: categoryChinese[c.slug] || c.name,
     slug: c.slug,
     description: c.description,
   })),
@@ -32,11 +43,12 @@ export const demoAdminRecords: AdminRecords = {
     id: r.slug,
     name: r.name,
     slug: r.slug,
-    homepage_url: `https://www.${r.slug}.com`,
+    homepage_url: `https://${r.allowedHosts[0]}`,
     enabled: false,
     affiliate_approved: false,
-    allowed_hosts: `www.${r.slug}.com,${r.slug}.com`,
+    allowed_hosts: r.allowedHosts.join(","),
   })),
+  offers: [],
   affiliate_links: [],
   deal_sources: retailers.map((r) => ({
     id: `demo-source-${r.slug}`,
@@ -46,6 +58,6 @@ export const demoAdminRecords: AdminRecords = {
     source_type: "manual",
     enabled: false,
     affiliate_approved: false,
-    homepage_url: `https://www.${r.slug}.com`,
+    homepage_url: `https://${r.allowedHosts[0]}`,
   })),
 };

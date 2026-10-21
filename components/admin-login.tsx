@@ -1,8 +1,11 @@
 "use client";
 import { useState } from "react";
+import { useLocale } from "./locale-provider";
+import { tr } from "@/lib/i18n/admin";
 import { useRouter } from "next/navigation";
 import { loginAdmin } from "@/app/admin/actions";
 export function AdminLogin() {
+  const locale = useLocale();
   const [error, setError] = useState(""),
     [pending, setPending] = useState(false);
   const router = useRouter();
@@ -15,16 +18,16 @@ export function AdminLogin() {
         setError("");
         const result = await loginAdmin(new FormData(e.currentTarget));
         setPending(false);
-        if (result.error) setError(result.error);
+        if (result.error) setError(tr(locale, result.error));
         else router.refresh();
       }}
     >
       <label>
-        Administrator email
+        {tr(locale, "Administrator email")}{" "}
         <input name="email" type="email" autoComplete="username" required />
       </label>
       <label>
-        Password
+        {tr(locale, "Password")}{" "}
         <input
           name="password"
           type="password"
@@ -35,11 +38,13 @@ export function AdminLogin() {
       </label>
       {error && <p role="alert">{error}</p>}
       <button className="button primary" disabled={pending}>
-        {pending ? "Signing in…" : "Sign in securely"}
+        {pending ? tr(locale, "Signing in…") : tr(locale, "Sign in securely")}
       </button>
       <p>
-        No self-service administrator registration. Membership must be
-        provisioned through a trusted server or SQL console.
+        {tr(
+          locale,
+          "No self-service administrator registration. Membership must be provisioned through a trusted server or SQL console.",
+        )}{" "}
       </p>
     </form>
   );

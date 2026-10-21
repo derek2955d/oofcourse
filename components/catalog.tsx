@@ -1,10 +1,14 @@
 "use client";
-import Link from "next/link";
+import Link from "./localized-link";
 import { SlidersHorizontal, ArrowRight, Heart } from "lucide-react";
 import { categories, retailers, selectProducts } from "@/lib/data";
 import type { Query } from "@/lib/query";
 import { ProductCard } from "./site";
 import { useSaved } from "./saved";
+import { useLocale } from "./locale-provider";
+import { t } from "@/lib/i18n/messages";
+import { categoryName } from "@/lib/i18n/catalog";
+import { localePath } from "@/lib/i18n/config";
 export function Catalog({
   query,
   action = "/deals",
@@ -18,10 +22,12 @@ export function Catalog({
   fixedRetailer?: string;
   onlySaved?: boolean;
 }) {
-  const { ids, ready, error, clear } = useSaved();
-  const saved = onlySaved || query.saved === "1";
+  const l = useLocale(),
+    { ids, ready, error, clear } = useSaved(),
+    saved = onlySaved || query.saved === "1";
   const results = selectProducts({
     ...query,
+    locale: l,
     category: fixedCategory || query.category,
     retailer: fixedRetailer || query.retailer,
   }).filter((p) => !saved || ids.includes(p.id));
@@ -30,27 +36,37 @@ export function Catalog({
       <details className="filter-panel" open>
         <summary>
           <SlidersHorizontal size={17} />
-          Refine your finds<span>Search, categories & stores</span>
+          {t(l, "filterTitle")}
+          <span>{t(l, "filterHint")}</span>
         </summary>
-        <form action={action} className="filters" key={JSON.stringify(query)}>
+        <form
+          className="filters"
+          action={localePath(l, action)}
+          key={JSON.stringify(query)}
+        >
           <label className="filter-search">
-            Search finds
+            {t(l, "search")}
             <input
               type="search"
               name="q"
-              placeholder="Try headphones, baby, or kitchen"
+              aria-label={t(l, "searchDeals")}
+              placeholder={t(l, "searchPlaceholder")}
               defaultValue={query.q || ""}
               maxLength={200}
             />
           </label>
           {!fixedCategory && (
             <label>
-              Category
-              <select name="category" defaultValue={query.category || ""}>
-                <option value="">All categories</option>
+              {t(l, "category")}
+              <select
+                aria-label={t(l, "category")}
+                name="category"
+                defaultValue={query.category || ""}
+              >
+                <option value="">{t(l, "allCategories")}</option>
                 {categories.map((c) => (
-                  <option value={c.slug} key={c.slug}>
-                    {c.name}
+                  <option key={c.slug} value={c.slug}>
+                    {categoryName(c, l)}
                   </option>
                 ))}
               </select>
@@ -58,22 +74,30 @@ export function Catalog({
           )}
           {!fixedRetailer && (
             <label>
-              Retailer
-              <select name="retailer" defaultValue={query.retailer || ""}>
-                <option value="">All retailers</option>
+              {t(l, "retailer")}
+              <select
+                aria-label={t(l, "retailer")}
+                name="retailer"
+                defaultValue={query.retailer || ""}
+              >
+                <option value="">{t(l, "allRetailers")}</option>
                 {retailers.map((r) => (
                   <option key={r.slug} value={r.slug}>
-                    {r.name} · demo
+                    {r.name}
                   </option>
                 ))}
               </select>
             </label>
           )}
           <label>
-            Sort by
-            <select name="sort" defaultValue={query.sort || "newest"}>
-              <option value="newest">Recently added</option>
-              <option value="name">Name: A–Z</option>
+            {t(l, "sort")}
+            <select
+              name="sort"
+              aria-label={t(l, "sort")}
+              defaultValue={query.sort || "newest"}
+            >
+              <option value="newest">{t(l, "newest")}</option>
+              <option value="name">{t(l, "nameSort")}</option>
             </select>
           </label>
           {!onlySaved && (
@@ -85,42 +109,37 @@ export function Catalog({
                 defaultChecked={query.saved === "1"}
               />
               <Heart size={15} />
-              Saved only
+              {t(l, "savedOnly")}
             </label>
           )}
-          <button className="button primary" type="submit">
-            Apply filters
+          <button type="submit" className="button primary">
+            {t(l, "apply")}
           </button>
-          <Link className="reset-link" href={action}>
-            Clear filters
+          <Link href={action} className="reset-link">
+            {t(l, "reset")}
           </Link>
         </form>
-        <p className="filter-note">
-          Price and discount sorting will be available only when authorized,
-          reliable live data is connected.
-        </p>
       </details>
       {error && (
-        <p className="storage-notice" role="status">
-          {error}
+        <p role="status" className="storage-notice">
+          {t(l, "storageError")}
         </p>
       )}
-      <h2 className="sr-only">Search results</h2>
+      <h2 className="sr-only">{t(l, "searchResults")}</h2>
       <div className="results-toolbar">
         <p role="status">
           {saved && !ready
-            ? "Loading your saved finds…"
-            : `${results.length} demo ${results.length === 1 ? "find" : "finds"}${query.q ? ` for “${query.q}”` : ""}`}
-          <span> · No live offers</span>
+            ? t(l, "loadingSaved")
+            : `${results.length} ${t(l, "results")}${query.q ? ` · “${query.q}”` : ""}`}
         </p>
         {onlySaved && ids.length > 0 && (
-          <button className="reset-link" type="button" onClick={clear}>
-            Clear saved finds
+          <button type="button" className="reset-link" onClick={clear}>
+            {t(l, "clearSaved")}
           </button>
         )}
       </div>
       {saved && !ready ? (
-        <div className="product-grid" aria-label="Loading saved finds">
+        <div className="product-grid" aria-label={t(l, "loadingSaved")}>
           {[1, 2, 3, 4].map((i) => (
             <div className="skeleton" key={i} />
           ))}
@@ -133,19 +152,20 @@ export function Catalog({
         </div>
       ) : (
         <div className="empty-state">
-          <Heart size={32} />
-          <h2>{saved ? "Your favorites start here." : "No finds just yet."}</h2>
-          <p>
-            {saved
-              ? "Tap the heart on a find to keep it here. Your collection stays in this browser."
-              : "Try another keyword, category, or retailer."}
-          </p>
+          <Heart size={30} />
+          <h2>{t(l, saved ? "savedEmpty" : "noResults")}</h2>
+          <p>{t(l, saved ? "savedEmptyText" : "noResultsText")}</p>
           <Link href={saved ? "/deals" : action} className="button primary">
-            {saved ? "Explore the collection" : "Reset search"}
+            {t(l, saved ? "explore" : "resetSearch")}
             <ArrowRight size={17} />
           </Link>
         </div>
       )}
+      <noscript>
+        {l === "zh"
+          ? "收藏功能需要 JavaScript，商品浏览和筛选仍可使用。"
+          : "Favorites require JavaScript; browsing and filtering still work."}
+      </noscript>
     </>
   );
 }
