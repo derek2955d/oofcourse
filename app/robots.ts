@@ -5,14 +5,20 @@ export default function robots(): MetadataRoute.Robots {
       process.env.SITE_INDEXABLE === "true"
         ? {
             userAgent: "*",
-            allow: "/",
+            allow: ["/en", "/zh"],
             disallow: [
-              "/admin",
-              "/deals",
-              "/category/",
-              "/stores/",
-              "/search",
-              "/saved",
+              "/en/admin",
+              "/zh/admin",
+              "/en/deals",
+              "/zh/deals",
+              "/en/category/",
+              "/zh/category/",
+              "/en/stores/",
+              "/zh/stores/",
+              "/en/search",
+              "/zh/search",
+              "/en/saved",
+              "/zh/saved",
             ],
           }
         : { userAgent: "*", disallow: "/" },

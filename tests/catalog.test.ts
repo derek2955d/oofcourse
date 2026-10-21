@@ -10,8 +10,8 @@ import {
 import { parseSaved } from "../lib/saved";
 import { normalizeQuery } from "../lib/query";
 import { shouldCollectAnalytics } from "../lib/analytics";
-test("eight categories and sixteen provenance-labeled demo concepts, without invented commerce data", () => {
-  assert.equal(categories.length, 8);
+test("nine categories and sixteen provenance-labeled demo concepts, without invented commerce data", () => {
+  assert.equal(categories.length, 9);
   assert.equal(products.length, 16);
   assert.equal(new Set(products.map((p) => p.slug)).size, 16);
   for (const p of products) {

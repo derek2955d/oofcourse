@@ -1,7 +1,9 @@
 "use client";
 import { createContext, useContext, useEffect, useState } from "react";
 import { Heart } from "lucide-react";
-import Link from "next/link";
+import Link from "@/components/localized-link";
+import { useLocale } from "./locale-provider";
+import { t } from "@/lib/i18n/messages";
 import { parseSaved, SAVED_KEY } from "@/lib/saved";
 type SavedState = {
   ids: string[];
@@ -18,6 +20,7 @@ const SavedContext = createContext<SavedState>({
   clear: () => {},
 });
 export function SavedProvider({ children }: { children: React.ReactNode }) {
+  const locale = useLocale();
   const [ids, setIds] = useState<string[]>([]),
     [ready, setReady] = useState(false),
     [error, setError] = useState("");
@@ -26,16 +29,14 @@ export function SavedProvider({ children }: { children: React.ReactNode }) {
       try {
         setIds(parseSaved(localStorage.getItem(SAVED_KEY)));
       } catch {
-        setError(
-          "Browser storage is unavailable. Saved finds will last only for this visit.",
-        );
+        setError(t(locale, "storageError"));
       }
       setReady(true);
     };
     load();
     window.addEventListener("storage", load);
     return () => window.removeEventListener("storage", load);
-  }, []);
+  }, [locale]);
   function update(next: string[]) {
     setIds(next);
     try {
@@ -71,6 +72,7 @@ export function SaveButton({
   name: string;
   full?: boolean;
 }) {
+  const locale = useLocale();
   const { ids, toggle, ready } = useSaved();
   const saved = ids.includes(id);
   return (
@@ -80,23 +82,24 @@ export function SaveButton({
       disabled={!ready}
       aria-label={
         full
-          ? `${saved ? "Saved to your finds" : "Save this find"}: ${name}${saved ? ". Unsave" : ""}`
-          : `${saved ? "Unsave" : "Save"} ${name}`
+          ? `${t(locale, saved ? "savedFull" : "saveFull")}: ${name}${saved ? `. ${t(locale, "unsave")}` : ""}`
+          : `${t(locale, saved ? "unsave" : "save")} ${name}`
       }
       aria-pressed={saved}
       onClick={() => toggle(id)}
     >
       <Heart size={18} fill={saved ? "currentColor" : "none"} />
-      {full && (saved ? "Saved to your finds" : "Save this find")}
+      {full && t(locale, saved ? "savedFull" : "saveFull")}
     </button>
   );
 }
 export function SavedNav() {
+  const locale = useLocale();
   const { ids, ready } = useSaved();
   return (
     <Link href="/saved" className="saved-nav">
       <Heart size={19} />
-      Saved
+      {t(locale, "saved")}
       {ready && ids.length > 0 && (
         <span className="saved-count">{ids.length}</span>
       )}

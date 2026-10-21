@@ -1,20 +1,31 @@
 import type { MetadataRoute } from "next";
 import { guides } from "@/lib/guides";
+import { siteUrl } from "@/lib/seo";
+import { locales, localePath } from "@/lib/i18n/config";
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [
-    "",
+  const paths = [
+    "/",
     "/about",
     "/contact",
     "/privacy",
     "/affiliate-disclosure",
     "/terms",
     "/categories",
-    "/stores",
     "/guides",
     ...guides.map((g) => `/guides/${g.slug}`),
-  ].map((path) => ({
-    url: `https://oofcourse.com${path}`,
-    changeFrequency: "monthly",
-    priority: path ? 0.5 : 1,
-  }));
+  ];
+  return locales.flatMap((locale) =>
+    paths.map((path) => ({
+      url: siteUrl + localePath(locale, path),
+      changeFrequency: "monthly" as const,
+      priority: path === "/" ? 1 : 0.5,
+      alternates: {
+        languages: {
+          "en-US": siteUrl + localePath("en", path),
+          "zh-CN": siteUrl + localePath("zh", path),
+          "x-default": siteUrl + localePath("en", path),
+        },
+      },
+    })),
+  );
 }

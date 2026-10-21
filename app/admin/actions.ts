@@ -22,14 +22,18 @@ const schemas = {
   products: z.object({
     id: z.string().uuid().optional(),
     name: text,
+    name_zh: z.string().max(1000).default(""),
+    description_zh: z.string().max(8000).default(""),
     slug,
     description: z.string().min(1).max(8000),
     category_id: z.string().uuid(),
-    retailer_id: z.string().uuid(),
+    retailer_id: z.string().uuid().nullable(),
     source_id: z.string().uuid().nullable(),
     merchant: text,
     image_url: z.union([https, z.string().startsWith("/illustrations/")]),
     image_license: text,
+    content_scope: z.enum(["neutral", "retailer_restricted"]),
+    content_retailer_id: z.string().uuid().nullable(),
     status: z.enum([
       "draft",
       "pending_review",
@@ -45,6 +49,7 @@ const schemas = {
   categories: z.object({
     id: z.string().uuid().optional(),
     name: text,
+    name_zh: z.string().max(1000).default(""),
     slug,
     description: z.string().max(1000),
   }),
@@ -57,7 +62,34 @@ const schemas = {
     affiliate_approved: z.boolean(),
     enabled: z.boolean(),
   }),
+  offers: z.object({
+    id: z.string().uuid().optional(),
+    product_id: z.string().uuid(),
+    retailer_id: z.string().uuid(),
+    source_id: z.string().uuid(),
+    status: z.enum([
+      "draft",
+      "pending_review",
+      "published",
+      "unverified",
+      "expired",
+      "archived",
+    ]),
+    is_demo: z.boolean(),
+    currency: z.string().regex(/^[A-Z]{3}$/),
+    current_price: z.number().finite().nonnegative().nullable(),
+    original_price: z.number().finite().nonnegative().nullable(),
+    price_verified: z.boolean(),
+    price_usage_authorized: z.boolean(),
+    image_url: z.union([https, z.string().startsWith("/illustrations/")]),
+    image_license: text,
+    content_scope: z.enum(["neutral", "retailer_restricted"]),
+    content_retailer_id: z.string().uuid().nullable(),
+    last_checked_at: z.string().datetime().nullable(),
+    expires_at: z.string().datetime().nullable(),
+  }),
   affiliate_links: z.object({
+    offer_id: z.string().uuid(),
     id: z.string().uuid().optional(),
     product_id: z.string().uuid(),
     retailer_id: z.string().uuid(),
@@ -101,7 +133,7 @@ export async function loginAdmin(form: FormData) {
       await client.auth.signOut();
       return { error: "Administrator access is required." };
     }
-    revalidatePath("/admin");
+    for (const locale of ["en", "zh"]) revalidatePath(`/${locale}/admin`);
     return { success: true };
   } catch {
     return {
@@ -114,7 +146,7 @@ export async function logoutAdmin() {
     const client = await supabaseServer();
     await client.auth.signOut();
   }
-  revalidatePath("/admin");
+  for (const locale of ["en", "zh"]) revalidatePath(`/${locale}/admin`);
 }
 export async function saveAdminRecord(entity: AdminEntity, input: unknown) {
   try {
@@ -132,7 +164,7 @@ export async function saveAdminRecord(entity: AdminEntity, input: unknown) {
         error:
           "Save rejected. Check related records, source permissions, and publication requirements.",
       };
-    revalidatePath("/admin");
+    for (const locale of ["en", "zh"]) revalidatePath(`/${locale}/admin`);
     return { success: true };
   } catch {
     return {
@@ -151,7 +183,7 @@ export async function archiveAdminProduct(id: string) {
       .update({ status: "archived" })
       .eq("id", id);
     if (error) return { error: "Archive rejected." };
-    revalidatePath("/admin");
+    for (const locale of ["en", "zh"]) revalidatePath(`/${locale}/admin`);
     return { success: true };
   } catch {
     return { error: "Administrator authentication required." };

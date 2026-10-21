@@ -1,38 +1,22 @@
-import Link from "next/link";
-import { ArrowRight, ShoppingBag, ArrowUpRight, Sparkles } from "lucide-react";
+"use client";
+import Link from "./localized-link";
 import { retailers } from "@/lib/data";
+import { useLocale } from "./locale-provider";
+import { t } from "@/lib/i18n/messages";
 export function StoreCards() {
+  const l = useLocale();
   return (
-    <div className="store-grid">
+    <div className="retailer-directory">
       {retailers.map((r) => (
-        <article className={`store-card ${r.slug}`} key={r.slug}>
-          <div className="store-wordmark">
-            {r.name}
-            <span>
-              {r.slug === "amazon" ? (
-                <ArrowUpRight size={23} />
-              ) : (
-                <Sparkles size={23} />
-              )}
-            </span>
-          </div>
-          <p>Familiar retailer. A place for future finds.</p>
-          <span className="store-status">Demo collection · No live offers</span>
-          <Link href={`/stores/${r.slug}`} className="text-link">
-            Browse demo collection
-            <ArrowRight size={17} />
-          </Link>
-        </article>
+        <Link
+          key={r.slug}
+          href={`/stores/${r.slug}`}
+          className="retailer-directory-link"
+        >
+          {r.name}
+          <span>{t(l, "viewAll")} →</span>
+        </Link>
       ))}
-      <article className="store-card future-store">
-        <ShoppingBag size={25} />
-        <h3>More good places.</h3>
-        <p>
-          Target, Best Buy, and more may come later. No partnerships are
-          currently claimed.
-        </p>
-        <span className="store-status">Future retailers · Coming later</span>
-      </article>
     </div>
   );
 }

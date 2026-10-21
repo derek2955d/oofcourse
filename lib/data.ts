@@ -1,3 +1,4 @@
+import { demoChineseNames, categoryChinese } from "./i18n/catalog";
 export type Category = {
   slug: string;
   name: string;
@@ -6,6 +7,13 @@ export type Category = {
   color: string;
 };
 export const categories: Category[] = [
+  {
+    slug: "fashion",
+    name: "Fashion",
+    description: "Everyday style, thoughtfully chosen.",
+    icon: "fashion",
+    color: "#EAF4FF",
+  },
   {
     slug: "home",
     name: "Home & Kitchen",
@@ -63,17 +71,26 @@ export const categories: Category[] = [
     color: "#EAF5F3",
   },
 ];
-export type RetailerSlug = "amazon" | "walmart";
-export const retailers = [
+export type RetailerSlug = string;
+export type Retailer = {
+  slug: string;
+  name: string;
+  description: string;
+  color: string;
+  allowedHosts: string[];
+};
+export const retailers: Retailer[] = [
   {
-    slug: "amazon" as const,
+    slug: "amazon",
+    allowedHosts: ["amazon.com", "www.amazon.com", "amzn.to"],
     name: "Amazon",
     description:
       "Explore example products organized for Amazon. No approved offers or retailer links are connected.",
     color: "#FFF4E2",
   },
   {
-    slug: "walmart" as const,
+    slug: "walmart",
+    allowedHosts: ["walmart.com", "www.walmart.com"],
     name: "Walmart",
     description:
       "Explore example products organized for Walmart. No approved offers or retailer links are connected.",
@@ -90,6 +107,8 @@ export const productStatuses = [
 ] as const;
 export type ProductStatus = (typeof productStatuses)[number];
 export type Product = {
+  nameZh: string;
+  descriptionZh: string;
   id: string;
   name: string;
   slug: string;
@@ -139,6 +158,8 @@ export const products: Product[] = items.map(
   ([name, category, kind, retailer], i) => ({
     id: `demo-${i + 1}`,
     name,
+    nameZh: demoChineseNames[i],
+    descriptionZh: `${demoChineseNames[i]}的原创概念展示，用于探索日常购物灵感。这不是实际的零售商在售商品或有效优惠。`,
     slug: name
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
@@ -177,19 +198,21 @@ export type ProductQuery = {
   category?: string;
   retailer?: string;
   sort?: string;
+  locale?: "en" | "zh";
 };
 export function selectProducts({
   q = "",
   category = "",
   retailer = "",
   sort = "newest",
+  locale = "en",
 }: ProductQuery) {
   const words = q.trim().toLowerCase().split(/\s+/).filter(Boolean);
   return products
     .filter(
       (p) =>
         words.every((w) =>
-          `${p.name} ${categories.find((c) => c.slug === p.category)?.name} ${p.merchant}`
+          `${p.name} ${p.nameZh} ${p.descriptionZh} ${categories.find((c) => c.slug === p.category)?.name} ${categoryChinese[p.category] || ""} ${p.merchant}`
             .toLowerCase()
             .includes(w),
         ) &&
@@ -198,7 +221,10 @@ export function selectProducts({
     )
     .sort((a, b) =>
       sort === "name"
-        ? a.name.localeCompare(b.name)
+        ? (locale === "zh" ? a.nameZh : a.name).localeCompare(
+            locale === "zh" ? b.nameZh : b.name,
+            locale === "zh" ? "zh-CN" : "en-US",
+          )
         : b.createdAt.localeCompare(a.createdAt) || a.id.localeCompare(b.id),
     );
 }
@@ -225,9 +251,7 @@ export function safeAffiliateUrl(p: Product, now = Date.now()): string | null {
   try {
     const url = new URL(p.affiliateUrl);
     const hosts =
-      p.retailer === "amazon"
-        ? ["amazon.com", "www.amazon.com", "amzn.to"]
-        : ["walmart.com", "www.walmart.com"];
+      retailers.find((r) => r.slug === p.retailer)?.allowedHosts || [];
     return url.protocol === "https:" &&
       !url.username &&
       !url.password &&
