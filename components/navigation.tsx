@@ -235,7 +235,11 @@ export function SearchBar({
           </label>
         </>
       )}
-      <button className="button primary" type="submit">
+      <button
+        className="button primary"
+        type="submit"
+        aria-label={t("searchButton")}
+      >
         <Search size={18} />
         <span>{t("searchButton")}</span>
       </button>

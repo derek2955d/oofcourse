@@ -443,7 +443,8 @@ export function PublishingWizard({
                   {t("choosePhotos")}
                 </button>
                 <input
-                  className="sr-only"
+                  hidden
+                  disabled={!connected || pending}
                   ref={inputRef}
                   aria-label={t("choosePhotos")}
                   type="file"

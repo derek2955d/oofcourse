@@ -73,21 +73,21 @@ test("four-step publishing validates, preserves browser progress and never simul
     "Please check",
   );
   await page
-    .getByLabel("Title *", { exact: true })
+    .getByRole("textbox", { name: /^Title \*/ })
     .fill("Private browser test fixture");
   await page.getByLabel("Price in USD *", { exact: true }).fill("10");
   await page
     .getByLabel("Pickup arrangements *", { exact: true })
     .fill("Public place");
   await page
-    .getByLabel("Description *", { exact: true })
+    .getByRole("textbox", { name: /^Description \*/ })
     .fill(
       "This is an isolated browser test of private form progress. It must never appear in the public catalog.",
     );
   await page.reload();
   await page.getByRole("button", { name: "Restore browser progress" }).click();
   await page.getByRole("button", { name: "Continue", exact: true }).click();
-  await expect(page.getByLabel("Title *", { exact: true })).toHaveValue(
+  await expect(page.getByRole("textbox", { name: /^Title \*/ })).toHaveValue(
     "Private browser test fixture",
   );
   await page.getByRole("button", { name: "Continue", exact: true }).click();
