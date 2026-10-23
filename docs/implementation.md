@@ -10,3 +10,5 @@ The old shopping project was explicitly cleared by the owner; its source remains
 6. Readiness: RLS/database tests, browser interaction/accessibility/SEO checks, documentation and deployment preparation. Report any hosted-service flows that cannot be exercised without credentials.
 
 Public browsing uses real approved, nonexpired database records or professional empty states. Layout previews are separately labeled, noindex, contain no fabricated business, housing or salary claims, and cannot be published.
+
+Accessibility note: brand accents retain #3478F6, while normal-size white button labels use the provided darker #2563EB blue for AA contrast. Decorative numbering and supporting text were darkened without changing the requested light palette.

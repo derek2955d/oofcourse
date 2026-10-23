@@ -705,7 +705,7 @@ select {
   margin: 12px 0;
 }
 .posting-cta p {
-  color: #58756a;
+  color: #4d685e;
   font-size: 14px;
   max-width: 600px;
   margin-bottom: 22px;
@@ -3007,4 +3007,37 @@ select {
   .business-directory > h2 {
     font-size: 21px;
   }
+}
+/* The supplied primary blue stays in the brand. Normal-size white button text
+   uses the supplied darker blue to meet WCAG AA contrast. */
+.button.primary {
+  background: #2563eb;
+}
+.button.primary:hover {
+  background: #1d4ed8;
+}
+.hero .hero-eyebrow,
+.hero-local {
+  color: #4d6485;
+}
+.footer-bottom,
+.footer-location {
+  color: #596b83;
+}
+.how-grid small {
+  color: #5d6d85;
+}
+.art-note {
+  font-size: 12px;
+  max-width: 90%;
+  left: 10%;
+  white-space: normal;
+  line-height: 1.5;
+}
+.mobile-bottom > a {
+  color: #5d6d85;
+}
+.mobile-bottom > a[aria-current="page"],
+.mobile-bottom > .post-tab {
+  color: #245dce;
 }

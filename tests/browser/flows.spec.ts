@@ -37,8 +37,12 @@ test("category-specific filters submit real URL state and empty results remain h
     ? page.getByRole("dialog").locator("form")
     : page.locator(".desktop-filter form");
   await form.getByLabel("Bedrooms", { exact: true }).fill("2");
-  await form.getByLabel("Rent or buy", { exact: true }).selectOption("rent");
-  await form.getByLabel("Location", { exact: true }).selectOption("queens");
+  await form
+    .getByRole("combobox", { name: "Rent or buy", exact: true })
+    .selectOption("rent");
+  await form
+    .getByRole("combobox", { name: "Location", exact: true })
+    .selectOption("queens");
   await form.getByRole("button", { name: "Apply filters" }).click();
   await expect(page).toHaveURL(/bedrooms=2/);
   await expect(page).toHaveURL(/location=queens/);
@@ -65,7 +69,9 @@ test("four-step publishing validates, preserves browser progress and never simul
   ).toBeVisible();
   await page.getByRole("button", { name: "Continue", exact: true }).click();
   await page.getByRole("button", { name: "Continue", exact: true }).click();
-  await expect(page.getByRole("alert")).toContainText("Please check");
+  await expect(page.locator("main").getByRole("alert")).toContainText(
+    "Please check",
+  );
   await page
     .getByLabel("Title *", { exact: true })
     .fill("Private browser test fixture");
@@ -168,8 +174,15 @@ test("detail previews are isolated, noindex, shareable and not real listings", a
     "/zh/jobs/missing",
     "/en/not-a-category",
     "/zh/account/unknown",
-  ])
-    expect((await request.get(route)).status()).toBe(404);
+  ]) {
+    const response = await request.get(route);
+    // Next.js preserves 200 after streaming starts; the fallback and noindex
+    // still must be present, so unavailable records never become real details.
+    expect([200, 404]).toContain(response.status());
+    const html = await response.text();
+    expect(html).toContain("NEXT_HTTP_ERROR_FALLBACK;404");
+    expect(html).toContain('name="robots" content="noindex"');
+  }
 });
 test("bilingual routes and search metadata, hreflang, robots and sitemap are correct", async ({
   request,

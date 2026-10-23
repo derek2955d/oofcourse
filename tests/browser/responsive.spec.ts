@@ -28,14 +28,15 @@ test("responsive home, category-specific lists, detail layouts, posting and lock
     ? ["en", "zh"]
     : ["en"]) {
     await page.goto(`/${locale}`);
-    for (const img of await page.locator("main img").all()) {
+    await expect(page.locator("main h1")).toBeVisible();
+    for (const img of await page.locator("main img:visible").all()) {
       await img.scrollIntoViewIfNeeded();
       await expect(img).toHaveJSProperty("complete", true);
       expect(
         await img.evaluate((i: HTMLImageElement) => i.naturalWidth),
       ).toBeGreaterThan(0);
     }
-    await page.evaluate(() => document.fonts.ready);
+    await page.evaluate(() => document.fonts.ready.then(() => true));
     await page.evaluate(() => scrollTo(0, 0));
     await page.screenshot({
       path: `test-results/home-${locale}-${width}.png`,

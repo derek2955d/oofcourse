@@ -28,7 +28,7 @@ export function pageMetadata(
       siteName: "OofCourse",
       locale: locale === "zh" ? "zh_CN" : "en_US",
       alternateLocale: [locale === "zh" ? "en_US" : "zh_CN"],
-      images: [{ url: `${origin}/art/social.svg`, width: 1200, height: 630 }],
+      images: [{ url: `${origin}/art/social.png`, width: 1200, height: 630 }],
       type: "website",
     },
     robots: {

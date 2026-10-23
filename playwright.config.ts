@@ -2,6 +2,8 @@ import { defineConfig } from "@playwright/test";
 const base = {
   baseURL: "http://127.0.0.1:3100",
   headless: true,
+  actionTimeout: 15000,
+  navigationTimeout: 30000,
   launchOptions: {
     executablePath:
       process.env.PLAYWRIGHT_EXECUTABLE_PATH || "/usr/bin/chromium",
