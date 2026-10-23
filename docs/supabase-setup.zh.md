@@ -1,36 +1,34 @@
-# 连接独立 Supabase 开发项目
+# 新分类信息平台的开发数据库配置
 
-这一步用于真实管理员登录及数据库编辑。当前公开商品仍使用演示适配器；保存数据库记录不会自动变成公开优惠。
+旧导购站代码已归档。本次需要独立的 Supabase 开发项目，不能在旧商品数据库上执行本目录迁移，也不要混用旧的 admin_users 权限表。
 
-1. 打开 https://supabase.com/dashboard ，登录后选择 **New project**。项目可命名 `oofcourse-dev`。选择免费方案；若界面要求付费，请先停止。数据库密码通过密码管理器保存，不要发到聊天或提交 Git。
-2. 项目创建完成后，打开 **SQL Editor → New query**。按顺序分别复制并执行仓库中的以下完整文件，每次成功后再执行下一个：
-   - `supabase/migrations/202610210001_initial_schema.sql`
-   - `supabase/migrations/202610210002_multi_retailer.sql`
-   - `supabase/migrations/202610210003_bilingual_offers.sql`
-   不要执行 `tests/database/auth-fixture.sql`；它仅供隔离测试使用。已执行的迁移不要重复运行，也不要在其他网站的数据库执行。
-3. 打开 **Authentication → Users → Add user / Create new user**，创建你的管理员账号，使用强密码。确认邮箱后，复制该用户的 **User UID**。如果创建界面只有邀请功能，按邮件完成账号激活。
-4. 在 SQL Editor 执行下面的语句，将示例 UUID 替换为刚才的 User UID（不是邮箱）：
+1. 登录 Supabase Dashboard，创建免费开发项目（例如 oofcourse-local-dev）。安全保存数据库密码，不要发送到聊天或提交仓库。
+2. 在 SQL Editor 依次执行本项目的所有完整 SQL 文件：
+   - `202610230001_classifieds.sql`
+   - `202610230002_reference_data.sql`
+   - `202610230003_workflows.sql`
+   - `202610230004_media.sql`
+   - `202610230005_operations.sql`
+   - `202610230006_publication_boundary.sql`
+3. 在 Authentication 设置中保留邮箱验证，并将本地开发地址和受信任的预览地址的 `/auth/confirm` 加入允许的重定向地址。设置符合生产需求的邮件服务与速率限制后再商业上线。
+4. 在 API 设置中获取 Project URL 和 Publishable key，安全填入云环境和 Vercel Preview 的 `NEXT_PUBLIC_SUPABASE_URL`、`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`。重新启动开发任务或重建预览；不要把值发送到聊天。
+5. 通过网站注册账号，按邮件完成验证。普通账号仅创建 profiles 记录，没有管理员权限。
+6. 如需管理员，从 Authentication Users 复制已验证账号的 User UID，再由可信项目管理员在 SQL Editor 执行：
 
    ```sql
-   insert into public.admin_users (user_id, role)
-   values ('替换为管理员的完整User-UID', 'admin')
-   on conflict (user_id) do update set role = excluded.role;
+   insert into public.user_roles(user_id,role)
+   values ('替换为管理员完整User-UID','admin')
+   on conflict do nothing;
    ```
 
-   只有可信项目管理员可执行这一步。网站不允许用户自行授予管理员权限。
-5. 在项目 **Settings → API / API Keys** 找到 **Project URL** 和 **Publishable key**。界面名称可能略有变化；URL 通常是 `https://项目标识.supabase.co`，新式 publishable key 以 `sb_publishable_` 开头。不要选择 Secret / Service Role key。
-6. 在 Codex 云环境设置的环境变量中添加：
+7. 用该账号访问 `/zh/admin` 或 `/en/admin`。修改网址、表单或客户端存储不能授予管理员角色。
 
-   ```text
-   NEXT_PUBLIC_SUPABASE_URL=你的Project URL
-   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=你的Publishable key
-   ```
+## 图片和权限
 
-   保存并发布环境配置，启动使用新配置的任务。不要在聊天中粘贴任何密钥或密码。Vercel 预览是独立环境，还需要在 **Project → Settings → Environment Variables** 添加这两个值，仅选择 **Preview**，然后重新部署预览；不要顺带修改 Production。
-7. 打开预览的 `/zh/admin` 或 `/en/admin`，使用步骤 3 的账号登录。若仍出现本地演示工作区，部署没有读到两个环境变量；若登录后仍不能读取记录，检查迁移是否全部成功、UID 是否正确、角色是否为 `admin`。
+迁移创建名为 listing-images 的私有 Storage bucket，限制 JPEG/PNG/WebP 和 4MB 服务端对象大小。上传前浏览器压缩并重新编码原图。只有本人草稿允许写入，公开图片须关联已审核且未到期的信息，短期签名 URL 最长五分钟。
 
-## 验证边界
+## 自动到期
 
-管理员可以维护商品双语描述、分类、零售商、来源、报价及联盟链接。未经授权的用户没有写入权限，管理员身份由服务端和 RLS 共同检查。发布报价还要求真实来源、内容授权、批准的商家域名、有效链接及近期核验。
+公开查询本身会排除过期信息，即使定时任务未配置也不会继续显示。可选的到期任务还需服务器端 Service Role key 及随机 CRON_SECRET，调用受保护的 `/api/cron/expire`。不要向浏览器暴露这两项值，不要在 Preview 配置中误用生产数据库。
 
-本仓库的隔离数据库测试不等于已验证你的 Supabase 项目。连接后仍需实测登录、退出、会话刷新、非管理员拒绝、编辑与审核。真实公开数据适配器、授权数据接入和定时过期检查尚需完成，不能仅把演示记录切换为 published 就上线。
+隔离 SQL 测试的 auth/storage fixtures 仅用于临时 PostgreSQL，不能在真实 Supabase 项目执行。真实邮件验证、登录刷新、Storage API 及完整发布审核链路必须在连接开发项目后再实测。

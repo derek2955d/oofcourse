@@ -1,37 +1,34 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
+import { NextIntlClientProvider, hasLocale } from "next-intl";
+import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { Header } from "@/components/header";
-import { DemoNotice, Footer } from "@/components/site";
-import { SavedProvider } from "@/components/saved";
-import { LocaleProvider } from "@/components/locale-provider";
-import { isLocale, languageTag } from "@/lib/i18n/config";
-import { siteUrl } from "@/lib/seo";
+import { Suspense } from "react";
+import { routing } from "@/i18n/routing";
+import { SiteHeader, MobileBottomNav } from "@/components/navigation";
+import { SiteFooter } from "@/components/footer";
+import "@fontsource-variable/inter";
+import "@fontsource/noto-sans-sc/400.css";
+import "@fontsource/noto-sans-sc/600.css";
 import "../globals.css";
-export function generateStaticParams() {
-  return [{ locale: "en" }, { locale: "zh" }];
-}
+import { CatalogProvider } from "@/components/catalog-provider";
+import { safeJson } from "@/lib/structured-data";
+import { loadTaxonomy } from "@/lib/taxonomy-server";
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL("https://oofcourse.com"),
   title: {
-    default: "OofCourse — Great Deals? Of Course!",
+    default: "OofCourse — Your Local Life, Simplified.",
     template: "%s | OofCourse",
   },
-  robots: {
-    index: process.env.SITE_INDEXABLE === "true",
-    follow: process.env.SITE_INDEXABLE === "true",
-  },
-  manifest: "/manifest.webmanifest",
+  description:
+    "Discover housing, jobs, secondhand finds, local services and community life in New York.",
+  robots: { index: false, follow: true },
   icons: { icon: "/icon.svg" },
-  openGraph: {
-    siteName: "OofCourse",
-    type: "website",
-    images: [{ url: `${siteUrl}/en/opengraph-image`, width: 1200, height: 630 }],
-  },
-  twitter: { card: "summary_large_image" },
-  appleWebApp: { capable: true, title: "OofCourse", statusBarStyle: "default" },
+  manifest: "/manifest.webmanifest",
 };
-export default async function RootLayout({
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
+export default async function Layout({
   children,
   params,
 }: {
@@ -39,39 +36,36 @@ export default async function RootLayout({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  if (!isLocale(locale)) notFound();
+  if (!hasLocale(routing.locales, locale)) notFound();
+  setRequestLocale(locale);
   return (
-    <html lang={languageTag(locale)}>
+    <html lang={locale === "zh" ? "zh-CN" : "en-US"}>
       <body>
-        <LocaleProvider locale={locale}>
-          <a href="#main" className="skip-link">
-            {locale === "zh" ? "跳至内容" : "Skip to content"}
-          </a>
-          <SavedProvider>
+        <NextIntlClientProvider messages={await getMessages()}>
+          <CatalogProvider data={await loadTaxonomy()}>
+            <a href="#main-content" className="skip-link">
+              {locale === "zh" ? "跳至主要内容" : "Skip to content"}
+            </a>
             <Suspense fallback={<div className="header-placeholder" />}>
-              <Header />
+              <SiteHeader />
             </Suspense>
-            <DemoNotice />
             <script
               type="application/ld+json"
               dangerouslySetInnerHTML={{
-                __html: JSON.stringify({
+                __html: safeJson({
                   "@context": "https://schema.org",
                   "@type": "WebSite",
                   name: "OofCourse",
-                  url: `${siteUrl}/${locale}`,
-                  inLanguage: languageTag(locale),
-                  description:
-                    locale === "zh"
-                      ? "独立的综合购物发现平台。"
-                      : "An independent shopping discovery platform.",
+                  url: `https://oofcourse.com/${locale}`,
+                  inLanguage: locale === "zh" ? "zh-CN" : "en-US",
                 }),
               }}
             />
-            <main id="main">{children}</main>
-            <Footer />
-          </SavedProvider>
-        </LocaleProvider>
+            <main id="main-content">{children}</main>
+            <SiteFooter />
+            <MobileBottomNav />
+          </CatalogProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

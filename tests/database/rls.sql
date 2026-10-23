@@ -1,49 +1,82 @@
 \set ON_ERROR_STOP on
 begin;
-insert into auth.users values ('00000000-0000-0000-0000-000000000001'),('00000000-0000-0000-0000-000000000002');
-insert into public.admin_users(user_id) values ('00000000-0000-0000-0000-000000000001');
-insert into public.categories(id,slug,name) values ('10000000-0000-0000-0000-000000000001','test','Test');
-insert into public.deal_sources(id,name,merchant,source_type,enabled,affiliate_approved) values ('20000000-0000-0000-0000-000000000001','Test Source','Test Merchant','manual',true,true);
-insert into public.products(name,slug,description,category_id,source_id,merchant,image_license,affiliate_url,status,is_demo,last_checked_at,expires_at) values
-('Live','live','Test','10000000-0000-0000-0000-000000000001','20000000-0000-0000-0000-000000000001','Test','Owned','https://amazon.com/test','active',false,now(),now()+interval '1 day'),
-('Expired','expired','Test','10000000-0000-0000-0000-000000000001','20000000-0000-0000-0000-000000000001','Test','Owned','https://amazon.com/test','active',false,now(),now()-interval '1 day'),
-('Stale','stale','Test','10000000-0000-0000-0000-000000000001','20000000-0000-0000-0000-000000000001','Test','Owned','https://amazon.com/test','active',false,now()-interval '2 days',now()+interval '1 day');
-insert into public.products(name,slug,description,category_id,merchant) values ('Demo','demo','Test','10000000-0000-0000-0000-000000000001','Test');
-set local role anon;
+insert into auth.users(id,email_confirmed_at) values('00000000-0000-0000-0000-000000000001',now()),('00000000-0000-0000-0000-000000000002',now()),('00000000-0000-0000-0000-000000000003',now()),('00000000-0000-0000-0000-000000000004',now());
+insert into auth.users(id) values('00000000-0000-0000-0000-000000000005');
+insert into public.user_roles values('00000000-0000-0000-0000-000000000004','admin');
+select set_config('request.jwt.claim.sub','00000000-0000-0000-0000-000000000001',true);
+set local role authenticated;
+insert into public.listings(id,user_id,category_id,subcategory,location_id,title,description,price,details) values('10000000-0000-0000-0000-000000000001',auth.uid(),'marketplace','furniture','queens','Test chair for database permission checks','A disposable test record for privacy checks. 椅子，仅用于隔离数据库权限验证。',10,'{"condition":"good","pickup":"Public meeting place"}');
 do $$begin
- if (select count(*) from public.products)<>1 then raise exception 'Anon must see only current verified live offer'; end if;
- if has_table_privilege('anon','public.products','INSERT') then raise exception 'Anon must not have write access'; end if;
- if has_table_privilege('anon','public.deal_checks','SELECT') then raise exception 'Anon must not read checks'; end if;
+ if (select count(*) from public.user_roles)<>0 then raise exception 'Ordinary signup gained an administrator role';end if;
+ begin insert into public.user_roles values(auth.uid(),'admin');raise exception 'Self promotion allowed';exception when insufficient_privilege then null;end;
+ begin update public.profiles set posting_restricted=true where id=auth.uid();raise exception 'Owner edited protected profile';exception when raise_exception then if sqlerrm<>'Protected profile fields' then raise;end if;end;
+ begin update public.listings set status='approved',published_at=now(),expires_at=now()+interval '1 day';raise exception 'Owner approved listing';exception when raise_exception then if sqlerrm<>'Moderator approval required' then raise;end if;end;
+end$$;
+update public.listings set status='pending' where id='10000000-0000-0000-0000-000000000001';
+reset role;
+select set_config('request.jwt.claim.sub','',true);
+set local role anon;
+do $$begin if exists(select 1 from public.listings) or exists(select 1 from public.listing_media) then raise exception 'Draft or pending data leaked';end if;end$$;
+reset role;
+select set_config('request.jwt.claim.sub','00000000-0000-0000-0000-000000000002',true);
+set local role authenticated;
+do $$declare n int;begin
+ if exists(select 1 from public.listings) then raise exception 'Private draft leaked to another user';end if;
+ update public.listings set title='Unauthorized overwrite' where id='10000000-0000-0000-0000-000000000001';get diagnostics n=row_count;if n<>0 then raise exception 'Another user modified the listing';end if;
+ begin perform public.moderate_listing('10000000-0000-0000-0000-000000000001','approved','Untrusted approval');raise exception 'Unauthorized moderation';exception when raise_exception then if sqlerrm<>'Administrator required' then raise;end if;end;
+end$$;
+reset role;
+select set_config('request.jwt.claim.sub','00000000-0000-0000-0000-000000000004',true);
+set local role authenticated;
+do $$begin begin update public.listings set status='approved',published_at=now(),expires_at=now()+interval '1 day' where id='10000000-0000-0000-0000-000000000001';raise exception 'Admin bypassed audited workflow';exception when raise_exception then if sqlerrm<>'A submitted listing and audited moderation are required' then raise;end if;end;end$$;
+select public.moderate_listing('10000000-0000-0000-0000-000000000001','approved','Reviewed test fixture only');
+reset role;
+select set_config('request.jwt.claim.sub','',true);
+select set_config('request.jwt.claim.sub','',true);
+set local role anon;
+do $$declare r jsonb;begin
+ if (select count(*) from public.listings)<>1 then raise exception 'Approved listing not public';end if;
+ r:=public.search_listings('marketplace','{"q":"椅子"}',12,0);if (r->>'total')::int<>1 then raise exception 'Chinese keyword search failed';end if;
+ r:=public.search_listings('marketplace','{"min":"20"}',12,0);if (r->>'total')::int<>0 then raise exception 'Price filter failed';end if;
+ begin insert into public.favorites(user_id,listing_id) values('00000000-0000-0000-0000-000000000002','10000000-0000-0000-0000-000000000001');raise exception 'Anonymous write accepted';exception when insufficient_privilege then null;end;
 end$$;
 reset role;
 select set_config('request.jwt.claim.sub','00000000-0000-0000-0000-000000000002',true);
 set local role authenticated;
-do $$begin
- if (select count(*) from public.admin_users)<>0 then raise exception 'Member should not read admin membership'; end if;
- begin
-  insert into public.products(name,slug,description,category_id,merchant) values ('Unauthorized','unauthorized','Test','10000000-0000-0000-0000-000000000001','Test');
-  raise exception 'Nonadmin write unexpectedly allowed';
- exception when insufficient_privilege then null;
- end;
- begin
-  insert into public.admin_users(user_id) values ('00000000-0000-0000-0000-000000000002');
-  raise exception 'Privilege escalation unexpectedly allowed';
- exception when insufficient_privilege then null;
- end;
-end$$;
+insert into public.favorites(user_id,listing_id) values(auth.uid(),'10000000-0000-0000-0000-000000000001');
+select public.contact_publisher('10000000-0000-0000-0000-000000000001','Test contact request only, never a real message.');
+insert into public.reports(listing_id,user_id,reason,description) values('10000000-0000-0000-0000-000000000001',auth.uid(),'misleading','Disposable moderation test report only.');
+do $$begin if (select count(*) from public.messages)<>1 or (select count(*) from public.favorites)<>1 then raise exception 'Participant data unavailable';end if;end$$;
+reset role;
+select set_config('request.jwt.claim.sub','00000000-0000-0000-0000-000000000003',true);
+set local role authenticated;
+do $$begin if exists(select 1 from public.messages) or exists(select 1 from public.conversations) or exists(select 1 from public.favorites) or exists(select 1 from public.reports) then raise exception 'Private participant data leaked';end if;end$$;
 reset role;
 select set_config('request.jwt.claim.sub','00000000-0000-0000-0000-000000000001',true);
 set local role authenticated;
+update public.listings set status='draft',title='Edited title requiring a fresh review' where id='10000000-0000-0000-0000-000000000001';
+insert into storage.objects(bucket_id,name) values('listing-images',auth.uid()::text||'/10000000-0000-0000-0000-000000000001/example.webp');
+insert into public.listing_media(listing_id,object_path,position) values('10000000-0000-0000-0000-000000000001',auth.uid()::text||'/10000000-0000-0000-0000-000000000001/example.webp',0);
 do $$begin
- if (select count(*) from public.products)<>4 then raise exception 'Admin should see all records'; end if;
- insert into public.products(name,slug,description,category_id,merchant) values ('Admin draft','admin-draft','Test','10000000-0000-0000-0000-000000000001','Test');
- update public.products set description='Updated' where slug='admin-draft';
- delete from public.products where slug='admin-draft';
+ begin insert into public.listings(category_id,subcategory,location_id,title,description,price,status,details) values('jobs','full-time','queens','Invalid salary test fixture','A sufficiently long test description for the invalid salary field validation.',1,'pending','{"company":"Fixture","salary_min":20,"salary_max":10,"pay_period":"hour","employment":"full-time","workplace":"on-site","industry":"Test"}');raise exception 'Invalid salary accepted';exception when check_violation then null;end;
 end$$;
 reset role;
-update public.deal_sources set enabled=false;
+select set_config('request.jwt.claim.sub','',true);
+select set_config('request.jwt.claim.sub','',true);
 set local role anon;
-do $$begin if (select count(*) from public.products)<>0 then raise exception 'Disabled source must hide offer'; end if; end$$;
+do $$begin if exists(select 1 from public.listings) or exists(select 1 from public.listing_media) or exists(select 1 from storage.objects) then raise exception 'Edited listing or private images still public';end if;end$$;
+reset role;
+select set_config('request.jwt.claim.sub','00000000-0000-0000-0000-000000000004',true);
+set local role authenticated;
+do $$begin if (select count(*) from public.audit_logs)<1 then raise exception 'Missing audit records';end if;end$$;
+reset role;
+select set_config('request.jwt.claim.sub','00000000-0000-0000-0000-000000000005',true);
+set local role authenticated;
+insert into public.listings(id,category_id,subcategory,location_id,title,description,price,details) values('10000000-0000-0000-0000-000000000005','housing','rent','nyc','','',null,'{}');
+update public.listings set status='archived' where id='10000000-0000-0000-0000-000000000005';
+do $$begin begin
+ insert into public.listings(category_id,subcategory,location_id,title,description,price,status,details) values('marketplace','furniture','queens','Unverified publisher fixture','A disposable fixture which must never reach the submission queue without verification.',10,'pending','{"condition":"good","pickup":"Public place"}');
+ raise exception 'Unverified submission accepted';exception when raise_exception then if sqlerrm<>'Email verification required' then raise;end if;end;end$$;
 reset role;
 rollback;
-\echo 'PASS: anon visibility, write denial, nonadmin isolation, escalation denial, admin writes, and source gating'
+\echo 'PASS: signup isolation, owner boundaries, direct-API approval denial, moderation, bilingual search, price filters, private messages/favorites/reports, private media, edit re-review, salary constraints, audit records'

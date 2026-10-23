@@ -1,32 +1,40 @@
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Catalog } from "@/components/catalog";
-import { normalizeQuery } from "@/lib/query";
-import { getLocale } from "@/lib/i18n/server";
-import { t } from "@/lib/i18n/messages";
-import { metadata } from "@/lib/seo";
+import { isCategory, type Locale } from "@/lib/catalog";
+import { pageMetadata } from "@/lib/seo";
 export async function generateMetadata({
-  searchParams,
+  params,
 }: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
+  params: Promise<{ locale: Locale }>;
 }) {
-  const l = await getLocale(),
-    q = normalizeQuery(await searchParams).q;
-  return metadata(
-    `${t(l, "search")}${q ? `: ${q}` : ""}`,
-    t(l, "browseIntro"),
+  const { locale } = await params;
+  const t = await getTranslations({ locale });
+  return pageMetadata(
+    locale,
+    t("navSearch"),
+    t("heroSubtitle"),
     "/search",
     true,
   );
 }
 export default async function Search({
+  params,
   searchParams,
 }: {
+  params: Promise<{ locale: Locale }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const l = await getLocale();
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const raw = await searchParams;
   return (
-    <div className="container page">
-      <h1 className="page-title">{t(l, "searchResults")}</h1>
-      <Catalog action="/search" query={normalizeQuery(await searchParams)} />
-    </div>
+    <Catalog
+      category={
+        typeof raw.category === "string" && isCategory(raw.category)
+          ? raw.category
+          : undefined
+      }
+      raw={raw}
+    />
   );
 }

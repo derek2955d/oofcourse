@@ -1,50 +1,40 @@
 import type { Metadata } from "next";
-import { getLocale } from "./i18n/server";
-import { localePath, type Locale } from "./i18n/config";
-export const siteUrl = "https://oofcourse.com";
-export function localizedMetadata(
+import type { Locale } from "./catalog";
+export const origin = "https://oofcourse.com";
+export function pageMetadata(
   locale: Locale,
   title: string,
   description: string,
-  path: string,
-  noindex = false,
+  path = "",
+  privatePage = false,
 ): Metadata {
+  const p = path === "/" ? "" : path;
   return {
-    metadataBase: new URL(siteUrl),
+    metadataBase: new URL(origin),
     title,
     description,
     alternates: {
-      canonical: localePath(locale, path),
+      canonical: `/${locale}${p}`,
       languages: {
-        "en-US": localePath("en", path),
-        "zh-CN": localePath("zh", path),
-        "x-default": localePath("en", path),
+        "en-US": `/en${p}`,
+        "zh-CN": `/zh${p}`,
+        "x-default": `/en${p}`,
       },
     },
     openGraph: {
       title: `${title} | OofCourse`,
       description,
-      url: localePath(locale, path),
+      url: `${origin}/${locale}${p}`,
       siteName: "OofCourse",
       locale: locale === "zh" ? "zh_CN" : "en_US",
       alternateLocale: [locale === "zh" ? "en_US" : "zh_CN"],
+      images: [{ url: `${origin}/art/social.svg`, width: 1200, height: 630 }],
       type: "website",
-      images: [{ url: `${siteUrl}/en/opengraph-image`, width: 1200, height: 630 }],
     },
-    ...(noindex ? { robots: { index: false, follow: false } } : {}),
+    robots: {
+      index: !privatePage && process.env.SITE_INDEXABLE === "true",
+      follow: !privatePage,
+    },
+    twitter: { card: "summary_large_image" },
   };
-}
-export async function metadata(
-  title: string,
-  description: string,
-  path: string,
-  noindex = false,
-) {
-  return localizedMetadata(
-    await getLocale(),
-    title,
-    description,
-    path,
-    noindex,
-  );
 }

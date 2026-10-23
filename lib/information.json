@@ -1,0 +1,176 @@
+{
+  "about": {
+    "en": [
+      "Local life, a little simpler.",
+      "OofCourse is an independent bilingual classifieds platform for people living and working in New York.",
+      "One platform, everyday needs",
+      "Find and share housing, jobs, secondhand goods, local services, business information and community notices. Browsing and basic posting are free. Everyone uses the same six categories; there is no separate student-only mode.",
+      "A clear role",
+      "OofCourse helps people discover information and contact publishers. We are not a landlord, employer, broker, seller or payment escrow service. Verify identities, permissions and terms directly before committing.",
+      "Built with care",
+      "Listings are reviewed before publication. Automated signals assist moderation; they cannot guarantee accuracy, safety or legal compliance."
+    ],
+    "zh": [
+      "让本地生活，简单一点。",
+      "OofCourse 是面向纽约居民及工作生活人群的独立中英文分类信息平台。",
+      "一个平台，覆盖日常所需",
+      "查找与分享房屋、工作、闲置、本地服务、商家和社区信息。浏览及基础发布免费，所有用户使用同一套六大分类，没有独立留学生模式。",
+      "明确的平台角色",
+      "平台帮助用户发现信息并联系发布者，不充当房东、雇主、经纪人、卖家或资金托管机构。作出承诺前，请自行核实身份、授权及条款。",
+      "认真对待每一条信息",
+      "信息经过审核才会公开。自动化风险提示帮助管理员判断，但不能保证真实性、安全或法律合规。"
+    ]
+  },
+  "contact": {
+    "en": [
+      "We’re here to help you find the right place.",
+      "Choose the right route so your request reaches the right person.",
+      "About a listing",
+      "Open the listing and use Contact publisher to send a private request. Never put passwords, bank details or identity documents in messages.",
+      "Something looks wrong",
+      "Use Report listing for suspicious, misleading, discriminatory or prohibited content. Reports enter the private moderation queue and are not sent to the reported publisher.",
+      "Platform support",
+      "This launch preview does not yet publish an operator support email or legal mailing address. Verified operator contact details must be completed before commercial launch. For an immediate threat, contact local emergency services rather than waiting for platform moderation."
+    ],
+    "zh": [
+      "让问题，找到合适的出口。",
+      "选择适当的联系渠道，让信息送达正确的人。",
+      "咨询某条信息",
+      "进入详情页，通过“联系发布者”发送私密消息。请勿在消息中发送密码、银行资料或身份证件。",
+      "发现可疑内容",
+      "使用“举报信息”提交疑似诈骗、误导、歧视或违禁内容。举报进入私密审核队列，不会发送给被举报的发布者。",
+      "平台支持",
+      "此上线预览尚未公布经核实的运营方支持邮箱及法律邮寄地址，正式商业运营前必须补齐。遇到紧急人身危险请联系当地紧急服务，不要等待平台审核。"
+    ]
+  },
+  "help": {
+    "en": [
+      "A little help goes a long way.",
+      "Start with the essentials.",
+      "Find something",
+      "Choose one of the six categories, add a neighborhood or keyword, and narrow the results with category-specific filters. Language switching keeps your current page and search conditions; publisher-written content remains in its original language.",
+      "Post for free",
+      "Create an account, verify your email, choose a category, add accurate details and photos, then preview and submit for review. Drafts remain private. Only approved, current listings appear in public search.",
+      "Manage your account",
+      "Your account contains drafts, review statuses, saved listings, private contact requests, profile and security controls. Editing a published listing takes it out of public view until it is approved again. Archive a listing when it is no longer available.",
+      "When a preview isn’t connected",
+      "If account services are not configured, the site says so and does not simulate sign-in, uploads or publication. Empty catalogs do not imply that real listings were lost."
+    ],
+    "zh": [
+      "一点帮助，让使用更顺手。",
+      "从最常用的功能开始。",
+      "查找信息",
+      "选择六大分类之一，输入地区或关键词，再使用对应筛选。切换语言尽量保留当前页面及条件，发布者内容保持原始语言，不声称自动翻译。",
+      "免费发布",
+      "注册并验证邮箱，选择分类，填写真实资料与图片，预览后提交审核。草稿保持私密，只有已通过且未到期的信息才会公开。",
+      "管理账号",
+      "用户中心包含草稿、审核状态、收藏、私密联系消息、资料及安全设置。修改已发布信息会使其暂时退出公开展示，重新审核通过后恢复。不再有效的信息请及时归档。",
+      "预览尚未连接时",
+      "账号服务未配置时会明确提示，不会模拟登录、上传或发布成功。空目录不代表真实信息丢失。"
+    ]
+  },
+  "safety": {
+    "en": [
+      "A safer connection starts with you.",
+      "Pause, verify, and make informed decisions.",
+      "Housing",
+      "Verify the property, the publisher’s authority and all written terms. Do not send deposits before reasonable identity and property checks. Housing publishers must disclose fees, who pays them and relevant rental conditions. New York rules, including applicable broker-fee and FARE Act requirements, need professional review; a platform form does not establish compliance. Avoid discriminatory advertising.",
+      "Jobs",
+      "Ask for the employer’s identity, duties and a genuine salary range with a stated pay period. Do not pay to obtain a job or send banking credentials to an unverified recruiter. Publishers must follow applicable pay-transparency and nondiscrimination rules.",
+      "Buying and local services",
+      "Prefer safe public meeting places and inspect goods where appropriate. Treat gift-card, cryptocurrency-only and urgent wire-transfer requests as warning signs. Never share verification codes or identity documents with strangers.",
+      "Report and seek help",
+      "Report suspicious listings through their detail pages. Automated checks support human review and cannot promise that all scams will be caught. Contact emergency services for immediate danger."
+    ],
+    "zh": [
+      "安全连接，从认真核实开始。",
+      "先停一下，查证清楚，再作决定。",
+      "住房信息",
+      "核实房源、发布者权限及书面条款。完成合理的身份与房屋检查前，不轻易转账或支付押金。发布者必须披露费用、承担方及相关租赁条件。纽约适用的经纪费用及 FARE Act 等规定需要专业审查，填写表单不代表已合规。避免歧视性广告。",
+      "招聘信息",
+      "核实雇主、职责及有薪资周期的真实范围。不要为了获得工作付费，不向未经核实的招聘者提供银行凭证。发布者必须遵守适用的薪资透明及反歧视规定。",
+      "交易与本地服务",
+      "尽可能选择安全的公共场所见面，并检查物品。对礼品卡、仅收加密货币、催促电汇等要求保持警惕，不向陌生人提供验证码或证件。",
+      "举报与求助",
+      "在详情页举报可疑信息。自动检查辅助人工审核，不能保证发现所有诈骗。遇到紧急危险请联系紧急服务。"
+    ]
+  },
+  "guidelines": {
+    "en": [
+      "Useful information. Respectful neighbors.",
+      "These standards apply to every category and every account.",
+      "Be accurate and authorized",
+      "Post only information you have permission to publish. Use accurate prices, salary ranges, availability, photos and descriptions. Do not impersonate people, companies or authorities. Do not copy protected images without permission.",
+      "Keep the community safe",
+      "No scams, unlawful discrimination, harassment, threats, exploitation, stolen goods, illegal weapons, controlled substances or other prohibited goods and services. No credential requests, fraudulent payments or exposure of private information.",
+      "Keep it relevant",
+      "Use the appropriate category and area. Avoid duplicate posts, keyword stuffing, spam links and disguised paid advertising. Sponsored placements must be labeled; paid promotion is not enabled in this launch version.",
+      "Review and enforcement",
+      "Submissions enter review. Moderators may request changes, reject, archive or restrict posting, with recorded reasons. Publishers can correct and resubmit information. Serious or repeated abuse can result in account restrictions."
+    ],
+    "zh": [
+      "有用的信息，友善的邻里。",
+      "以下准则适用于所有分类及账号。",
+      "真实并拥有发布权限",
+      "只发布有权公开的信息，如实填写价格、薪资范围、有效期、图片与说明。不得冒充个人、企业或官方，不得未经允许使用受保护图片。",
+      "共同维护安全",
+      "禁止诈骗、违法歧视、骚扰、威胁、剥削、赃物、非法武器、管制物品及其他违禁商品服务。禁止索取凭证、欺诈付款或暴露他人隐私。",
+      "保持相关与清晰",
+      "选择正确分类及地区，避免重复发布、关键词堆砌、垃圾链接和伪装推广。付费推广必须标注，本版尚未启用付费功能。",
+      "审核与处理",
+      "提交后进入审核。管理员可要求修改、拒绝、归档或限制发布，并记录原因。发布者可修正后重新提交，严重或重复违规可能导致账号限制。"
+    ]
+  },
+  "privacy": {
+    "en": [
+      "Privacy, with clear boundaries.",
+      "This policy describes the implemented launch architecture. Operator identity, contact details, retention schedules and jurisdiction-specific notices require completion and professional review before public commercial operation.",
+      "Information we process",
+      "Account email and authentication credentials are processed by Supabase Auth. Public profiles contain a display name and optional bio; account email is not placed on listings. Listing content, uploaded media, favorites, contact requests, reports and moderation records support platform functions.",
+      "Public and private",
+      "Only approved, current listings and approved business information are public. Drafts, contact requests, messages, favorites and reports are restricted by user roles and participation. Do not upload sensitive identity documents or exact private home addresses. Uploaded images are re-encoded in the browser to remove embedded metadata before upload.",
+      "Storage and service providers",
+      "Browser storage retains unsaved publishing progress, which may remain on shared devices until cleared. Authentication uses session cookies. Supabase stores configured account and platform data, and Vercel may process hosting logs including search URLs and technical request data. No marketing analytics or ad network is enabled by default.",
+      "Choices and retention",
+      "Users can edit profiles, archive listings and remove favorites. Account-deletion and formal privacy-rights handling require an operational support procedure before launch; they are not simulated here. Moderation and security records need a documented retention policy. Sign out and clear browser drafts on shared devices."
+    ],
+    "zh": [
+      "隐私保护，需要清楚的边界。",
+      "本政策说明当前上线架构。正式商业运营前，须补齐运营主体、联系资料、保留期限及适用地区通知，并接受专业审查。",
+      "处理哪些资料",
+      "账号邮箱及身份验证凭证由 Supabase Auth 处理。公开资料仅包含昵称和可选简介，信息页面不公开账号邮箱。信息正文、图片、收藏、联系消息、举报及审核记录用于平台功能。",
+      "哪些公开，哪些私密",
+      "只有审核通过且未到期的信息及已批准商家资料公开。草稿、联系消息、收藏及举报按角色及参与关系限制访问。不要上传身份证件或公开私人住宅精确地址。图片在浏览器中重新编码以移除嵌入式元数据后上传。",
+      "存储与服务提供商",
+      "浏览器会保留尚未保存的发布进度，共享设备上需自行清除。身份验证使用会话 Cookie。配置后的 Supabase 存储账号及平台数据，Vercel 托管日志可能包含搜索网址及技术请求资料。默认不启用营销分析或广告网络。",
+      "用户选择与保留",
+      "用户可编辑资料、归档信息、移除收藏。正式账号删除及隐私权请求处理需要在上线前建立运营支持流程，此处不会模拟完成。审核及安全记录须有明确保留政策，共享设备使用后请退出并清除浏览器草稿。"
+    ]
+  },
+  "terms": {
+    "en": [
+      "A straightforward agreement.",
+      "These launch terms are a review draft, not a declaration that legal review is complete. Operator identity, dispute procedures, applicable law and support details must be completed before commercial launch.",
+      "Platform role and eligibility",
+      "OofCourse is an independent information platform, not a party to user transactions, employment or rental agreements. Accounts are intended for adults legally able to use the service. Basic browsing and posting are free; no checkout or paid promotion is currently enabled.",
+      "Publisher responsibilities",
+      "You are responsible for the truthfulness, rights and legality of your content, photos, advertisements and contact behavior. Follow applicable housing, employment, consumer-protection, fair-housing, pay-transparency and fee-disclosure rules. A successful submission is not approval or legal clearance.",
+      "Moderation and availability",
+      "We may review, reject, remove or expire content and restrict abusive accounts according to community rules. Publication is conditional and does not guarantee inquiries, rentals, employment, sales or safety. Review notices and correct outdated information.",
+      "Transactions and commercial content",
+      "Verify counterparties, licenses, fees, payment terms and goods independently. Never treat the platform as escrow. Future advertisements, sponsorships or affiliate relationships must be clearly disclosed and will require appropriate updated terms before activation."
+    ],
+    "zh": [
+      "简单清楚的使用约定。",
+      "此为待审的上线条款草案，不代表法律审核已完成。商业运营前须补齐运营主体、争议处理、适用法律及支持资料。",
+      "平台角色与使用资格",
+      "OofCourse 是独立信息平台，不是用户交易、雇佣或租赁合同的当事方。账号面向具备合法使用能力的成年人。基础浏览及发布免费，当前未启用付款或付费推广。",
+      "发布者责任",
+      "发布者对正文、图片、广告及联系行为的真实性、授权及合法性负责，遵守适用的住房、就业、消费者保护、公平住房、薪资透明及费用披露规定。提交成功不代表审核通过或法律认可。",
+      "审核与有效性",
+      "平台可按社区准则审核、拒绝、移除或使信息到期，并限制滥用账号。信息公开不保证咨询、租售、就业、成交或安全，请及时检查通知并更新失效资料。",
+      "交易及商业内容",
+      "自行核实交易对象、许可、费用、付款条款及物品，不能将平台视为资金托管方。未来的广告、赞助及联盟关系必须明确披露，并在启用前更新适当条款。"
+    ]
+  }
+}

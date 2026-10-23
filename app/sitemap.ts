@@ -1,29 +1,47 @@
 import type { MetadataRoute } from "next";
-import { guides } from "@/lib/guides";
-import { siteUrl } from "@/lib/seo";
-import { locales, localePath } from "@/lib/i18n/config";
-export default function sitemap(): MetadataRoute.Sitemap {
+import { categoryKeys } from "@/lib/catalog";
+import { configured, publicDB } from "@/lib/supabase/server";
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const paths = [
-    "/",
+    "",
+    ...categoryKeys.map((c) => "/" + c),
+    "/categories",
     "/about",
     "/contact",
+    "/help",
+    "/safety",
     "/privacy",
-    "/affiliate-disclosure",
     "/terms",
-    "/categories",
-    "/guides",
-    ...guides.map((g) => `/guides/${g.slug}`),
+    "/guidelines",
   ];
-  return locales.flatMap((locale) =>
+  if (configured() && process.env.SITE_INDEXABLE === "true") {
+    const db = publicDB();
+    const [listings, businesses] = await Promise.all([
+      db
+        .from("listings")
+        .select("id,category_id")
+        .eq("status", "approved")
+        .gt("expires_at", new Date().toISOString())
+        .limit(5000),
+      db
+        .from("business_profiles")
+        .select("id")
+        .eq("status", "approved")
+        .limit(1000),
+    ]);
+    for (const row of listings.data || [])
+      paths.push(`/${row.category_id}/${row.id}`);
+    for (const row of businesses.data || [])
+      paths.push(`/businesses/profiles/${row.id}`);
+  }
+  return (["en", "zh"] as const).flatMap((l) =>
     paths.map((path) => ({
-      url: siteUrl + localePath(locale, path),
-      changeFrequency: "monthly" as const,
-      priority: path === "/" ? 1 : 0.5,
+      url: `https://oofcourse.com/${l}${path}`,
       alternates: {
         languages: {
-          "en-US": siteUrl + localePath("en", path),
-          "zh-CN": siteUrl + localePath("zh", path),
-          "x-default": siteUrl + localePath("en", path),
+          "en-US": `https://oofcourse.com/en${path}`,
+          "zh-CN": `https://oofcourse.com/zh${path}`,
+          "x-default": `https://oofcourse.com/en${path}`,
         },
       },
     })),

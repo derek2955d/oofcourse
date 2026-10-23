@@ -1,34 +1,49 @@
 import { defineConfig } from "@playwright/test";
+const base = {
+  baseURL: "http://127.0.0.1:3100",
+  headless: true,
+  launchOptions: {
+    executablePath:
+      process.env.PLAYWRIGHT_EXECUTABLE_PATH || "/usr/bin/chromium",
+    args: ["--no-sandbox"],
+  },
+};
 export default defineConfig({
   testDir: "./tests/browser",
-  fullyParallel: true,
-  timeout: 60000,
-  // Route sweeps and axe share limited cloud CPU; run serially for stable checks.
   workers: 1,
-  use: {
-    baseURL: "http://127.0.0.1:3100",
-    launchOptions: {
-      executablePath:
-        process.env.PLAYWRIGHT_EXECUTABLE_PATH || "/usr/bin/chromium",
-      args: ["--no-sandbox"],
-    },
-    headless: true,
-  },
+  timeout: 120000,
+  use: base,
   projects: [
-    { name: "tablet", use: { viewport: { width: 768, height: 1024 } } },
-    { name: "desktop", use: { viewport: { width: 1440, height: 1000 } } },
+    ...[375, 390, 430, 768, 1024, 1440, 1920].map((width) => ({
+      name: `responsive-${width}`,
+      testMatch: "responsive.spec.ts",
+      use: { viewport: { width, height: width < 761 ? 844 : 1000 } },
+    })),
     {
-      name: "mobile",
-      use: {
-        viewport: { width: 390, height: 844 },
-        isMobile: true,
-        hasTouch: true,
-      },
+      name: "desktop-flows",
+      testMatch: "flows.spec.ts",
+      use: { viewport: { width: 1440, height: 1000 } },
+    },
+    {
+      name: "mobile-flows",
+      testMatch: "flows.spec.ts",
+      use: { viewport: { width: 390, height: 844 } },
+    },
+    {
+      name: "desktop-a11y",
+      testMatch: "accessibility.spec.ts",
+      use: { viewport: { width: 1440, height: 1000 } },
+    },
+    {
+      name: "mobile-a11y",
+      testMatch: "accessibility.spec.ts",
+      use: { viewport: { width: 390, height: 844 } },
     },
   ],
   webServer: {
     command: "npm run start -- --port 3100",
-    url: "http://127.0.0.1:3100",
+    url: "http://127.0.0.1:3100/en",
     reuseExistingServer: false,
+    timeout: 120000,
   },
 });

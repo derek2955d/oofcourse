@@ -1,14 +1,13 @@
 "use client";
-import { useLocale } from "@/components/locale-provider";
-import { t } from "@/lib/i18n/messages";
+import { useTranslations } from "next-intl";
 export default function ErrorPage({ reset }: { reset: () => void }) {
-  const l = useLocale();
+  const t = useTranslations();
   return (
-    <div className="error-page">
-      <h1>{t(l, "errorTitle")}</h1>
-      <p>{t(l, "errorText")}</p>
+    <div className="container page centered">
+      <h1>{t("errorTitle")}</h1>
+      <p>{t("errorText")}</p>
       <button className="button primary" onClick={reset}>
-        {t(l, "retry")}
+        {t("retry")}
       </button>
     </div>
   );

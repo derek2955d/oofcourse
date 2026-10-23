@@ -1,16 +1,14 @@
-import { NextRequest, NextResponse } from "next/server";
+import createMiddleware from "next-intl/middleware";
+import { routing } from "./i18n/routing";
 import { createServerClient } from "@supabase/ssr";
-export async function proxy(request: NextRequest) {
-  const path = request.nextUrl.pathname;
-  if (!/^\/(en|zh)(\/|$)/.test(path)) {
-    const url = request.nextUrl.clone();
-    url.pathname = `/en${path === "/" ? "" : path}`;
-    return NextResponse.redirect(url, 307);
-  }
-  let response = NextResponse.next({ request });
-  // Refresh only administrator sessions. Each server action still checks user + role.
+import type { NextRequest } from "next/server";
+export default async function proxy(request: NextRequest) {
+  const response = createMiddleware(routing)(request);
   if (
-    /^\/(en|zh)\/admin(?:\/|$)/.test(path) &&
+    (/^\/(en|zh)\/(account|admin|post|saved|login|signup|reset-password)/.test(
+      request.nextUrl.pathname,
+    ) ||
+      request.cookies.getAll().some((c) => c.name.startsWith("sb-"))) &&
     process.env.NEXT_PUBLIC_SUPABASE_URL &&
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
   ) {
@@ -20,12 +18,11 @@ export async function proxy(request: NextRequest) {
       {
         cookies: {
           getAll: () => request.cookies.getAll(),
-          setAll: (values) => {
-            for (const { name, value } of values)
+          setAll: (items) => {
+            for (const { name, value, options } of items) {
               request.cookies.set(name, value);
-            response = NextResponse.next({ request });
-            for (const { name, value, options } of values)
               response.cookies.set(name, value, options);
+            }
           },
         },
       },
@@ -33,13 +30,9 @@ export async function proxy(request: NextRequest) {
     try {
       await client.auth.getUser();
     } catch {
-      /* Protected page/actions deny access if authentication is unavailable. */
+      /* Protected actions still fail closed. */
     }
   }
   return response;
 }
-export const config = {
-  matcher: [
-    "/((?!api|_next|icon.svg|robots.txt|sitemap.xml|manifest.webmanifest|images/|illustrations/|pwa/).*)",
-  ],
-};
+export const config = { matcher: ["/((?!api|auth|_next|_vercel|.*\\..*).*)"] };

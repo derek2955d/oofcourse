@@ -1,38 +1,34 @@
-import Link from "@/components/localized-link";
-import { ArrowUpRight } from "lucide-react";
-import { categories } from "@/lib/data";
-import { CategoryIcon } from "@/components/icons";
-import { getLocale } from "@/lib/i18n/server";
-import { categoryName } from "@/lib/i18n/catalog";
-import { t } from "@/lib/i18n/messages";
-import { metadata } from "@/lib/seo";
-export async function generateMetadata() {
-  const l = await getLocale();
-  return metadata(t(l, "categories"), t(l, "browseIntro"), "/categories");
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { CategoryGrid } from "@/components/cards";
+import { pageMetadata } from "@/lib/seo";
+import type { Locale } from "@/lib/catalog";
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>;
+}) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale });
+  return pageMetadata(
+    locale,
+    t("allCategories"),
+    t("categorySubtitle"),
+    "/categories",
+  );
 }
-export default async function Categories() {
-  const l = await getLocale();
+export default async function Categories({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations();
   return (
     <div className="container page">
-      <h1 className="page-title">{t(l, "allCategories")}</h1>
-      <div className="category-directory">
-        {categories.map((c) => (
-          <Link
-            href={`/category/${c.slug}`}
-            key={c.slug}
-            className="category-directory-card"
-          >
-            <span className="category-icon" style={{ background: c.color }}>
-              <CategoryIcon name={c.icon} size={30} />
-            </span>
-            <h2>{categoryName(c, l)}</h2>
-            <span className="text-link">
-              {t(l, "explore")}
-              <ArrowUpRight size={16} />
-            </span>
-          </Link>
-        ))}
-      </div>
+      <h1 className="page-title">{t("allCategories")}</h1>
+      <p className="page-intro">{t("categorySubtitle")}</p>
+      <CategoryGrid />
     </div>
   );
 }

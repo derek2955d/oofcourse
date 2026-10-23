@@ -1,10 +1,12 @@
 node_modules/
 .next/
-out/
 .env*
 !.env.example
 .vercel/
 *.tsbuildinfo
-playwright-report/
-test-results/
 next-env.d.ts
+test-results/
+playwright-report/
+coverage/
+
+.npm-cache/

@@ -1,15 +1,14 @@
-"use client";
-import Link from "@/components/localized-link";
-import { useLocale } from "@/components/locale-provider";
-import { t } from "@/lib/i18n/messages";
-export default function NotFound() {
-  const l = useLocale();
+import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
+export default async function NotFound() {
+  const t = await getTranslations();
   return (
-    <div className="error-page">
-      <h1>{t(l, "notFound")}</h1>
-      <p>{t(l, "notFoundText")}</p>
-      <Link className="button primary" href="/deals">
-        {t(l, "explore")}
+    <div className="container page centered">
+      <p className="eyebrow">404</p>
+      <h1>{t("notFoundTitle")}</h1>
+      <p>{t("notFoundText")}</p>
+      <Link href="/" className="button primary">
+        {t("backHome")}
       </Link>
     </div>
   );
