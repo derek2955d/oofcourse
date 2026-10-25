@@ -2,20 +2,19 @@ import createMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
 import { createServerClient } from "@supabase/ssr";
 import type { NextRequest } from "next/server";
+import { supabaseConfig } from "./lib/supabase/config";
 export default async function proxy(request: NextRequest) {
   const response = createMiddleware(routing)(request);
+  const connection = supabaseConfig();
   if (
     (/^\/(en|zh)\/(account|admin|post|saved|login|signup|reset-password)/.test(
       request.nextUrl.pathname,
     ) ||
       request.cookies.getAll().some((c) => c.name.startsWith("sb-"))) &&
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+    connection
   ) {
-    const client = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
-      {
+    try {
+      const client = createServerClient(connection.url, connection.key, {
         cookies: {
           getAll: () => request.cookies.getAll(),
           setAll: (items) => {
@@ -25,9 +24,7 @@ export default async function proxy(request: NextRequest) {
             }
           },
         },
-      },
-    );
-    try {
+      });
       await client.auth.getUser();
     } catch {
       /* Protected actions still fail closed. */

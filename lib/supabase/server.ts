@@ -2,40 +2,33 @@ import "server-only";
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 import { createClient } from "@supabase/supabase-js";
-export const configured = () =>
-  Boolean(
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
-  );
+import { supabaseConfig } from "./config";
+export const configured = () => Boolean(supabaseConfig());
 export function publicDB() {
-  if (!configured()) throw new Error("setupMessage");
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
-    { auth: { persistSession: false, autoRefreshToken: false } },
-  );
+  const config = supabaseConfig();
+  if (!config) throw new Error("setupMessage");
+  return createClient(config.url, config.key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
 }
 export async function sessionDB() {
-  if (!configured()) throw new Error("setupMessage");
+  const config = supabaseConfig();
+  if (!config) throw new Error("setupMessage");
   const jar = await cookies();
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
-    {
-      cookies: {
-        getAll: () => jar.getAll(),
-        setAll: (items) => {
-          try {
-            items.forEach(({ name, value, options }) =>
-              jar.set(name, value, options),
-            );
-          } catch {
-            /* Read-only Server Component; proxy refreshes the session. */
-          }
-        },
+  return createServerClient(config.url, config.key, {
+    cookies: {
+      getAll: () => jar.getAll(),
+      setAll: (items) => {
+        try {
+          items.forEach(({ name, value, options }) =>
+            jar.set(name, value, options),
+          );
+        } catch {
+          /* Read-only Server Component; proxy refreshes the session. */
+        }
       },
     },
-  );
+  });
 }
 export async function requireUser() {
   const db = await sessionDB();
