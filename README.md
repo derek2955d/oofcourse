@@ -71,6 +71,8 @@ npm test
 npm run build
 npm run test:db
 npm run test:e2e
+# After npm run build; isolated navigation/Auth-provider fixtures only:
+npm run test:header
 ```
 
 The database suite creates an isolated PostgreSQL 17 Docker container with no network/published ports. A minimal auth/storage fixture lets it execute the **real migrations and RLS**; it does not exercise hosted Supabase Auth, email delivery or Storage HTTP behavior. The container is removed on success/failure. Browser checks start the production build on port 3100, use system Chromium, run serially on shared cloud CPU, cover the seven requested widths and check bilingual navigation, filters, publishing validation, browser draft restoration, locked service states, server-action authorization, metadata, 404s, screenshots and automated axe AA checks.

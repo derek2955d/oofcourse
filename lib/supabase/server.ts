@@ -16,6 +16,10 @@ export async function sessionDB() {
   if (!config) throw new Error("setupMessage");
   const jar = await cookies();
   return createServerClient(config.url, config.key, {
+    // Session-scoped rows, including the current profile, must never be cached.
+    global: {
+      fetch: (input, init) => fetch(input, { ...init, cache: "no-store" }),
+    },
     cookies: {
       getAll: () => jar.getAll(),
       setAll: (items) => {

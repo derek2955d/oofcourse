@@ -77,6 +77,7 @@ export function AccountForm({
   const { locations, subtypes } = useCatalogConfig();
   const t = useTranslations(),
     l = useLocale() as Locale,
+    router = useRouter(),
     [pending, start] = useTransition(),
     [message, setMessage] = useState(""),
     [error, setError] = useState("");
@@ -96,6 +97,7 @@ export function AccountForm({
                 : await changePassword(form);
           setError(r.error || "");
           setMessage(r.success || "");
+          if (r.success && kind === "profile") router.refresh();
         });
       }}
     >

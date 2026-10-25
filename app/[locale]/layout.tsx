@@ -4,12 +4,13 @@ import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { routing } from "@/i18n/routing";
-import { SiteHeader, MobileBottomNav } from "@/components/navigation";
+import { MobileBottomNav } from "@/components/navigation";
 import { SiteFooter } from "@/components/footer";
 import "@fontsource-variable/inter";
 import "@fontsource/noto-sans-sc/400.css";
 import "@fontsource/noto-sans-sc/600.css";
 import "../globals.css";
+import { AuthenticatedHeader } from "@/components/authenticated-header";
 import { CatalogProvider } from "@/components/catalog-provider";
 import { safeJson } from "@/lib/structured-data";
 import { loadTaxonomy } from "@/lib/taxonomy-server";
@@ -47,7 +48,7 @@ export default async function Layout({
               {locale === "zh" ? "跳至主要内容" : "Skip to content"}
             </a>
             <Suspense fallback={<div className="header-placeholder" />}>
-              <SiteHeader />
+              <AuthenticatedHeader />
             </Suspense>
             <script
               type="application/ld+json"

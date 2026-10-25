@@ -9,7 +9,7 @@ export async function updateProfile(input: unknown) {
       { db, user } = await requireUser();
     const { error } = await db.from("profiles").update(v).eq("id", user.id);
     if (error) return { error: "serverError" };
-    for (const l of ["en", "zh"]) revalidatePath(`/${l}/account`, "layout");
+    revalidatePath("/[locale]", "layout");
     return { success: "savedSuccess" };
   } catch {
     return { error: "validation" };

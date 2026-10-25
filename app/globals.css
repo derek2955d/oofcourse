@@ -3431,3 +3431,89 @@ select {
     font-size: 14px;
   }
 }
+
+/* The account label is supplied only by a server-verified session. */
+.header-account {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 4px 8px 4px 4px;
+  border: 1px solid #e2eafa;
+  border-radius: 24px;
+  color: #314b71;
+  background: #f6f9ff;
+  font-size: 13px;
+  font-weight: 600;
+  max-width: 152px;
+}
+.header-account:hover {
+  background: #edf3ff;
+  border-color: #bbcff6;
+  color: #245dce;
+}
+.header-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 29px;
+  height: 29px;
+  border-radius: 50%;
+  background: #e0ecff;
+  color: #245dce;
+  font-size: 12px;
+}
+.header-account-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 94px;
+}
+.mobile-header-links {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.mobile-header-tools .header-account {
+  display: none;
+}
+.mobile-menu-account {
+  overflow-wrap: anywhere;
+}
+.mobile-menu-account > span {
+  font-size: 11px;
+  color: #62728a;
+}
+@media (max-width: 760px) {
+  .header-actions .header-account {
+    display: none;
+  }
+  .mobile-header-tools .header-account {
+    display: inline-flex;
+    max-width: 125px;
+    min-height: 36px;
+    padding: 2px 7px 2px 3px;
+    font-size: 12px;
+    gap: 5px;
+  }
+  .mobile-header-tools .header-avatar {
+    width: 25px;
+    height: 25px;
+    font-size: 11px;
+  }
+  .mobile-header-tools .header-account-name {
+    max-width: 70px;
+  }
+  .mobile-header-links {
+    gap: 10px;
+  }
+  .mobile-menu .mobile-menu-account {
+    grid-column: 1/-1;
+    justify-content: flex-start;
+    gap: 10px;
+  }
+  .mobile-menu-account > span {
+    margin-left: auto;
+  }
+}

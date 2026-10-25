@@ -71,12 +71,38 @@ export function LocationSelector() {
     </label>
   );
 }
-export function SiteHeader() {
+export function SiteHeader({
+  viewer = null,
+}: {
+  viewer?: { displayName: string | null } | null;
+}) {
   const { categories } = useCatalogConfig();
   const t = useTranslations(),
     locale = useLocale() as Locale,
     pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const accountName = viewer?.displayName || t("navAccount");
+  const accountLink = viewer ? (
+    <Link
+      href="/account"
+      className="header-account"
+      title={accountName}
+      aria-label={`${accountName} · ${t("navAccount")}`}
+    >
+      <span className="header-avatar" aria-hidden="true">
+        {viewer.displayName ? (
+          Array.from(viewer.displayName)[0].toLocaleUpperCase(locale)
+        ) : (
+          <UserRound size={16} />
+        )}
+      </span>
+      <span className="header-account-name">{accountName}</span>
+    </Link>
+  ) : (
+    <Link href="/login" className="login-link">
+      {t("navLogin")}
+    </Link>
+  );
   return (
     <header className="site-header">
       <div className="container header-main">
@@ -98,9 +124,7 @@ export function SiteHeader() {
         <div className="header-actions">
           <LocationSelector />
           <LanguageSwitcher />
-          <Link href="/login" className="login-link">
-            {t("navLogin")}
-          </Link>
+          {accountLink}
           <Link href="/post" className="button primary post-desktop">
             <Plus size={16} />
             {t("navPost")}
@@ -118,10 +142,13 @@ export function SiteHeader() {
       </div>
       <div className="container mobile-header-tools">
         <LocationSelector />
-        <Link href="/search" className="text-link">
-          <Search size={16} />
-          {t("navSearch")}
-        </Link>
+        <div className="mobile-header-links">
+          <Link href="/search" className="text-link">
+            <Search size={16} />
+            {t("navSearch")}
+          </Link>
+          {viewer && accountLink}
+        </div>
       </div>
       {open && (
         <nav
@@ -136,7 +163,14 @@ export function SiteHeader() {
               <ArrowRight size={16} />
             </Link>
           ))}
-          <Link href="/login">{t("navLogin")}</Link>
+          <Link
+            href={viewer ? "/account" : "/login"}
+            className="mobile-menu-account"
+          >
+            <UserRound size={18} />
+            {viewer ? accountName : t("navLogin")}
+            {viewer && <span>{t("navAccount")}</span>}
+          </Link>
         </nav>
       )}
     </header>
