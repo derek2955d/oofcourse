@@ -17,6 +17,16 @@ export default defineConfig({
   use: base,
   projects: [
     {
+      name: "compact-desktop",
+      testMatch: "compact-header.spec.ts",
+      use: { viewport: { width: 1440, height: 1000 } },
+    },
+    {
+      name: "compact-mobile",
+      testMatch: "compact-header.spec.ts",
+      use: { viewport: { width: 390, height: 844 } },
+    },
+    {
       name: "auth-desktop",
       testMatch: "auth-design.spec.ts",
       use: { viewport: { width: 1440, height: 1000 } },

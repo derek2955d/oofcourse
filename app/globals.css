@@ -3517,3 +3517,109 @@ select {
     margin-left: auto;
   }
 }
+
+/* Compact header preferences: selected values remain available to assistive tech. */
+.site-header .location-compact {
+  position: relative;
+  justify-content: center;
+  gap: 0;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  max-width: 44px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  color: #526581;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.site-header .location-compact > svg {
+  color: inherit;
+  pointer-events: none;
+}
+.site-header .location-compact select {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  min-height: 44px;
+  cursor: pointer;
+  margin: 0;
+}
+.site-header .location-compact:hover,
+.header-setting-button:hover {
+  color: #245dce;
+  background: #edf3ff;
+  border-color: #e0e9fb;
+}
+.site-header .location-compact:focus-within {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+.site-header .language-switch {
+  position: relative;
+  display: block;
+  flex-shrink: 0;
+}
+.header-setting-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  color: #526581;
+  cursor: pointer;
+}
+.header-setting-button[aria-expanded="true"] {
+  color: #245dce;
+  background: #edf3ff;
+  border-color: #d8e5fd;
+}
+.language-options {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 10px);
+  z-index: 70;
+  min-width: 164px;
+  padding: 7px;
+  background: white;
+  border: 1px solid #e1e8f3;
+  border-radius: 14px;
+  box-shadow: 0 14px 35px #263a5a1a;
+}
+.language-options > a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 43px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #405570;
+  border-radius: 9px;
+  white-space: nowrap;
+}
+.language-options > a:hover,
+.language-options > a[aria-current="page"] {
+  background: #edf3ff;
+  color: #245dce;
+}
+.language-options > a[aria-current="page"] {
+  font-weight: 600;
+}
+@media (max-width: 760px) {
+  .header-actions .language-switch {
+    font-size: 12px;
+  }
+  .language-options {
+    top: calc(100% + 7px);
+  }
+  .mobile-header-tools .location-compact {
+    margin-left: -6px;
+  }
+}

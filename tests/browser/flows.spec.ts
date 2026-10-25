@@ -16,6 +16,7 @@ test("hero search, category selection and language switching retain query state"
       .selectOption("housing");
   await page.getByRole("button", { name: "Find it locally" }).click();
   await expect(page).toHaveURL(/q=/);
+  await page.locator(".language-switch").getByRole("button").click();
   await page
     .locator(".language-switch")
     .getByRole("link", { name: "中文", exact: true })
@@ -164,6 +165,7 @@ test("detail previews are isolated, noindex, shareable and not real listings", a
     "content",
     /noindex/,
   );
+  await page.locator(".language-switch").getByRole("button").click();
   await page
     .locator(".language-switch")
     .getByRole("link", { name: "中文", exact: true })

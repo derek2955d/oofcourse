@@ -2,10 +2,12 @@
 import { useCatalogConfig } from "./catalog-provider";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import {
   MapPin,
+  Globe2,
+  Check,
   ChevronDown,
   Plus,
   Search,
@@ -23,21 +25,65 @@ export function LanguageSwitcher() {
     locale = useLocale(),
     pathname = usePathname(),
     params = useSearchParams();
+  const [open, setOpen] = useState(false);
+  const root = useRef<HTMLDivElement>(null),
+    trigger = useRef<HTMLButtonElement>(null);
+  const panelId = useId();
+  useEffect(() => {
+    if (!open) return;
+    const outside = (event: PointerEvent) => {
+      if (!root.current?.contains(event.target as Node)) setOpen(false);
+    };
+    const escape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpen(false);
+        trigger.current?.focus();
+      }
+    };
+    document.addEventListener("pointerdown", outside);
+    document.addEventListener("keydown", escape);
+    return () => {
+      document.removeEventListener("pointerdown", outside);
+      document.removeEventListener("keydown", escape);
+    };
+  }, [open]);
+  const label = `${t("language")}: ${locale === "en" ? "English" : "中文"}`;
   return (
-    <nav className="language-switch" aria-label={t("language")}>
-      {(["en", "zh"] as const).map((l) => (
-        <Link
-          key={l}
-          href={{ pathname, query: Object.fromEntries(params.entries()) }}
-          locale={l}
-          lang={l === "zh" ? "zh-CN" : "en-US"}
-          hrefLang={l === "zh" ? "zh-CN" : "en-US"}
-          aria-current={locale === l ? "page" : undefined}
-        >
-          {l === "en" ? "EN" : "中文"}
-        </Link>
-      ))}
-    </nav>
+    <div className="language-switch" ref={root}>
+      <button
+        ref={trigger}
+        className="header-setting-button"
+        type="button"
+        title={label}
+        aria-label={label}
+        aria-expanded={open}
+        aria-controls={panelId}
+        onClick={() => setOpen(!open)}
+      >
+        <Globe2 size={19} aria-hidden="true" />
+      </button>
+      <nav
+        id={panelId}
+        hidden={!open}
+        className="language-options"
+        aria-label={t("language")}
+      >
+        {(["en", "zh"] as const).map((l) => (
+          <Link
+            key={l}
+            href={{ pathname, query: Object.fromEntries(params.entries()) }}
+            locale={l}
+            lang={l === "zh" ? "zh-CN" : "en-US"}
+            hrefLang={l === "zh" ? "zh-CN" : "en-US"}
+            aria-current={locale === l ? "page" : undefined}
+            onClick={() => setOpen(false)}
+          >
+            <span>{l === "en" ? "English" : "中文"}</span>
+            {locale === l && <Check size={16} aria-hidden="true" />}
+          </Link>
+        ))}
+      </nav>
+    </div>
   );
 }
 export function LocationSelector() {
@@ -47,9 +93,16 @@ export function LocationSelector() {
     params = useSearchParams(),
     pathname = usePathname(),
     router = useRouter();
+  const selected = locations.find(
+    ([slug]) => slug === (params.get("location") || "nyc"),
+  );
+  const selectedName = selected ? selected[locale === "zh" ? 2 : 1] : "";
   return (
-    <label className="location-select">
-      <MapPin size={16} />
+    <label
+      className="location-select location-compact"
+      title={`${t("navLocation")}: ${selectedName}`}
+    >
+      <MapPin size={19} aria-hidden="true" />
       <span className="sr-only">{t("navLocation")}</span>
       <select
         aria-label={t("navLocation")}
@@ -67,7 +120,6 @@ export function LocationSelector() {
           </option>
         ))}
       </select>
-      <ChevronDown size={13} />
     </label>
   );
 }

@@ -56,6 +56,7 @@ test("bilingual auth layouts, password visibility and existing navigation", asyn
     ).toEqual([]);
   }
   await page.goto("/en/login?next=/account/saved");
+  await page.locator(".language-switch").getByRole("button").click();
   await page
     .locator(".language-switch")
     .getByRole("link", { name: "中文", exact: true })
