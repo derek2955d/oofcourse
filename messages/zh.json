@@ -360,5 +360,28 @@
   "fairness_review": "公平住房或就业表达，需审核",
   "broker_fee_review": "租客承担经纪费，需法律审查",
   "businessLogo": "商家标识",
-  "viewBusiness": "查看公开商家资料"
+  "viewBusiness": "查看公开商家资料",
+  "authDesign": {
+    "eyebrow": "很高兴，在这里遇见你",
+    "headline": "找到生活的落点，",
+    "accent": "开启身边的可能。",
+    "intro": "一个新住处、一份新机会、一件心仪的闲置。让日常所需，在你的社区里找到答案。",
+    "city": "从纽约出发，为日常生活而来",
+    "saved": "收藏心动发现，随时回来看看",
+    "post": "发布所需，与社区分享好物和机会",
+    "connect": "继续你的本地生活探索",
+    "back": "返回探索",
+    "show": "显示密码",
+    "hide": "隐藏密码",
+    "emailPlaceholder": "请输入你的邮箱",
+    "passwordPlaceholder": "请输入密码",
+    "namePlaceholder": "我们该如何称呼你？",
+    "accountLabel": "你的 OOFCOURSE 账号",
+    "foot": "一个账号，连接更多本地可能。",
+    "signupNote": "创建账号即表示你同意我们的",
+    "terms": "使用条款",
+    "and": "与",
+    "privacy": "隐私政策",
+    "unavailable": "账号功能暂未就绪，请查看上方连接提示。"
+  }
 }

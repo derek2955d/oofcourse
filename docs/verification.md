@@ -18,3 +18,9 @@ Next.js can return HTTP 200 with a noindex 404 fallback after streaming has begu
 ## Configuration regression — 2026-10-25
 
 Malformed Supabase URLs previously threw during proxy client construction before its error handler. Configuration now validates URL syntax and keeps construction inside the guarded refresh; server clients share the same validated values. Typecheck, lint and all 8 unit tests passed. A local Next.js request with the deliberately invalid `https://…supabase.co` returned HTTP 200, the connection notice and disabled login instead of a server error. This reproduces one possible cause of the hosted screenshot; protected Vercel runtime logs remain unavailable, so it does not prove the exact hosted cause or a working hosted database connection.
+
+## Authentication design refresh — 2026-10-25
+
+Replaced the plain authentication card with a responsive illustrated split layout, shared by login, signup and password reset in both languages. Added accessible password visibility controls, field placeholders, linked signup policies and an explicit reason for unavailable submission. Existing authentication server actions and role checks are unchanged.
+
+Typecheck, zero-warning lint, 8 unit tests and the final production build passed. Four browser cases passed: desktop/mobile bilingual auth layout checks (all three auth routes, no horizontal overflow, password visibility, preserved language-switch query, automated WCAG AA checks) plus desktop/mobile authentication and administration fail-closed regressions. English/Chinese screenshots were visually reviewed. Local tests use no hosted Supabase credentials; they do not claim a new live registration or email test.

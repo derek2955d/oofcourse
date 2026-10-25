@@ -16,6 +16,16 @@ export default defineConfig({
   timeout: 120000,
   use: base,
   projects: [
+    {
+      name: "auth-desktop",
+      testMatch: "auth-design.spec.ts",
+      use: { viewport: { width: 1440, height: 1000 } },
+    },
+    {
+      name: "auth-mobile",
+      testMatch: "auth-design.spec.ts",
+      use: { viewport: { width: 390, height: 844 } },
+    },
     ...[375, 390, 430, 768, 1024, 1440, 1920].map((width) => ({
       name: `responsive-${width}`,
       testMatch: "responsive.spec.ts",

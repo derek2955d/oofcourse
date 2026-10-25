@@ -360,5 +360,28 @@
   "fairness_review": "Fair housing / employment review required",
   "broker_fee_review": "Tenant-paid broker fee — legal review required",
   "businessLogo": "Business logo",
-  "viewBusiness": "View public business profile"
+  "viewBusiness": "View public business profile",
+  "authDesign": {
+    "eyebrow": "GOOD TO SEE YOU HERE",
+    "headline": "Find your place.",
+    "accent": "Make it yours.",
+    "intro": "A new home, your next opportunity, a great secondhand find. Your neighborhood is full of possibilities.",
+    "city": "Made for everyday life in New York",
+    "saved": "Keep your favorite finds close",
+    "post": "Share something with your neighborhood",
+    "connect": "Pick up where you left off",
+    "back": "Back to exploring",
+    "show": "Show password",
+    "hide": "Hide password",
+    "emailPlaceholder": "you@example.com",
+    "passwordPlaceholder": "Enter your password",
+    "namePlaceholder": "What should we call you?",
+    "accountLabel": "YOUR OOFCOURSE ACCOUNT",
+    "foot": "One account. More local possibilities.",
+    "signupNote": "By creating an account, you agree to our",
+    "terms": "Terms of Use",
+    "and": "and",
+    "privacy": "Privacy Policy",
+    "unavailable": "Account access is not ready yet. Please check the connection notice above."
+  }
 }

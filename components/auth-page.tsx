@@ -1,5 +1,8 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
+import Image from "next/image";
+import { ArrowLeft, Heart, MapPin, Plus, Sparkles } from "lucide-react";
+import { Link } from "@/i18n/navigation";
 import { configured } from "@/lib/supabase/server";
 import { AuthForm } from "./auth-form";
 import { ConnectionNotice } from "./ui";
@@ -29,17 +32,67 @@ export async function AuthPage({
   setRequestLocale(locale);
   const t = await getTranslations();
   return (
-    <div className="container page">
-      <div className="auth-layout">
-        {!configured() && <ConnectionNotice />}
-        <div className="surface">
-          <p className="eyebrow">OOFCOURSE.</p>
-          <h1 className="page-title">{t(`${mode}Title`)}</h1>
-          <p className="page-intro">{t(`${mode}Intro`)}</p>
-          <Suspense>
-            <AuthForm mode={mode} connected={configured()} />
-          </Suspense>
-        </div>
+    <div className="container auth-scene">
+      <Link href="/" className="auth-back">
+        <ArrowLeft size={16} />
+        {t("authDesign.back")}
+      </Link>
+      <div className="auth-layout auth-redesign">
+        <aside className="auth-story" aria-label={t("authDesign.city")}>
+          <div className="auth-story-copy">
+            <p className="auth-story-eyebrow">
+              <span />
+              {t("authDesign.eyebrow")}
+            </p>
+            <h2>
+              {t("authDesign.headline")}
+              <br />
+              <span>{t("authDesign.accent")}</span>
+            </h2>
+            <p className="auth-story-intro">{t("authDesign.intro")}</p>
+          </div>
+          <div className="auth-illustration">
+            <div className="auth-art-orbit" />
+            <Image
+              src="/art/neighborhood.svg"
+              alt=""
+              width={640}
+              height={430}
+              priority
+            />
+            <span className="auth-art-spark">
+              <Sparkles size={22} />
+            </span>
+            <div className="auth-art-tag">
+              <Heart size={17} />
+              {t("authDesign.saved")}
+            </div>
+          </div>
+          <div className="auth-story-bottom">
+            <MapPin size={16} />
+            <span>{t("authDesign.city")}</span>
+          </div>
+        </aside>
+        <section className="auth-panel" aria-labelledby="auth-title">
+          <div className="auth-form-wrap">
+            <div className="auth-account-icon">
+              {mode === "signup" ? <Plus size={25} /> : <Sparkles size={25} />}
+            </div>
+            <p className="auth-account-label">{t("authDesign.accountLabel")}</p>
+            <h1 id="auth-title" className="page-title">
+              {t(`${mode}Title`)}
+            </h1>
+            <p className="page-intro">{t(`${mode}Intro`)}</p>
+            {!configured() && <ConnectionNotice />}
+            <Suspense>
+              <AuthForm mode={mode} connected={configured()} />
+            </Suspense>
+            <p className="auth-panel-foot">
+              <span />
+              {t("authDesign.foot")}
+            </p>
+          </div>
+        </section>
       </div>
     </div>
   );
