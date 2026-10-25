@@ -3,22 +3,22 @@ import AxeBuilder from "@axe-core/playwright";
 test("compact header controls retain choices, queries and keyboard access", async ({
   page,
 }) => {
-  await page.goto("/en/search?q=lamp&sort=newest&page=2");
+  await page.goto("/en/search?q=lamp&sort=newest&page=2&state=NY");
   await expect(page.locator("main h1")).toBeVisible();
   const location = page
     .locator(".site-header")
     .getByRole("combobox", { name: "State", exact: true });
   await expect(location).toHaveValue("NY");
   expect((await location.boundingBox())!.width).toBeLessThanOrEqual(44);
-  await location.selectOption("NJ");
-  await expect(page).toHaveURL(/state=NJ/);
+  await expect(location.locator("option")).toHaveCount(1);
+  await expect(page).toHaveURL(/state=NY/);
   expect(new URL(page.url()).searchParams.get("q")).toBe("lamp");
   expect(new URL(page.url()).searchParams.get("sort")).toBe("newest");
-  expect(new URL(page.url()).searchParams.has("page")).toBe(false);
-  await expect(location).toHaveValue("NJ");
+  expect(new URL(page.url()).searchParams.get("page")).toBe("2");
+  await expect(location).toHaveValue("NY");
   await expect(page.locator(".location-compact:visible")).toHaveAttribute(
     "title",
-    /New Jersey/,
+    /New York/,
   );
   const control = page.locator(".language-switch").getByRole("button");
   await expect(control).toHaveText("");
@@ -54,13 +54,13 @@ test("compact header controls retain choices, queries and keyboard access", asyn
     .click();
   await expect(page).toHaveURL(/\/zh\/search/);
   await expect(control).toHaveAttribute("aria-expanded", "false");
-  expect(new URL(page.url()).searchParams.get("state")).toBe("NJ");
+  expect(new URL(page.url()).searchParams.get("state")).toBe("NY");
   expect(new URL(page.url()).searchParams.get("q")).toBe("lamp");
   await expect(
     page
       .locator(".site-header")
       .getByRole("combobox", { name: "州", exact: true }),
-  ).toHaveValue("NJ");
+  ).toHaveValue("NY");
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,

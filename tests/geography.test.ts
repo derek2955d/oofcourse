@@ -2,6 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   usStates,
+  availableStates,
+  activeState,
   legacyStateScope,
   normalizeState,
   stateLabel,
@@ -15,7 +17,7 @@ test("state choices are states/DC, not city or neighborhood records", () => {
   assert.equal(normalizeState(" ca "), "CA");
   assert.equal(normalizeState("queens"), "NY");
   assert.equal(stateLabel("NY", "zh"), "纽约州");
-  assert.equal(cookieState("x=1; oofcourse_state=CA"), "CA");
+  assert.equal(cookieState("x=1; oofcourse_state=CA"), "NY");
   assert.equal(defaultTaxonomy.locationStates.queens, "NY");
   assert.ok(
     !usStates.some((s) => ["Brooklyn", "New York City"].includes(s[1])),
@@ -79,4 +81,15 @@ test("legacy NY compatibility proves scope before using the old RPC", () => {
     ),
     "migration-required",
   );
+});
+
+test("consumer rollout opens only New York and retains future geographic reference data", () => {
+  assert.deepEqual(
+    availableStates.map((s) => s[0]),
+    ["NY"],
+  );
+  assert.equal(activeState("CA"), "NY");
+  assert.equal(activeState("NJ"), "NY");
+  assert.equal(activeState("NY"), "NY");
+  assert.equal(normalizeState("CA"), "CA");
 });

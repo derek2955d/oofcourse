@@ -20,7 +20,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { useSelectedState } from "./use-geography";
-import { usStates, stateLabel } from "@/lib/geography";
+import { availableStates, stateLabel } from "@/lib/geography";
 import { categoryKeys, type Locale } from "@/lib/catalog";
 export function LanguageSwitcher() {
   const t = useTranslations(),
@@ -113,7 +113,7 @@ export function LocationSelector() {
           router.push(`${pathname}?${q}`);
         }}
       >
-        {usStates.map(([code, en, zh]) => (
+        {availableStates.map(([code, en, zh]) => (
           <option key={code} value={code}>
             {locale === "zh" ? zh : en}
           </option>
@@ -323,7 +323,7 @@ export function SearchBar({
                 router.push(`${pathname}?${q}`);
               }}
             >
-              {usStates.map(([s, en, zh]) => (
+              {availableStates.map(([s, en, zh]) => (
                 <option key={s} value={s}>
                   {locale === "zh" ? zh : en}
                 </option>

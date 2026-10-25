@@ -52,6 +52,15 @@ export const usStates = [
   ["WI", "Wisconsin", "威斯康星州"],
   ["WY", "Wyoming", "怀俄明州"],
 ] as const;
+// Consumer rollout. Keep full reference data for future launches and administration.
+export const enabledStateCodes: readonly string[] = ["NY"];
+export const availableStates = usStates.filter((state) =>
+  enabledStateCodes.includes(state[0]),
+);
+export function activeState(value: unknown) {
+  const code = normalizeState(value);
+  return enabledStateCodes.includes(code) ? code : availableStates[0][0];
+}
 export const stateCookie = "oofcourse_state";
 export function normalizeState(value: unknown) {
   const code = typeof value === "string" ? value.trim().toUpperCase() : "";
@@ -67,7 +76,7 @@ export function cookieState(cookie: string) {
     .map((x) => x.trim())
     .find((x) => x.startsWith(stateCookie + "="))
     ?.slice(stateCookie.length + 1);
-  return value ? normalizeState(value) : undefined;
+  return value ? activeState(value) : undefined;
 }
 
 export function legacyStateScope(

@@ -1,6 +1,6 @@
 "use client";
 import { useSelectedState } from "./use-geography";
-import { usStates } from "@/lib/geography";
+import { availableStates } from "@/lib/geography";
 import { useCatalogConfig } from "./catalog-provider";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useForm, useWatch } from "react-hook-form";
@@ -379,7 +379,7 @@ export function PublishingWizard({
                       form.setValue("location", "", { shouldDirty: true });
                     }}
                   >
-                    {usStates.map(([code, en, zh]) => (
+                    {availableStates.map(([code, en, zh]) => (
                       <option key={code} value={code}>
                         {l === "zh" ? zh : en}
                       </option>

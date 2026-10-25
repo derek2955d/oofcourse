@@ -2,11 +2,11 @@
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useDefaultState } from "./catalog-provider";
-import { cookieState, normalizeState, stateCookie } from "@/lib/geography";
+import { cookieState, activeState, stateCookie } from "@/lib/geography";
 export function useSelectedState() {
   const params = useSearchParams(),
     initial = useDefaultState();
-  const state = normalizeState(
+  const state = activeState(
     params.get("state") ||
       (typeof document !== "undefined"
         ? cookieState(document.cookie)

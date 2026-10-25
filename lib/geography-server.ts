@@ -1,10 +1,10 @@
 import "server-only";
 import { cookies } from "next/headers";
 import { cache } from "react";
-import { normalizeState, stateCookie } from "./geography";
+import { activeState, stateCookie } from "./geography";
 import { publicDB } from "./supabase/server";
 export async function selectedState(value?: string) {
-  return normalizeState(value || (await cookies()).get(stateCookie)?.value);
+  return activeState(value || (await cookies()).get(stateCookie)?.value);
 }
 export const enabledAreas = cache(async (state?: string) => {
   let query = publicDB()
