@@ -383,5 +383,11 @@
     "and": "与",
     "privacy": "隐私政策",
     "unavailable": "账号功能暂未就绪，请查看上方连接提示。"
+  },
+  "geo": {
+    "state": "州",
+    "allAreas": "全部城市及地区",
+    "noAreas": "该州暂未添加城市或地区。",
+    "localFoot": "在{state}，发现身边的生活。"
   }
 }

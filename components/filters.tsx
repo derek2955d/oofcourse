@@ -14,7 +14,7 @@ export function FilterPanel({
   category?: CategoryKey;
   query: BrowseQuery;
 }) {
-  const { locations, subtypes } = useCatalogConfig();
+  const { locations, locationStates, subtypes } = useCatalogConfig();
   const t = useTranslations(),
     l = useLocale() as Locale,
     dialog = useRef<HTMLDialogElement>(null),
@@ -23,6 +23,7 @@ export function FilterPanel({
   const form = (
     <form className="filter-form" action={path}>
       <input type="hidden" name="sort" value={query.sort} />
+      <input type="hidden" name="state" value={query.state} />
       {!category && params.get("category") && (
         <input type="hidden" name="category" value={params.get("category")!} />
       )}
@@ -32,14 +33,20 @@ export function FilterPanel({
       </label>
       <label className="field">
         {t("location")}
-        <select name="location" defaultValue={query.location || "nyc"}>
-          {locations.map(([s, en, zh]) => (
-            <option key={s} value={s}>
-              {l === "zh" ? zh : en}
-            </option>
-          ))}
+        <select name="location" defaultValue={query.location}>
+          <option value="">{t("geo.allAreas")}</option>
+          {locations
+            .filter((x) => locationStates[x[0]] === query.state)
+            .map(([s, en, zh]) => (
+              <option key={s} value={s}>
+                {l === "zh" ? zh : en}
+              </option>
+            ))}
         </select>
       </label>
+      {!locations.some((x) => locationStates[x[0]] === query.state) && (
+        <p className="small-note">{t("geo.noAreas")}</p>
+      )}
       {category && (
         <label className="field">
           {t("subcategory")}
@@ -111,7 +118,7 @@ export function FilterPanel({
           {t("apply")}
         </button>
         <Link
-          href={category ? `/${category}` : "/search"}
+          href={`${category ? `/${category}` : "/search"}?state=${query.state}`}
           className="text-link"
         >
           {t("clear")}

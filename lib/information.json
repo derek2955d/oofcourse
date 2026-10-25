@@ -130,7 +130,7 @@
       "Public and private",
       "Only approved, current listings and approved business information are public. Drafts, contact requests, messages, favorites and reports are restricted by user roles and participation. Do not upload sensitive identity documents or exact private home addresses. Uploaded images are re-encoded in the browser to remove embedded metadata before upload.",
       "Storage and service providers",
-      "Browser storage retains unsaved publishing progress, which may remain on shared devices until cleared. Authentication uses session cookies. Supabase stores configured account and platform data, and Vercel may process hosting logs including search URLs and technical request data. No marketing analytics or ad network is enabled by default.",
+      "Browser storage retains unsaved publishing progress, which may remain on shared devices until cleared. Authentication uses session cookies. A functional cookie remembers your selected US state for up to one year; language preferences are also retained. Supabase stores configured account and platform data, and Vercel may process hosting logs including search URLs and technical request data. No marketing analytics or ad network is enabled by default.",
       "Choices and retention",
       "Users can edit profiles, archive listings and remove favorites. Account-deletion and formal privacy-rights handling require an operational support procedure before launch; they are not simulated here. Moderation and security records need a documented retention policy. Sign out and clear browser drafts on shared devices."
     ],
@@ -142,7 +142,7 @@
       "哪些公开，哪些私密",
       "只有审核通过且未到期的信息及已批准商家资料公开。草稿、联系消息、收藏及举报按角色及参与关系限制访问。不要上传身份证件或公开私人住宅精确地址。图片在浏览器中重新编码以移除嵌入式元数据后上传。",
       "存储与服务提供商",
-      "浏览器会保留尚未保存的发布进度，共享设备上需自行清除。身份验证使用会话 Cookie。配置后的 Supabase 存储账号及平台数据，Vercel 托管日志可能包含搜索网址及技术请求资料。默认不启用营销分析或广告网络。",
+      "浏览器会保留尚未保存的发布进度，共享设备上需自行清除。身份验证使用会话 Cookie；功能性 Cookie 会记住所选美国州，最长保留一年，并保留语言偏好。配置后的 Supabase 存储账号及平台数据，Vercel 托管日志可能包含搜索网址及技术请求资料。默认不启用营销分析或广告网络。",
       "用户选择与保留",
       "用户可编辑资料、归档信息、移除收藏。正式账号删除及隐私权请求处理需要在上线前建立运营支持流程，此处不会模拟完成。审核及安全记录须有明确保留政策，共享设备使用后请退出并清除浏览器草稿。"
     ]

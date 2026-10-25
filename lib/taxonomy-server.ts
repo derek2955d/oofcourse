@@ -9,10 +9,13 @@ export async function loadTaxonomy(): Promise<Taxonomy> {
     const [locations, categories, subtypes] = await Promise.all([
       db
         .from("locations")
-        .select("id,name_en,name_zh")
+        .select("id,name_en,name_zh,state")
         .eq("enabled", true)
         .order("id"),
-      db.from("categories").select("id,name_en,name_zh").order("sort_order"),
+      db
+        .from("categories")
+        .select("id,name_en,name_zh,state")
+        .order("sort_order"),
       db
         .from("subcategories")
         .select("id,category_id,name_en,name_zh")
@@ -26,6 +29,9 @@ export async function loadTaxonomy(): Promise<Taxonomy> {
       x.name_en,
       x.name_zh,
     ]);
+    data.locationStates = Object.fromEntries(
+      (locations.data || []).map((x) => [x.id, x.state]),
+    );
     for (const c of categories.data || [])
       if (isCategory(c.id))
         data.categories[c.id] = { en: c.name_en, zh: c.name_zh };

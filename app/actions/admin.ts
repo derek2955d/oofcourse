@@ -2,6 +2,7 @@
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/supabase/server";
+import { usStates } from "@/lib/geography";
 import { categoryKeys } from "@/lib/catalog";
 const reason = z.string().trim().min(3).max(2000);
 function refresh() {
@@ -127,7 +128,11 @@ export async function updateReference(
           id: z.string().regex(/^[a-z0-9-]{1,80}$/),
           name_en: z.string().trim().min(2).max(100),
           name_zh: z.string().trim().min(2).max(100),
-          state: z.string().length(2),
+          state: z
+            .string()
+            .trim()
+            .toUpperCase()
+            .refine((value) => usStates.some((s) => s[0] === value)),
           city: z.string().trim().min(2).max(100),
           borough: z.string().max(100),
           neighborhood: z.string().max(100),

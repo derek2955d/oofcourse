@@ -8,6 +8,8 @@ import {
   type CategoryKey,
   type Locale,
 } from "@/lib/catalog";
+import { selectedState } from "@/lib/geography-server";
+import { stateLabel } from "@/lib/geography";
 import { browseListings } from "@/lib/listings";
 import { SearchBar } from "./navigation";
 import { FilterPanel, SortControl } from "./filters";
@@ -24,14 +26,17 @@ export async function Catalog({
 }) {
   const t = await getTranslations(),
     l = (await getLocale()) as Locale,
-    q = parseQuery(raw);
+    q = parseQuery({
+      ...raw,
+      state: await selectedState(
+        typeof raw.state === "string" ? raw.state : undefined,
+      ),
+    });
   const result = await browseListings(category, q);
   const pages = Math.max(1, Math.ceil(result.total / 12));
-  const activeFilters =
-    Object.entries(q).some(
-      ([k, v]) => !["page", "sort", "location"].includes(k) && v,
-    ) ||
-    (!!q.location && q.location !== "nyc");
+  const activeFilters = Object.entries(q).some(
+    ([k, v]) => !["page", "sort", "state"].includes(k) && v,
+  );
   function pageHref(page: number) {
     const params = new URLSearchParams();
     Object.entries(q).forEach(([k, v]) => {
@@ -51,7 +56,7 @@ export async function Catalog({
       </nav>
       <div className="catalog-header">
         <div>
-          <p className="eyebrow">NEW YORK CITY</p>
+          <p className="eyebrow">{stateLabel(q.state, l)}</p>
           <h1 className="page-title">
             {category ? categoryData[category][l] : t("navSearch")}
           </h1>
@@ -98,10 +103,12 @@ export async function Catalog({
             <EmptyState
               category={category}
               filtered={!!activeFilters || q.page > 1}
+              state={q.state}
             />
           )}
           {category === "businesses" && (
             <BusinessDirectory
+              state={q.state}
               location={q.location}
               keyword={q.q}
               subtype={q.subcategory}

@@ -41,9 +41,11 @@ export function SectionHeading({
 export async function EmptyState({
   category,
   filtered = false,
+  state,
 }: {
   category?: CategoryKey;
   filtered?: boolean;
+  state?: string;
 }) {
   const t = await getTranslations();
   const key = category
@@ -76,13 +78,16 @@ export async function EmptyState({
       <p>{t(filtered ? "noResultsText" : "emptyIntro")}</p>
       <Link
         className={filtered ? "text-link" : "button button-outline"}
-        href={
-          filtered
+        href={(() => {
+          const base = filtered
             ? category
               ? `/${category}`
               : "/search"
-            : `/post${category ? `?category=${category}` : ""}`
-        }
+            : `/post${category ? `?category=${category}` : ""}`;
+          return state
+            ? `${base}${base.includes("?") ? "&" : "?"}state=${state}`
+            : base;
+        })()}
       >
         {filtered ? t("clear") : t("firstPost")}
         {filtered ? <ArrowUpRight size={15} /> : <Plus size={16} />}

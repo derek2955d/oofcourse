@@ -383,5 +383,11 @@
     "and": "and",
     "privacy": "Privacy Policy",
     "unavailable": "Account access is not ready yet. Please check the connection notice above."
+  },
+  "geo": {
+    "state": "State",
+    "allAreas": "All cities and areas",
+    "noAreas": "No cities or areas have been added for this state yet.",
+    "localFoot": "Everyday life in {state}."
   }
 }

@@ -84,3 +84,7 @@ Use the existing private GitHub repository and an isolated feature branch. Verce
 Optional expiry automation: configure **server-only** `SUPABASE_SERVICE_ROLE_KEY` and a random `CRON_SECRET` of at least 32 characters. A trusted scheduler can GET `/api/cron/expire` with a Bearer secret. Missing configuration returns 503; unauthorized callers receive 401; no schedule or paid plan is activated automatically. Public expiry filtering remains effective without this job.
 
 See [launch blockers and operational limits](docs/readiness.md). This repository is a runnable foundation with implemented real-service code, not a declaration that commercial readiness or hosted integration has been verified.
+
+## State and local-area scope
+
+The compact header selects a US state (50 states plus DC), remembered by a functional preference cookie. Category filters then list only enabled cities/areas in that state. A changed state clears the prior local area; locale switches preserve state and filters. The New York reference seed remains unchanged; unconfigured states show honest empty states. Apply `202610250007_state_geography.sql` to add SQL-level state filtering before adding mixed-state regions. Existing NY-only databases retain a strictly checked compatibility path. Publishing has its own explicit state → area fields so editing/restoring an existing draft preserves its real location.

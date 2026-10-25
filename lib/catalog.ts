@@ -1,3 +1,4 @@
+import { normalizeState } from "./geography";
 export const locales = ["en", "zh"] as const;
 export type Locale = (typeof locales)[number];
 export const categoryKeys = [
@@ -161,6 +162,7 @@ export type Listing = {
   category: CategoryKey;
   subcategory: string;
   location: string;
+  state?: string;
   title: string;
   description: string;
   price: number | null;
@@ -176,6 +178,7 @@ export type Listing = {
   is_sponsored?: boolean;
 };
 export type BrowseQuery = {
+  state: string;
   q: string;
   location: string;
   subcategory: string;
@@ -204,6 +207,7 @@ export type BrowseQuery = {
   topic: string;
 };
 export const filterKeys = [
+  "state",
   "q",
   "location",
   "subcategory",
@@ -241,7 +245,8 @@ export function parseQuery(
   ) as Omit<BrowseQuery, "page">;
   return {
     ...q,
-    location: q.location || "nyc",
+    state: normalizeState(q.state),
+    location: q.location,
     sort: ["newest", "price-low", "price-high"].includes(q.sort)
       ? q.sort
       : "newest",
@@ -277,6 +282,11 @@ export function filterListings(
           .join(" ")
           .toLocaleLowerCase()
           .includes(q.q.toLocaleLowerCase()),
+    )
+    .filter(
+      (p) =>
+        (p.state ||
+          (locations.some((x) => x[0] === p.location) ? "NY" : "")) === q.state,
     )
     .filter(
       (p) => !q.location || q.location === "nyc" || p.location === q.location,

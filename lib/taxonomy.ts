@@ -6,11 +6,13 @@ import {
 } from "./catalog";
 export type Taxonomy = {
   locations: [string, string, string][];
+  locationStates: Record<string, string>;
   categories: Record<CategoryKey, { en: string; zh: string }>;
   subtypes: Record<CategoryKey, [string, string, string][]>;
 };
 export const defaultTaxonomy: Taxonomy = {
   locations: locations.map((x) => [...x]),
+  locationStates: Object.fromEntries(locations.map((x) => [x[0], "NY"])),
   categories: Object.fromEntries(
     categoryKeys.map((c) => [
       c,

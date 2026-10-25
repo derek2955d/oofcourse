@@ -10,6 +10,7 @@
    - `202610230004_media.sql`
    - `202610230005_operations.sql`
    - `202610230006_publication_boundary.sql`
+   - `202610250007_state_geography.sql`
 3. 在 Authentication 设置中保留邮箱验证，并将本地开发地址和受信任的预览地址的 `/auth/confirm` 加入允许的重定向地址。设置符合生产需求的邮件服务与速率限制后再商业上线。
 4. 在 API 设置中获取 Project URL 和 Publishable key，安全填入云环境和 Vercel Preview 的 `NEXT_PUBLIC_SUPABASE_URL`、`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`。重新启动开发任务或重建预览；不要把值发送到聊天。
 5. 通过网站注册账号，按邮件完成验证。普通账号仅创建 profiles 记录，没有管理员权限。

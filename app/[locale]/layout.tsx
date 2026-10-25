@@ -13,6 +13,7 @@ import "../globals.css";
 import { AuthenticatedHeader } from "@/components/authenticated-header";
 import { CatalogProvider } from "@/components/catalog-provider";
 import { safeJson } from "@/lib/structured-data";
+import { selectedState } from "@/lib/geography-server";
 import { loadTaxonomy } from "@/lib/taxonomy-server";
 export const metadata: Metadata = {
   metadataBase: new URL("https://oofcourse.com"),
@@ -43,7 +44,10 @@ export default async function Layout({
     <html lang={locale === "zh" ? "zh-CN" : "en-US"}>
       <body>
         <NextIntlClientProvider messages={await getMessages()}>
-          <CatalogProvider data={await loadTaxonomy()}>
+          <CatalogProvider
+            data={await loadTaxonomy()}
+            initialState={await selectedState()}
+          >
             <a href="#main-content" className="skip-link">
               {locale === "zh" ? "跳至主要内容" : "Skip to content"}
             </a>

@@ -17,6 +17,16 @@ export default defineConfig({
   use: base,
   projects: [
     {
+      name: "state-desktop",
+      testMatch: "state-geography.spec.ts",
+      use: { viewport: { width: 1440, height: 1000 } },
+    },
+    {
+      name: "state-mobile",
+      testMatch: "state-geography.spec.ts",
+      use: { viewport: { width: 390, height: 844 } },
+    },
+    {
       name: "compact-desktop",
       testMatch: "compact-header.spec.ts",
       use: { viewport: { width: 1440, height: 1000 } },

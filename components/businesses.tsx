@@ -3,13 +3,16 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { publicDB, configured } from "@/lib/supabase/server";
 import { Store, MapPin, ArrowUpRight } from "lucide-react";
+import { enabledAreas, selectedState } from "@/lib/geography-server";
 import { loadTaxonomy } from "@/lib/taxonomy-server";
 export async function BusinessDirectory({
+  state,
   location = "",
   keyword = "",
   subtype = "",
   limit = 6,
 }: {
+  state?: string;
   location?: string;
   keyword?: string;
   subtype?: string;
@@ -17,10 +20,34 @@ export async function BusinessDirectory({
 }) {
   if (!configured()) return null;
   const db = publicDB();
+  const targetState = await selectedState(state);
+  let scope: Awaited<ReturnType<typeof enabledAreas>>;
+  try {
+    scope = (await enabledAreas(targetState)).filter(
+      (a) =>
+        a.state === targetState &&
+        (!location ||
+          (location === "nyc"
+            ? targetState === "NY" && a.city === "New York"
+            : a.id === location)),
+    );
+  } catch {
+    const t = await getTranslations();
+    return (
+      <p className="notice error-notice" role="alert">
+        {t("dataError")}
+      </p>
+    );
+  }
+  if (!scope.length) return null;
   let query = db
     .from("business_profiles")
     .select("id,name,category,location,description,logo_path")
     .eq("status", "approved")
+    .in(
+      "location",
+      scope.map((a) => a.id),
+    )
     .order("created_at", { ascending: false })
     .limit(limit);
   if (location && location !== "nyc") query = query.eq("location", location);

@@ -1,4 +1,6 @@
 "use client";
+import { useSelectedState } from "./use-geography";
+import { usStates } from "@/lib/geography";
 import { useCatalogConfig } from "./catalog-provider";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useForm, useWatch } from "react-hook-form";
@@ -60,7 +62,14 @@ export function PublishingWizard({
   initialCategory?: CategoryKey;
   existing?: Listing;
 }) {
-  const { locations, subtypes } = useCatalogConfig();
+  const { locations, locationStates, subtypes } = useCatalogConfig();
+  const browseState = useSelectedState();
+  const [postingState, setPostingState] = useState(
+    existing ? locationStates[existing.location] || browseState : browseState,
+  );
+  const areaOptions = locations.filter(
+    (x) => locationStates[x[0]] === postingState,
+  );
   const t = useTranslations(),
     l = useLocale() as Locale;
   const [step, setStep] = useState(0),
@@ -93,9 +102,13 @@ export function PublishingWizard({
       : {
           ...initial(initialCategory),
           subcategory: subtypes[initialCategory][0]?.[0] || "",
+          location: areaOptions.some((x) => x[0] === "nyc")
+            ? "nyc"
+            : areaOptions[0]?.[0] || "",
         },
   });
   const category = useWatch({ control: form.control, name: "category" });
+  const formLocation = useWatch({ control: form.control, name: "location" });
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>;
     const unsub = form.subscribe({
@@ -266,6 +279,9 @@ export function PublishingWizard({
                 );
                 if (parsed.success) {
                   form.reset(parsed.data);
+                  setPostingState(
+                    locationStates[parsed.data.location] || browseState,
+                  );
                   id.current = parsed.data.id;
                   setMessage("savedSuccess");
                 } else setError("validation");
@@ -307,6 +323,7 @@ export function PublishingWizard({
                     form.reset({
                       ...form.getValues(),
                       ...initial(c),
+                      location: form.getValues("location"),
                       subcategory: subtypes[c][0]?.[0] || "",
                       title: form.getValues("title"),
                       description: form.getValues("description"),
@@ -353,9 +370,29 @@ export function PublishingWizard({
                   </select>
                 </label>
                 <label className="field">
+                  {t("geo.state")} *
+                  <select
+                    value={postingState}
+                    onChange={(e) => {
+                      const next = e.target.value;
+                      setPostingState(next);
+                      form.setValue("location", "", { shouldDirty: true });
+                    }}
+                  >
+                    {usStates.map(([code, en, zh]) => (
+                      <option key={code} value={code}>
+                        {l === "zh" ? zh : en}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="field">
                   {t("location")} *
-                  <select {...form.register("location")}>
-                    {locations.map(([s, en, zh]) => (
+                  <select {...form.register("location")} value={formLocation}>
+                    <option value="">
+                      {areaOptions.length ? t("location") : t("geo.noAreas")}
+                    </option>
+                    {areaOptions.map(([s, en, zh]) => (
                       <option value={s} key={s}>
                         {l === "zh" ? zh : en}
                       </option>

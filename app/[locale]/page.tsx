@@ -16,6 +16,8 @@ import { SearchBar } from "@/components/navigation";
 import { BusinessDirectory } from "@/components/businesses";
 import { CategoryGrid, ListingGrid } from "@/components/cards";
 import { SectionHeading, EmptyState } from "@/components/ui";
+import { selectedState } from "@/lib/geography-server";
+import { stateLabel } from "@/lib/geography";
 import { browseListings } from "@/lib/listings";
 import { categoryKeys, type Locale } from "@/lib/catalog";
 import { pageMetadata } from "@/lib/seo";
@@ -39,15 +41,17 @@ export default async function Home({
   searchParams,
 }: {
   params: Promise<{ locale: Locale }>;
-  searchParams: Promise<{ location?: string }>;
+  searchParams: Promise<{ location?: string; state?: string }>;
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations();
-  const { location } = await searchParams;
+  const raw = await searchParams;
+  const location = raw.location,
+    state = await selectedState(raw.state);
   const feeds = await Promise.all(
     categoryKeys.map((category) =>
-      browseListings(category, { location: location || "nyc" }, 3),
+      browseListings(category, { state, location: location || "" }, 3),
     ),
   );
   return (
@@ -66,7 +70,7 @@ export default async function Home({
             <p className="hero-subtitle">{t("heroSubtitle")}</p>
             <p className="hero-local">
               <MapPin size={15} />
-              {t("heroFoot")}
+              {t("geo.localFoot", { state: stateLabel(state, locale) })}
             </p>
           </div>
           <div className="hero-art">
@@ -108,7 +112,7 @@ export default async function Home({
               <ArrowUpRight size={16} />
             </Link>
           </div>
-          <CategoryGrid />
+          <CategoryGrid state={state} />
         </section>
         {categoryKeys.map((category, i) => (
           <section className={`home-feed feed-${category}`} key={category}>
@@ -121,7 +125,7 @@ export default async function Home({
               title={t(
                 `latest${category.charAt(0).toUpperCase() + category.slice(1)}`,
               )}
-              href={`/${category}${location ? `?location=${encodeURIComponent(location)}` : ""}`}
+              href={`/${category}?state=${state}${location ? `&location=${encodeURIComponent(location)}` : ""}`}
               label={t("viewAll")}
             />
             {feeds[i].error ? (
@@ -131,11 +135,11 @@ export default async function Home({
             ) : feeds[i].items.length ? (
               <ListingGrid items={feeds[i].items} category={category} />
             ) : (
-              <EmptyState category={category} />
+              <EmptyState category={category} state={state} />
             )}
           </section>
         ))}
-        <BusinessDirectory location={location || "nyc"} limit={3} />
+        <BusinessDirectory state={state} location={location || ""} limit={3} />
         <section className="posting-cta">
           <div>
             <span className="eyebrow">{t("freeBadge")}</span>

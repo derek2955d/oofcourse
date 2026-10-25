@@ -19,6 +19,8 @@ import {
   UserRound,
   ArrowRight,
 } from "lucide-react";
+import { useSelectedState } from "./use-geography";
+import { usStates, stateLabel } from "@/lib/geography";
 import { categoryKeys, type Locale } from "@/lib/catalog";
 export function LanguageSwitcher() {
   const t = useTranslations(),
@@ -87,35 +89,32 @@ export function LanguageSwitcher() {
   );
 }
 export function LocationSelector() {
-  const { locations } = useCatalogConfig();
   const t = useTranslations(),
-    locale = useLocale() as Locale,
+    locale = useLocale(),
+    state = useSelectedState(),
     params = useSearchParams(),
     pathname = usePathname(),
     router = useRouter();
-  const selected = locations.find(
-    ([slug]) => slug === (params.get("location") || "nyc"),
-  );
-  const selectedName = selected ? selected[locale === "zh" ? 2 : 1] : "";
   return (
     <label
       className="location-select location-compact"
-      title={`${t("navLocation")}: ${selectedName}`}
+      title={`${t("geo.state")}: ${stateLabel(state, locale)}`}
     >
       <MapPin size={19} aria-hidden="true" />
-      <span className="sr-only">{t("navLocation")}</span>
+      <span className="sr-only">{t("geo.state")}</span>
       <select
-        aria-label={t("navLocation")}
-        value={params.get("location") || "nyc"}
+        aria-label={t("geo.state")}
+        value={state}
         onChange={(e) => {
           const q = new URLSearchParams(params);
-          q.set("location", e.target.value);
+          q.set("state", e.target.value);
+          q.delete("location");
           q.delete("page");
           router.push(`${pathname}?${q}`);
         }}
       >
-        {locations.map(([slug, en, zh]) => (
-          <option key={slug} value={slug}>
+        {usStates.map(([code, en, zh]) => (
+          <option key={code} value={code}>
             {locale === "zh" ? zh : en}
           </option>
         ))}
@@ -129,6 +128,7 @@ export function SiteHeader({
   viewer?: { displayName: string | null } | null;
 }) {
   const { categories } = useCatalogConfig();
+  const state = useSelectedState();
   const t = useTranslations(),
     locale = useLocale() as Locale,
     pathname = usePathname();
@@ -166,7 +166,7 @@ export function SiteHeader({
           {categoryKeys.map((c) => (
             <Link
               key={c}
-              href={`/${c}`}
+              href={`/${c}?state=${state}`}
               aria-current={pathname === `/${c}` ? "page" : undefined}
             >
               {categories[c][locale]}
@@ -210,7 +210,7 @@ export function SiteHeader({
           onClick={() => setOpen(false)}
         >
           {categoryKeys.map((c) => (
-            <Link href={`/${c}`} key={c}>
+            <Link href={`/${c}?state=${state}`} key={c}>
               {categories[c][locale]}
               <ArrowRight size={16} />
             </Link>
@@ -263,18 +263,22 @@ export function SearchBar({
   large?: boolean;
   category?: string;
 }) {
-  const { locations, categories } = useCatalogConfig();
+  const state = useSelectedState();
+  const { categories } = useCatalogConfig();
   const t = useTranslations(),
     locale = useLocale() as Locale,
-    params = useSearchParams();
+    params = useSearchParams(),
+    router = useRouter(),
+    pathname = usePathname();
   return (
     <form
       className={`search-bar ${large ? "hero-search" : ""}`}
       action={`/${locale}/${category || "search"}`}
     >
+      {!large && <input type="hidden" name="state" value={state} />}
       {!large &&
         Array.from(params.entries())
-          .filter(([key]) => !["q", "page", "category"].includes(key))
+          .filter(([key]) => !["q", "page", "category", "state"].includes(key))
           .map(([key, value]) => (
             <input type="hidden" name={key} value={value} key={key} />
           ))}
@@ -308,11 +312,18 @@ export function SearchBar({
             <MapPin size={17} />
             <span className="sr-only">{t("location")}</span>
             <select
-              name="location"
-              aria-label={t("location")}
-              defaultValue={params.get("location") || "nyc"}
+              name="state"
+              aria-label={t("geo.state")}
+              value={state}
+              onChange={(e) => {
+                const q = new URLSearchParams(params);
+                q.set("state", e.target.value);
+                q.delete("location");
+                q.delete("page");
+                router.push(`${pathname}?${q}`);
+              }}
             >
-              {locations.map(([s, en, zh]) => (
+              {usStates.map(([s, en, zh]) => (
                 <option key={s} value={s}>
                   {locale === "zh" ? zh : en}
                 </option>

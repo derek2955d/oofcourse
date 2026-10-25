@@ -54,7 +54,7 @@ test("category-specific filters submit real URL state and empty results remain h
     .locator(".empty-state")
     .getByRole("link", { name: "Clear filters" })
     .click();
-  await expect(page).toHaveURL("/en/housing");
+  await expect(page).toHaveURL("/en/housing?state=NY");
   await page.goto("/en/jobs");
   expect(await page.locator('select[name="workplace"]').count()).toBe(2);
   expect(await page.locator('select[name="condition"]').count()).toBe(0);

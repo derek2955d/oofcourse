@@ -20,8 +20,10 @@ import {
   type Locale,
 } from "@/lib/catalog";
 import { CategoryIcon } from "./icons";
+import { selectedState } from "@/lib/geography-server";
 import { loadTaxonomy } from "@/lib/taxonomy-server";
-export async function CategoryGrid() {
+export async function CategoryGrid({ state }: { state?: string } = {}) {
+  const scope = await selectedState(state);
   const locale = (await getLocale()) as Locale;
   const taxonomy = await loadTaxonomy();
   return (
@@ -29,7 +31,7 @@ export async function CategoryGrid() {
       {categoryKeys.map((c) => (
         <Link
           key={c}
-          href={`/${c}`}
+          href={`/${c}?state=${scope}`}
           className="category-card"
           style={
             {

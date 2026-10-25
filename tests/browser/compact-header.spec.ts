@@ -7,18 +7,18 @@ test("compact header controls retain choices, queries and keyboard access", asyn
   await expect(page.locator("main h1")).toBeVisible();
   const location = page
     .locator(".site-header")
-    .getByRole("combobox", { name: "Your area", exact: true });
-  await expect(location).toHaveValue("nyc");
+    .getByRole("combobox", { name: "State", exact: true });
+  await expect(location).toHaveValue("NY");
   expect((await location.boundingBox())!.width).toBeLessThanOrEqual(44);
-  await location.selectOption("queens");
-  await expect(page).toHaveURL(/location=queens/);
+  await location.selectOption("NJ");
+  await expect(page).toHaveURL(/state=NJ/);
   expect(new URL(page.url()).searchParams.get("q")).toBe("lamp");
   expect(new URL(page.url()).searchParams.get("sort")).toBe("newest");
   expect(new URL(page.url()).searchParams.has("page")).toBe(false);
-  await expect(location).toHaveValue("queens");
+  await expect(location).toHaveValue("NJ");
   await expect(page.locator(".location-compact:visible")).toHaveAttribute(
     "title",
-    /Queens/,
+    /New Jersey/,
   );
   const control = page.locator(".language-switch").getByRole("button");
   await expect(control).toHaveText("");
@@ -54,13 +54,13 @@ test("compact header controls retain choices, queries and keyboard access", asyn
     .click();
   await expect(page).toHaveURL(/\/zh\/search/);
   await expect(control).toHaveAttribute("aria-expanded", "false");
-  expect(new URL(page.url()).searchParams.get("location")).toBe("queens");
+  expect(new URL(page.url()).searchParams.get("state")).toBe("NJ");
   expect(new URL(page.url()).searchParams.get("q")).toBe("lamp");
   await expect(
     page
       .locator(".site-header")
-      .getByRole("combobox", { name: "所在地区", exact: true }),
-  ).toHaveValue("queens");
+      .getByRole("combobox", { name: "州", exact: true }),
+  ).toHaveValue("NJ");
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,

@@ -1,4 +1,6 @@
 import "server-only";
+import { legacyStateScope } from "./geography";
+import { enabledAreas, selectedState } from "./geography-server";
 import { configured, publicDB } from "./supabase/server";
 import {
   isCategory,
@@ -20,6 +22,7 @@ export function fromRow(raw: Record<string, unknown>): Listing | null {
     category: raw.category_id as CategoryKey,
     subcategory: String(raw.subcategory),
     location: String(raw.location_id),
+    state: typeof raw.state === "string" ? raw.state : undefined,
     title: String(raw.title),
     description: String(raw.description),
     price: raw.price === null ? null : Number(raw.price),
@@ -43,15 +46,32 @@ export async function browseListings(
     return { items: [], total: 0, error: false, configured: false };
   try {
     const db = publicDB();
-    const { data, error } = await db.rpc("search_listings", {
+    const state = await selectedState(query.state);
+    const args = {
       p_category: category || null,
-      p_filters: query,
+      p_filters: { ...query, state },
       p_limit: take,
       p_offset: ((query.page || 1) - 1) * take,
-    });
+    };
+    let { data, error } = await db.rpc("search_listings_by_state", args);
+    if (error?.code === "PGRST202") {
+      // Safe compatibility with the existing NY-only database until migration 007.
+      // Never post-filter a paginated result or silently show another state's rows.
+      const compatibility = legacyStateScope(
+        await enabledAreas(),
+        state,
+        query.location,
+      );
+      if (compatibility === "empty")
+        return { items: [], total: 0, error: false, configured: true };
+      if (compatibility !== "safe")
+        throw new Error("State search migration required");
+      ({ data, error } = await db.rpc("search_listings", args));
+    }
     if (error) throw error;
     const payload = data as { items: Record<string, unknown>[]; total: number };
     const items = (payload.items || [])
+      .map((row) => ({ ...row, state: row.state || state }))
       .map(fromRow)
       .filter((p): p is Listing => !!p);
     await attachImages(items, db);
