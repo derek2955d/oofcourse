@@ -11,7 +11,7 @@ test("compact header controls retain choices, queries and keyboard access", asyn
   await expect(location).toHaveValue("NY");
   await expect(page.locator(".footer-location")).toHaveText("New York");
   expect((await location.boundingBox())!.width).toBeLessThanOrEqual(44);
-  await expect(location.locator("option")).toHaveCount(2);
+  await expect(location.locator("option")).toHaveCount(1);
   await expect(page).toHaveURL(/state=NY/);
   expect(new URL(page.url()).searchParams.get("q")).toBe("lamp");
   expect(new URL(page.url()).searchParams.get("sort")).toBe("newest");

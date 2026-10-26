@@ -91,10 +91,11 @@ export function LanguageSwitcher() {
 export function LocationSelector() {
   const t = useTranslations(),
     locale = useLocale(),
-    state = useSelectedState(),
+    selectedState = useSelectedState(),
     params = useSearchParams(),
     pathname = usePathname(),
     router = useRouter();
+  const state = selectedState === "NJ" ? "NY" : selectedState;
   return (
     <label
       className="location-select location-compact"
@@ -113,11 +114,13 @@ export function LocationSelector() {
           router.push(`${pathname}?${q}`);
         }}
       >
-        {availableStates.map(([code, en, zh]) => (
-          <option key={code} value={code}>
-            {locale === "zh" ? zh : en}
-          </option>
-        ))}
+        {availableStates
+          .filter(([code]) => code === "NY")
+          .map(([code, en, zh]) => (
+            <option key={code} value={code}>
+              {locale === "zh" ? zh : en}
+            </option>
+          ))}
       </select>
     </label>
   );

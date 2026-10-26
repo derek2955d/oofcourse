@@ -6,11 +6,10 @@ import {
   CalendarDays,
   House,
   ShoppingBag,
-  ExternalLink,
   MapPin,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { officialCalendars, type LivingGuide } from "@/lib/living";
+import { type LivingGuide } from "@/lib/living";
 import { upcomingEvents } from "@/lib/living-server";
 import { loadTaxonomy } from "@/lib/taxonomy-server";
 import type { Locale } from "@/lib/catalog";
@@ -51,35 +50,6 @@ export function LivingGuideCard({
         </div>
       </Link>
     </article>
-  );
-}
-
-export async function OfficialCalendars() {
-  const t = await getTranslations("living");
-  const locale = (await getLocale()) as Locale;
-  return (
-    <div className="living-official">
-      <h3>{t("official")}</h3>
-      <div className="living-calendar-grid">
-        {officialCalendars.map((source) => (
-          <a
-            key={source.id}
-            href={source.url}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <CalendarDays size={20} aria-hidden="true" />
-            <div>
-              <strong>{source.name[locale]}</strong>
-              <p>{source.description[locale]}</p>
-            </div>
-            <ExternalLink size={15} aria-hidden="true" />
-            <span className="sr-only">{t("newTab")}</span>
-          </a>
-        ))}
-      </div>
-      <p className="living-source-note">{t("officialNote")}</p>
-    </div>
   );
 }
 
@@ -164,7 +134,6 @@ export async function LivingEvents({
           <p className="living-event-empty">{t("noEvents")}</p>
         )
       )}
-      <OfficialCalendars />
     </section>
   );
 }

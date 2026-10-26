@@ -14,11 +14,11 @@ test("NY and nearby NJ rollout hides unopened states and normalizes older state 
     .locator(".site-header")
     .getByRole("combobox", { name: "State", exact: true });
   await expect(state).toHaveValue("NY");
-  await expect(state.locator("option")).toHaveCount(2);
-  await expect(state.locator("option")).toHaveText(["New York", "New Jersey"]);
+  await expect(state.locator("option")).toHaveCount(1);
+  await expect(state.locator("option")).toHaveText("New York");
   await expect(
     page.locator(".site-header .location-compact:visible option"),
-  ).toHaveCount(2);
+  ).toHaveCount(1);
   await page.locator('.category-card[href*="/housing"]').click();
   await expect(page).toHaveURL(/\/en\/housing\?state=NY/);
   await expect(page.locator(".catalog-header .eyebrow")).toHaveText("New York");
@@ -138,6 +138,19 @@ test("near-Manhattan NJ selection submits the correct state and survives languag
   await expect(page).toHaveURL(/state=NJ/);
   await expect(page).toHaveURL(/location=jersey-city/);
   await expect(page.locator(".catalog-header .eyebrow")).toHaveText("新泽西");
+  await expect(
+    page.locator('.site-header .location-compact:visible select option'),
+  ).toHaveCount(1);
+  const quick = page.locator(".browse-areas");
+  await expect(
+    quick.getByRole("link", { name: "曼哈顿", exact: true }),
+  ).toBeVisible();
+  await expect(
+    quick.getByRole("link", { name: "霍博肯", exact: true }),
+  ).toHaveAttribute("href", /state=NJ/);
+  await expect(
+    quick.getByRole("link", { name: "曼哈顿", exact: true }),
+  ).toHaveAttribute("href", /state=NY/);
   await expect(page.locator(".active-filters")).toContainText("泽西市");
   await page.locator(".language-switch").getByRole("button").click();
   await page

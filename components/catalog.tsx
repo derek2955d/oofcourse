@@ -19,7 +19,6 @@ import { BusinessDirectory } from "./businesses";
 import { EmptyState } from "./ui";
 import { BrowseNavigation } from "./browse-navigation";
 import { EditorialActivityCards } from "./editorial-activities";
-import { OfficialCalendars } from "./living";
 import "@/app/living.css";
 import { supportsPriceFilters } from "@/lib/browse-presentation";
 export async function Catalog({
@@ -119,7 +118,6 @@ export async function Catalog({
             label={t("editorialActivity.label")}
             view={t("living.viewEvent")}
           />
-          <OfficialCalendars />
         </section>
       )}
       <Suspense>

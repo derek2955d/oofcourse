@@ -263,7 +263,7 @@ test("bilingual routes and search metadata, hreflang, robots and sitemap are cor
   );
 });
 
-test("New York living guides, official calendars and bilingual article routes work without invented events", async ({
+test("New York living guides and bilingual article routes work without calendar directories or invented events", async ({
   page,
   request,
 }) => {
@@ -285,15 +285,7 @@ test("New York living guides, official calendars and bilingual article routes wo
     );
     if (!activeEditorialActivities().length)
       await expect(section.locator(".living-event-empty")).toBeVisible();
-    const sources = section.locator(".living-calendar-grid > a");
-    await expect(sources).toHaveCount(4);
-    for (const link of await sources.all()) {
-      await expect(link).toHaveAttribute("target", "_blank");
-      await expect(link).toHaveAttribute("rel", "noopener noreferrer");
-      expect(new URL((await link.getAttribute("href"))!).protocol).toBe(
-        "https:",
-      );
-    }
+    await expect(page.locator(".living-official")).toHaveCount(0);
     await page.locator(".home-living-index").click();
     await expect(page).toHaveURL(new RegExp(`/${locale}/living$`));
     await page
@@ -456,22 +448,19 @@ test("published editorial activity has truthful details, working source links an
   expect(missing).not.toContain("editorial-activity-detail");
 });
 
-test("community hub combines activities, calendars and posts without area filters", async ({
+test("community hub combines activities and posts without calendar directories or area filters", async ({
   page,
 }) => {
   for (const locale of ["zh", "en"]) {
     for (const suffix of ["", "?subcategory=events"]) {
       await page.goto(`/${locale}/community${suffix}`);
       await expect(page.locator(".community-activities")).toBeVisible();
-      await expect(page.locator(".living-calendar-grid a")).toHaveCount(4);
+      await expect(page.locator(".living-official")).toHaveCount(0);
       const { activeEditorialActivities } =
         await import("../../lib/editorial-activities");
       await expect(
         page.locator(".community-activities .editorial-activity-card"),
       ).toHaveCount(activeEditorialActivities().length);
-      await expect(
-        page.locator(".living-calendar-grid a").first(),
-      ).toHaveAttribute("rel", "noopener noreferrer");
       await expect(page.locator('main input[name="q"]').first()).toBeAttached();
       expect(
         await page.evaluate(

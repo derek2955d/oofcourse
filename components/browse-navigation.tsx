@@ -20,10 +20,15 @@ export async function BrowseNavigation({
   const areas = taxonomy.locations.filter(
     ([id]) => taxonomy.locationStates[id] === query.state,
   );
-  const quickIds: readonly string[] =
-    query.state === "NJ" ? nearManhattanNJ.map((row) => row[0]) : nycBoroughIds;
-  const quick = quickIds.flatMap((borough) => {
-    const row = areas.find(([id]) => id === borough);
+  const quickIds: readonly string[] = [
+    ...nycBoroughIds,
+    ...nearManhattanNJ.map((row) => row[0]),
+  ];
+  const quick = quickIds.flatMap((id) => {
+    const row = taxonomy.locations.find(
+      (row) =>
+        row[0] === id && ["NY", "NJ"].includes(taxonomy.locationStates[id]),
+    );
     return row ? [row] : [];
   });
   function href(change: Record<string, string>) {
@@ -79,7 +84,7 @@ export async function BrowseNavigation({
             <Link
               key={id}
               prefetch={false}
-              href={href({ location: id })}
+              href={href({ location: id, state: taxonomy.locationStates[id] })}
               aria-current={query.location === id ? "true" : undefined}
             >
               {locale === "zh" ? zh : en}
