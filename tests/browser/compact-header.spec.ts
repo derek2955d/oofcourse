@@ -55,6 +55,13 @@ test("compact header controls retain choices, queries and keyboard access", asyn
     .click();
   await expect(page).toHaveURL(/\/zh\/search/);
   await expect(page.locator(".footer-location")).toHaveText("纽约");
+  await expect(
+    page.locator(".site-header .location-compact:visible option:checked"),
+  ).toHaveText("纽约");
+  await expect(page.locator(".location-compact:visible")).toHaveAttribute(
+    "title",
+    "州: 纽约",
+  );
   await expect(control).toHaveAttribute("aria-expanded", "false");
   expect(new URL(page.url()).searchParams.get("state")).toBe("NY");
   expect(new URL(page.url()).searchParams.get("q")).toBe("lamp");

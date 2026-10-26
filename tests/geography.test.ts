@@ -16,7 +16,7 @@ test("state choices are states/DC, not city or neighborhood records", () => {
   assert.equal(new Set(usStates.map((x) => x[0])).size, 51);
   assert.equal(normalizeState(" ca "), "CA");
   assert.equal(normalizeState("queens"), "NY");
-  assert.equal(stateLabel("NY", "zh"), "纽约州");
+  assert.equal(stateLabel("NY", "zh"), "纽约");
   assert.equal(cookieState("x=1; oofcourse_state=CA"), "NY");
   assert.equal(defaultTaxonomy.locationStates.queens, "NY");
   assert.ok(
