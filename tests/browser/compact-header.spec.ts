@@ -9,6 +9,7 @@ test("compact header controls retain choices, queries and keyboard access", asyn
     .locator(".site-header")
     .getByRole("combobox", { name: "State", exact: true });
   await expect(location).toHaveValue("NY");
+  await expect(page.locator(".footer-location")).toHaveText("New York");
   expect((await location.boundingBox())!.width).toBeLessThanOrEqual(44);
   await expect(location.locator("option")).toHaveCount(1);
   await expect(page).toHaveURL(/state=NY/);
@@ -53,6 +54,7 @@ test("compact header controls retain choices, queries and keyboard access", asyn
     .getByRole("link", { name: "中文", exact: true })
     .click();
   await expect(page).toHaveURL(/\/zh\/search/);
+  await expect(page.locator(".footer-location")).toHaveText("纽约州");
   await expect(control).toHaveAttribute("aria-expanded", "false");
   expect(new URL(page.url()).searchParams.get("state")).toBe("NY");
   expect(new URL(page.url()).searchParams.get("q")).toBe("lamp");

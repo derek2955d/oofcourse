@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { ArrowUpRight, MapPin } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
+import { FooterLocation } from "./footer-location";
 export async function SiteFooter() {
   const t = await getTranslations();
   return (
@@ -12,10 +13,7 @@ export async function SiteFooter() {
             <i />
           </Link>
           <p>{t("footerBlurb")}</p>
-          <span className="footer-location">
-            <MapPin size={14} />
-            New York City
-          </span>
+          <FooterLocation />
         </div>
         <div>
           <h2>{t("footerPlatform")}</h2>
