@@ -1,0 +1,50 @@
+import { CalendarDays, ArrowUpRight, MapPin } from "lucide-react";
+import { Link } from "@/i18n/navigation";
+import { activeEditorialActivities } from "@/lib/editorial-activities";
+import type { Locale } from "@/lib/catalog";
+export function EditorialActivityCards({
+  locale,
+  label,
+  view,
+}: {
+  locale: Locale;
+  label: string;
+  view: string;
+}) {
+  const activities = activeEditorialActivities();
+  if (!activities.length) return null;
+  return (
+    <div className="editorial-activity-cards" aria-label={label}>
+      {activities.map((activity) => (
+        <article className="editorial-activity-card" key={activity.slug}>
+          <div className="editorial-activity-label">
+            <CalendarDays size={17} aria-hidden="true" />
+            <span>{label}</span>
+            <time dateTime={activity.startsAt}>
+              {new Intl.DateTimeFormat(locale === "zh" ? "zh-CN" : "en-US", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+                timeZone: "America/New_York",
+              }).format(new Date(activity.startsAt))}
+            </time>
+          </div>
+          <h3>
+            <Link href={`/activities/${activity.slug}`}>
+              {activity.title[locale]}
+            </Link>
+          </h3>
+          <p>{activity.summary[locale]}</p>
+          <p className="editorial-activity-place">
+            <MapPin size={14} aria-hidden="true" />
+            {activity.place[locale]}
+          </p>
+          <Link href={`/activities/${activity.slug}`} className="text-link">
+            {view}
+            <ArrowUpRight size={14} />
+          </Link>
+        </article>
+      ))}
+    </div>
+  );
+}

@@ -477,5 +477,18 @@
     "guides": "Life guides",
     "safety": "Safety tips",
     "postEvent": "Share a community activity"
+  },
+  "editorialActivity": {
+    "label": "OofCourse editorial",
+    "when": "Opening",
+    "place": "Location",
+    "timezone": "New York time",
+    "fees": "Before you book",
+    "dates": "Opening day and rink season",
+    "source": "Official source",
+    "checked": "Information checked: {date}",
+    "note": "An independently written summary of public facts, not organizer-authorized promotional copy. Check current arrangements with the organizer. OofCourse does not sell tickets, make reservations or guarantee availability.",
+    "official": "Official details & reservations",
+    "past": "The opening date has passed. See the official website for ongoing seasonal arrangements."
   }
 }

@@ -1,13 +1,18 @@
 import type { MetadataRoute } from "next";
+import { activeEditorialActivities } from "@/lib/editorial-activities";
 import { livingGuides } from "@/lib/living";
 import { categoryKeys } from "@/lib/catalog";
 import { configured, publicDB } from "@/lib/supabase/server";
+export const dynamic = "force-dynamic";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const paths = [
     "",
     ...categoryKeys.map((c) => "/" + c),
     "/categories",
     "/living",
+    ...activeEditorialActivities().map(
+      (activity) => `/activities/${activity.slug}`,
+    ),
     ...livingGuides.map((guide) => `/living/${guide.slug}`),
     "/about",
     "/contact",

@@ -242,6 +242,8 @@ test("New York living guides, official calendars and bilingual article routes wo
 }) => {
   test.setTimeout(180000);
   const { livingGuides } = await import("../../lib/living");
+  const { activeEditorialActivities } =
+    await import("../../lib/editorial-activities");
   const { default: AxeBuilder } = await import("@axe-core/playwright");
   for (const locale of ["en", "zh"] as const) {
     await page.goto(`/${locale}`);
@@ -251,7 +253,11 @@ test("New York living guides, official calendars and bilingual article routes wo
       page.locator(".activity-home-aside .category-card"),
     ).toHaveCount(6);
     await expect(section.locator(".living-upcoming article")).toHaveCount(0);
-    await expect(section.locator(".living-event-empty")).toBeVisible();
+    await expect(section.locator(".editorial-activity-card")).toHaveCount(
+      activeEditorialActivities().length,
+    );
+    if (!activeEditorialActivities().length)
+      await expect(section.locator(".living-event-empty")).toBeVisible();
     const sources = section.locator(".living-calendar-grid > a");
     await expect(sources).toHaveCount(4);
     for (const link of await sources.all()) {
@@ -341,4 +347,84 @@ test("New York living guides, official calendars and bilingual article routes wo
   expect([200, 404]).toContain(missing.status());
   expect(body).toContain("noindex");
   expect(body).not.toContain('class="living-article"');
+});
+
+test("published editorial activity has truthful details, working source links and bilingual navigation", async ({
+  page,
+  request,
+}) => {
+  const { activeEditorialActivities, editorialActivities } =
+    await import("../../lib/editorial-activities");
+  const { default: AxeBuilder } = await import("@axe-core/playwright");
+  const activity = editorialActivities[0];
+  for (const locale of ["zh", "en"] as const) {
+    await page.goto(`/${locale}`);
+    await expect(page.locator(".editorial-activity-card")).toHaveCount(
+      activeEditorialActivities().length,
+    );
+    if (activeEditorialActivities().length)
+      await page.locator(".editorial-activity-card h3 a").click();
+    else await page.goto(`/${locale}/activities/${activity.slug}`);
+    await expect(page).toHaveURL(
+      new RegExp(`/${locale}/activities/${activity.slug}`),
+    );
+    await expect(page.locator("main h1")).toHaveText(activity.title[locale]);
+    await expect(
+      page.locator(".editorial-activity-facts time"),
+    ).toHaveAttribute("datetime", activity.startsAt);
+    await expect(page.locator(".editorial-activity-detail")).toContainText(
+      activity.fees[locale],
+    );
+    await expect(page.locator(".editorial-activity-detail")).toContainText(
+      activity.seasonNote[locale],
+    );
+    const official = page.locator(".living-article-action a[target='_blank']");
+    await expect(official).toHaveAttribute("href", activity.sourceUrl);
+    await expect(official).toHaveAttribute("rel", "noopener noreferrer");
+    await expect(page.locator(".editorial-activity-detail img")).toHaveCount(0);
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
+    const scan = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+      .analyze();
+    expect(
+      scan.violations.map((v) => ({
+        id: v.id,
+        nodes: v.nodes.map((n) => n.target),
+      })),
+    ).toEqual([]);
+    await page.screenshot({
+      path: `test-results/editorial-${locale}-${page.viewportSize()!.width}.png`,
+      fullPage: true,
+    });
+    await page.locator(".language-switch").getByRole("button").click();
+    await page
+      .locator(".language-switch")
+      .getByRole("link", {
+        name: locale === "zh" ? "English" : "中文",
+        exact: true,
+      })
+      .click();
+    await expect(page).toHaveURL(
+      new RegExp(
+        `/${locale === "zh" ? "en" : "zh"}/activities/${activity.slug}`,
+      ),
+    );
+  }
+  const html = await (
+    await request.get(`/zh/activities/${activity.slug}`)
+  ).text();
+  expect(html).toContain(
+    `https://oofcourse.com/zh/activities/${activity.slug}`,
+  );
+  expect(html).toContain('hrefLang="en-US"');
+  expect(html).not.toContain('"@type":"Event"');
+  const missing = await (
+    await request.get("/en/activities/not-an-activity")
+  ).text();
+  expect(missing).toContain("noindex");
+  expect(missing).not.toContain("editorial-activity-detail");
 });

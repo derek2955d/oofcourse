@@ -14,6 +14,8 @@ import { officialCalendars, type LivingGuide } from "@/lib/living";
 import { upcomingEvents } from "@/lib/living-server";
 import { loadTaxonomy } from "@/lib/taxonomy-server";
 import type { Locale } from "@/lib/catalog";
+import { activeEditorialActivities } from "@/lib/editorial-activities";
+import { EditorialActivityCards } from "./editorial-activities";
 
 export function LivingGuideCard({
   guide,
@@ -112,6 +114,11 @@ export async function LivingEvents({
           <ArrowUpRight size={15} />
         </Link>
       </div>
+      <EditorialActivityCards
+        locale={locale}
+        label={(await getTranslations("editorialActivity"))("label")}
+        view={t("viewEvent")}
+      />
       {!!events.items.length && (
         <div className="living-upcoming" aria-label={t("communityEvents")}>
           {events.items.map((event) => (
@@ -152,7 +159,8 @@ export async function LivingEvents({
           {t("eventError")}
         </p>
       ) : (
-        !events.items.length && (
+        !events.items.length &&
+        !activeEditorialActivities().length && (
           <p className="living-event-empty">{t("noEvents")}</p>
         )
       )}
