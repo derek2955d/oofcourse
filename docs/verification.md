@@ -82,3 +82,10 @@ Published the independently written Bryant Park Winter Village opening summary t
 Typecheck, lint, 17 unit tests and production build passed. Six desktop/mobile browser cases passed, covering responsive regressions, the actual editorial card/detail/source link, language switching on the same activity, truthful fee/scope copy, unknown-slug and metadata handling, and automated WCAG AA checks. Screenshots are saved outside the repository at `/workspace/oofcourse-review-screenshots/first-activity/`; logs are `/tmp/oofcourse-first-activity-build.log` and `/tmp/oofcourse-first-activity-browser.log`.
 
 No hosted database write or privileged API was used. This entry is managed in `lib/editorial-activities.ts`, not the Supabase member-listing admin UI; source changes require a repository deployment. Production DNS/main were not changed. Rights/source observations remain in the activity draft and content-maintenance documentation; no blanket republication authorization is claimed.
+
+### Community activity entry connection — 2026-10-26
+
+- Community landing and its events subcategory now include the same source-controlled editorial activity cards and four official calendar directories as the homepage. Member submissions remain in the existing searchable listing area; editorial records are not inserted into Supabase.
+- Keyword, local-area, other-subcategory and paginated results omit the editorial/calendar block so these resources do not appear to match unrelated filters.
+- Typecheck, lint, all 17 unit tests and production build passed. Focused bilingual desktop/mobile browser coverage verifies both entry URLs, calendar links, editorial card counts, preserved search and no horizontal overflow.
+- Hosted Supabase writes/auth are not exercised by this local check. Production domain unchanged.

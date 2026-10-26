@@ -428,3 +428,33 @@ test("published editorial activity has truthful details, working source links an
   expect(missing).toContain("noindex");
   expect(missing).not.toContain("editorial-activity-detail");
 });
+
+test("community browse includes editorial activities and official calendars without replacing filters", async ({
+  page,
+}) => {
+  for (const locale of ["zh", "en"]) {
+    for (const suffix of ["", "?subcategory=events"]) {
+      await page.goto(`/${locale}/community${suffix}`);
+      await expect(page.locator(".community-activities")).toBeVisible();
+      await expect(page.locator(".living-calendar-grid a")).toHaveCount(4);
+      const { activeEditorialActivities } =
+        await import("../../lib/editorial-activities");
+      await expect(
+        page.locator(".community-activities .editorial-activity-card"),
+      ).toHaveCount(activeEditorialActivities().length);
+      await expect(
+        page.locator(".living-calendar-grid a").first(),
+      ).toHaveAttribute("rel", "noopener noreferrer");
+      await expect(page.locator('main input[name="q"]').first()).toBeAttached();
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= innerWidth,
+        ),
+      ).toBe(true);
+    }
+    await page.goto(`/${locale}/community?subcategory=volunteering`);
+    await expect(page.locator(".community-activities")).toHaveCount(0);
+    await page.goto(`/${locale}/community?q=library`);
+    await expect(page.locator(".community-activities")).toHaveCount(0);
+  }
+});

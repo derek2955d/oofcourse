@@ -18,6 +18,9 @@ import { CategoryIcon } from "./icons";
 import { BusinessDirectory } from "./businesses";
 import { EmptyState } from "./ui";
 import { BrowseNavigation } from "./browse-navigation";
+import { EditorialActivityCards } from "./editorial-activities";
+import { OfficialCalendars } from "./living";
+import "@/app/living.css";
 import { supportsPriceFilters } from "@/lib/browse-presentation";
 export async function Catalog({
   category,
@@ -85,6 +88,28 @@ export async function Catalog({
           </span>
         )}
       </div>
+      {category === "community" &&
+        (!q.subcategory || q.subcategory === "events") &&
+        !q.q &&
+        !q.location &&
+        q.page === 1 && (
+          <section
+            className="living-events community-activities"
+            aria-labelledby="community-activities-heading"
+          >
+            <div className="living-section-heading">
+              <h2 id="community-activities-heading">
+                {t("living.homeEventsHeading")}
+              </h2>
+            </div>
+            <EditorialActivityCards
+              locale={l}
+              label={t("editorialActivity.label")}
+              view={t("living.viewEvent")}
+            />
+            <OfficialCalendars />
+          </section>
+        )}
       <Suspense>
         <SearchBar category={category} />
       </Suspense>
