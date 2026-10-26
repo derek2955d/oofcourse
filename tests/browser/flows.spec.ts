@@ -234,3 +234,105 @@ test("bilingual routes and search metadata, hreflang, robots and sitemap are cor
     "Disallow: /",
   );
 });
+
+test("New York living guides, official calendars and bilingual article routes work without invented events", async ({
+  page,
+  request,
+}) => {
+  test.setTimeout(180000);
+  const { livingGuides } = await import("../../lib/living");
+  const { default: AxeBuilder } = await import("@axe-core/playwright");
+  for (const locale of ["en", "zh"] as const) {
+    await page.goto(`/${locale}`);
+    const section = page.locator(".living-home");
+    await expect(section.locator(".living-guide-card")).toHaveCount(3);
+    await expect(section.locator(".living-upcoming article")).toHaveCount(0);
+    await expect(section.locator(".living-event-empty")).toBeVisible();
+    const sources = section.locator(".living-calendar-grid > a");
+    await expect(sources).toHaveCount(4);
+    for (const link of await sources.all()) {
+      await expect(link).toHaveAttribute("target", "_blank");
+      await expect(link).toHaveAttribute("rel", "noopener noreferrer");
+      expect(new URL((await link.getAttribute("href"))!).protocol).toBe(
+        "https:",
+      );
+    }
+    await section
+      .locator(".living-guide-card")
+      .first()
+      .getByRole("link")
+      .click();
+    await expect(page).toHaveURL(
+      new RegExp(`/${locale}/living/rental-viewing-checklist`),
+    );
+    for (const guide of livingGuides) {
+      await page.goto(`/${locale}/living/${guide.slug}`);
+      await expect(page.locator("main h1")).toHaveText(guide.title[locale]);
+      await expect(page.locator(".living-article > section")).toHaveCount(3);
+      await expect(page.locator(".living-article-sources a")).toHaveCount(
+        guide.sources.length,
+      );
+      await expect(page.locator(".living-article-action a")).toHaveAttribute(
+        "href",
+        `/${locale}/${guide.topic}?state=NY`,
+      );
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= innerWidth,
+        ),
+      ).toBe(true);
+      const response = await request.get(`/${locale}/living/${guide.slug}`);
+      const html = await response.text();
+      expect(response.status()).toBe(200);
+      expect(html).toContain(
+        `https://oofcourse.com/${locale}/living/${guide.slug}`,
+      );
+      expect(html).toContain('hrefLang="en-US"');
+      expect(html).toContain('hrefLang="zh-CN"');
+      expect(html).not.toContain('"@type":"Event"');
+    }
+    const target = locale === "en" ? "中文" : "English";
+    const other = locale === "en" ? "zh" : "en";
+    await page.locator(".language-switch").getByRole("button").click();
+    await page
+      .locator(".language-switch")
+      .getByRole("link", { name: target, exact: true })
+      .click();
+    await expect(page).toHaveURL(
+      new RegExp(`/${other}/living/libraries-and-local-activities`),
+    );
+    await page.goto(`/${locale}/living`);
+    await expect(page.locator("main h1")).toHaveCount(1);
+    const scan = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+      .analyze();
+    expect(
+      scan.violations.map((v) => ({
+        id: v.id,
+        nodes: v.nodes.map((n) => n.target),
+      })),
+    ).toEqual([]);
+    await page.screenshot({
+      path: `test-results/living-${locale}-${page.viewportSize()!.width}.png`,
+      fullPage: true,
+    });
+    await page.goto(`/${locale}/living/rental-viewing-checklist`);
+    const articleScan = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+      .analyze();
+    expect(
+      articleScan.violations.map((v) => ({
+        id: v.id,
+        nodes: v.nodes.map((n) => n.target),
+      })),
+    ).toEqual([]);
+  }
+  const sitemap = await (await request.get("/sitemap.xml")).text();
+  for (const guide of livingGuides)
+    expect(sitemap).toContain(`/zh/living/${guide.slug}`);
+  const missing = await request.get("/en/living/not-a-real-guide");
+  const body = await missing.text();
+  expect([200, 404]).toContain(missing.status());
+  expect(body).toContain("noindex");
+  expect(body).not.toContain('class="living-article"');
+});

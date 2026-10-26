@@ -215,6 +215,10 @@ export function SiteHeader({
               <ArrowRight size={16} />
             </Link>
           ))}
+          <Link href="/living">
+            {t("living.nav")}
+            <ArrowRight size={16} />
+          </Link>
           <Link
             href={viewer ? "/account" : "/login"}
             className="mobile-menu-account"

@@ -1,0 +1,194 @@
+import { getLocale, getTranslations } from "next-intl/server";
+import {
+  ArrowUpRight,
+  ArrowRight,
+  BookOpen,
+  CalendarDays,
+  House,
+  ShoppingBag,
+  ExternalLink,
+  MapPin,
+} from "lucide-react";
+import { Link } from "@/i18n/navigation";
+import {
+  livingGuides,
+  officialCalendars,
+  type LivingGuide,
+} from "@/lib/living";
+import { upcomingEvents } from "@/lib/living-server";
+import { loadTaxonomy } from "@/lib/taxonomy-server";
+import type { Locale } from "@/lib/catalog";
+
+export function LivingGuideCard({
+  guide,
+  locale,
+  read,
+}: {
+  guide: LivingGuide;
+  locale: Locale;
+  read: string;
+}) {
+  const Icon =
+    guide.topic === "housing"
+      ? House
+      : guide.topic === "marketplace"
+        ? ShoppingBag
+        : BookOpen;
+  return (
+    <article className={`living-guide-card living-topic-${guide.topic}`}>
+      <Link href={`/living/${guide.slug}`} className="living-guide-link">
+        <div className="living-guide-art" aria-hidden="true">
+          <span className="living-art-orbit" />
+          <Icon size={40} strokeWidth={1.5} />
+          <span className="living-art-spark">+</span>
+        </div>
+        <div className="living-guide-body">
+          <span className="living-guide-tag">{guide.tag[locale]}</span>
+          <h3>{guide.title[locale]}</h3>
+          <p>{guide.summary[locale]}</p>
+          <span className="text-link">
+            {read}
+            <ArrowRight size={15} />
+          </span>
+        </div>
+      </Link>
+    </article>
+  );
+}
+
+export async function OfficialCalendars() {
+  const t = await getTranslations("living");
+  const locale = (await getLocale()) as Locale;
+  return (
+    <div className="living-official">
+      <h3>{t("official")}</h3>
+      <div className="living-calendar-grid">
+        {officialCalendars.map((source) => (
+          <a
+            key={source.id}
+            href={source.url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <CalendarDays size={20} aria-hidden="true" />
+            <div>
+              <strong>{source.name[locale]}</strong>
+              <p>{source.description[locale]}</p>
+            </div>
+            <ExternalLink size={15} aria-hidden="true" />
+            <span className="sr-only">{t("newTab")}</span>
+          </a>
+        ))}
+      </div>
+      <p className="living-source-note">{t("officialNote")}</p>
+    </div>
+  );
+}
+
+export async function LivingEvents() {
+  const t = await getTranslations("living");
+  const locale = (await getLocale()) as Locale;
+  const [events, taxonomy] = await Promise.all([
+    upcomingEvents(),
+    loadTaxonomy(),
+  ]);
+  return (
+    <section
+      className="living-events"
+      id="events"
+      aria-labelledby="living-events-heading"
+    >
+      <div className="living-section-heading">
+        <div>
+          <p className="eyebrow">{t("upcoming")}</p>
+          <h2 id="living-events-heading">{t("events")}</h2>
+          <p>{t("eventsIntro")}</p>
+        </div>
+        <Link
+          href="/community?state=NY&subcategory=events"
+          className="text-link"
+        >
+          {t("viewEvents")}
+          <ArrowUpRight size={15} />
+        </Link>
+      </div>
+      {!!events.items.length && (
+        <div className="living-upcoming" aria-label={t("communityEvents")}>
+          {events.items.map((event) => (
+            <article key={event.id}>
+              <div className="living-event-date">
+                <CalendarDays size={21} aria-hidden="true" />
+                <time dateTime={event.day}>
+                  {new Intl.DateTimeFormat(
+                    locale === "zh" ? "zh-CN" : "en-US",
+                    {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                      timeZone: "America/New_York",
+                    },
+                  ).format(new Date(`${event.day}T12:00:00Z`))}
+                </time>
+              </div>
+              <h3>
+                <Link href={`/community/${event.id}`}>{event.title}</Link>
+              </h3>
+              <p>
+                <MapPin size={14} aria-hidden="true" />
+                {taxonomy.locations.find(([id]) => id === event.location)?.[
+                  locale === "zh" ? 2 : 1
+                ] || event.location}
+              </p>
+              <Link href={`/community/${event.id}`} className="text-link">
+                {t("viewEvent")}
+                <ArrowUpRight size={14} />
+              </Link>
+            </article>
+          ))}
+        </div>
+      )}
+      {events.error ? (
+        <p role="alert" className="living-event-empty">
+          {t("eventError")}
+        </p>
+      ) : (
+        !events.items.length && (
+          <p className="living-event-empty">{t("noEvents")}</p>
+        )
+      )}
+      <OfficialCalendars />
+    </section>
+  );
+}
+
+export async function LivingSection({ state = "NY" }: { state?: string }) {
+  if (state !== "NY") return null;
+  const t = await getTranslations("living");
+  const locale = (await getLocale()) as Locale;
+  return (
+    <section className="living-home" aria-labelledby="living-home-heading">
+      <div className="living-section-heading">
+        <div>
+          <p className="eyebrow">{t("eyebrow")}</p>
+          <h2 id="living-home-heading">{t("title")}</h2>
+          <p>{t("intro")}</p>
+        </div>
+        <Link href="/living" className="text-link">
+          {t("all")}
+          <ArrowUpRight size={16} />
+        </Link>
+      </div>
+      <div className="living-guide-grid">
+        {livingGuides.map((guide) => (
+          <LivingGuideCard
+            guide={guide}
+            locale={locale}
+            read={t("read")}
+            key={guide.slug}
+          />
+        ))}
+      </div>
+      <LivingEvents />
+    </section>
+  );
+}

@@ -15,6 +15,7 @@ import {
   BookOpen,
 } from "lucide-react";
 import { SearchBar } from "@/components/navigation";
+import { LivingSection } from "@/components/living";
 import { BusinessDirectory } from "@/components/businesses";
 import { CategoryGrid, ListingGrid } from "@/components/cards";
 import { CategoryIcon } from "@/components/icons";
@@ -25,6 +26,7 @@ import { browseListings } from "@/lib/listings";
 import { categoryKeys, categoryData, type Locale } from "@/lib/catalog";
 import { pageMetadata } from "@/lib/seo";
 import "../home.css";
+import "../living.css";
 export async function generateMetadata({
   params,
 }: {
@@ -186,6 +188,12 @@ export default async function Home({
         </div>
         <CategoryGrid state={state} />
       </section>
+
+      <Suspense
+        fallback={<div className="living-placeholder" aria-hidden="true" />}
+      >
+        <LivingSection state={state} />
+      </Suspense>
 
       <section
         id="home-discover"

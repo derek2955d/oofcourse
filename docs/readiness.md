@@ -36,3 +36,7 @@ Geography: the consumer header currently opens only New York; the full 50-state 
 - Local areas now have grouped options and quick links, with individual removable filter chips. Matching retains the existing exact-area semantics (and existing NYC-wide aggregation). A borough selection does not yet aggregate all neighborhood records; implement a factual parent/descendant geography model and database-side filtering before claiming cascading city/borough/neighborhood search.
 - Generic price filtering/sorting is offered only for housing, marketplace and services. Jobs use existing structured work/pay-period filters and display validated salary ranges; true salary-overlap filtering/sorting needs a dedicated database query and tests, rather than filtering the generic price column.
 - Next operational work: unread/read message tracking and notifications, explicit category-specific completion statuses, and verified hosted account workflows. The deferred session-limit requirement above remains open.
+
+## New York life editorial content
+
+Three original bilingual guides and an official-calendar directory are maintained in `lib/living.ts`; see `docs/local-life-content.zh.md`. Community activities use existing approved listings with date/geography/expiry filtering before limiting. Editorial guides currently deploy through source control, not an admin CMS; no automatic news/event scraping or live organizer availability is claimed. Schedule periodic source/content review before commercial operation.
