@@ -51,7 +51,7 @@ export default async function Home({
     state = await selectedState(raw.state);
   const feeds = await Promise.all(
     categoryKeys.map((category) =>
-      browseListings(category, { state, location: location || "" }, 3),
+      browseListings(category, { state, location: location || "" }, 6),
     ),
   );
   return (
@@ -135,7 +135,7 @@ export default async function Home({
             ) : feeds[i].items.length ? (
               <ListingGrid items={feeds[i].items} category={category} />
             ) : (
-              <EmptyState category={category} state={state} />
+              <EmptyState category={category} state={state} compact />
             )}
           </section>
         ))}

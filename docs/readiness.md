@@ -2,7 +2,7 @@
 
 ## External integration still required
 
-- Configure an independent Supabase development project, apply all seven migrations, provision a verified administrator, and safely inject the public URL/key. Hosted signup, email verification, password reset, cookie refresh, private Storage uploads and the entire two-account submit → review → publish → contact cycle must be tested against that project. Local PostgreSQL fixtures do not prove these provider-specific flows.
+- The owner reports creating the independent Supabase project, applying all seven migrations, setting Preview configuration and completing signup/verification/login. Independently verify administrator provisioning, password reset, cookie refresh, private Storage uploads and the entire hosted two-account submit → review → publish → contact cycle. The current execution environment has no Supabase credentials; local PostgreSQL fixtures do not prove these provider-specific flows.
 - Configure authenticated SMTP, appropriate Auth rate limits/password rules and anti-bot protection. Optional Google OAuth has not been activated.
 - Set correct callback origins/allowlists in each environment. Preview Vercel access may require the project owner's login.
 
@@ -30,3 +30,9 @@ Stripe, purchases, paid promotion activation, ad networks and affiliate marketin
 Administrator member controls currently restrict posting/contact and hide the member's public content; they do not claim to delete or ban the Supabase Auth identity. A full identity ban, session revocation and verified account-erasure workflow require a separately reviewed server-only Auth administration integration before enabling those controls.
 
 Geography: the consumer header currently opens only New York; the full 50-state plus DC reference remains available for future launches. Detailed areas come only from enabled database records; the launch seed still contains New York City areas. Operators must add factual city/borough/neighborhood records for other states. Apply migration 007 for mixed-state statewide search. Taxonomy and directory area lists currently need pagination beyond 1,000 enabled records in a request scope; compatibility checks fail closed when the registry is truncated.
+
+## Next local-discovery improvements
+
+- Local areas now have grouped options and quick links, with individual removable filter chips. Matching retains the existing exact-area semantics (and existing NYC-wide aggregation). A borough selection does not yet aggregate all neighborhood records; implement a factual parent/descendant geography model and database-side filtering before claiming cascading city/borough/neighborhood search.
+- Generic price filtering/sorting is offered only for housing, marketplace and services. Jobs use existing structured work/pay-period filters and display validated salary ranges; true salary-overlap filtering/sorting needs a dedicated database query and tests, rather than filtering the generic price column.
+- Next operational work: unread/read message tracking and notifications, explicit category-specific completion statuses, and verified hosted account workflows. The deferred session-limit requirement above remains open.

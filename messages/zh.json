@@ -389,5 +389,24 @@
     "allAreas": "全部城市及地区",
     "noAreas": "该州暂未添加城市或地区。",
     "localFoot": "在{state}，发现身边的生活。"
+  },
+  "browse": {
+    "citywide": "全市",
+    "boroughs": "纽约市行政区",
+    "localAreas": "本地地区",
+    "quickAreas": "按地区浏览",
+    "allAreas": "全部地区",
+    "minimumRent": "最低月租（美元）",
+    "maximumRent": "最高月租（美元）",
+    "minimumBudget": "最低预算（美元）",
+    "maximumBudget": "最高预算（美元）",
+    "jobFilterHint": "可按薪资周期、工作类型和办公方式筛选，薪资范围显示在职位信息中。",
+    "mixedPriceHint": "不同信息的价格单位可能不同，选择分类后更方便比较。",
+    "published": "发布于 {date}",
+    "salaryUnavailable": "未提供薪资",
+    "priceUnavailable": "未提供价格",
+    "removeFilter": "移除{filter}",
+    "selectedFilters": "已选条件",
+    "serviceHourly": "/ 小时"
   }
 }

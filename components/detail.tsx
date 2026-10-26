@@ -10,6 +10,8 @@ import {
   type Locale,
 } from "@/lib/catalog";
 import { detailFields } from "@/lib/fields";
+import { salaryRange } from "@/lib/browse-presentation";
+import { loadTaxonomy } from "@/lib/taxonomy-server";
 import { ImageGallery } from "./gallery";
 import { FavoriteButton, ShareButton, ListingDialog } from "./listing-actions";
 export async function ListingDetail({
@@ -31,13 +33,24 @@ export async function ListingDetail({
       dateStyle: "medium",
       timeZone: "America/New_York",
     }).format(new Date(v));
+  const salary = salaryRange(item?.details || {});
+  const taxonomy = await loadTaxonomy();
+  const area = item
+    ? taxonomy.locations.find(([id]) => id === item.location)?.[
+        l === "zh" ? 2 : 1
+      ] || locationLabel(item.location, l)
+    : t("location");
   const price = preview
     ? t("previewPrice")
     : item?.category === "jobs"
-      ? `${formatMoney(Number(item.details.salary_min), l)} – ${formatMoney(Number(item.details.salary_max), l)} / ${t(String(item.details.pay_period))}`
-      : item?.price === 0
-        ? t("free")
-        : formatMoney(item?.price ?? null, l) || t("priceOnRequest");
+      ? salary
+        ? `${formatMoney(salary.low, l)}${salary.low === salary.high ? "" : ` – ${formatMoney(salary.high, l)}`} / ${t(salary.period)}`
+        : t("browse.salaryUnavailable")
+      : item?.category === "services" && item.details.price_type === "quote"
+        ? t("quote")
+        : item?.price === 0
+          ? t("free")
+          : formatMoney(item?.price ?? null, l) || t("browse.priceUnavailable");
   return (
     <div className="container page">
       {preview && (
@@ -60,7 +73,7 @@ export async function ListingDetail({
           <div className="detail-meta">
             <span>
               <MapPin size={15} />
-              {item ? locationLabel(item.location, l) : t("location")}
+              {area}
             </span>
             {item?.published_at && (
               <span>
@@ -140,7 +153,19 @@ export async function ListingDetail({
           </div>
         </div>
         <aside className="contact-card">
-          <p className="detail-price">{price}</p>
+          <p className="detail-price">
+            {price}
+            {!preview &&
+              item?.price !== null &&
+              item?.category === "housing" &&
+              item.details.tenure === "rent" && <small> {t("perMonth")}</small>}
+            {!preview &&
+              item?.price !== null &&
+              item?.category === "services" &&
+              item.details.price_type === "hourly" && (
+                <small> {t("browse.serviceHourly")}</small>
+              )}
+          </p>
           <div className="publisher">
             <span className="publisher-icon">
               <UserRound size={21} />

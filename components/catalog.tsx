@@ -17,6 +17,8 @@ import { ListingGrid } from "./cards";
 import { CategoryIcon } from "./icons";
 import { BusinessDirectory } from "./businesses";
 import { EmptyState } from "./ui";
+import { BrowseNavigation } from "./browse-navigation";
+import { supportsPriceFilters } from "@/lib/browse-presentation";
 export async function Catalog({
   category,
   raw,
@@ -32,6 +34,11 @@ export async function Catalog({
         typeof raw.state === "string" ? raw.state : undefined,
       ),
     });
+  if (!supportsPriceFilters(category)) {
+    q.min = "";
+    q.max = "";
+    q.sort = "newest";
+  }
   const result = await browseListings(category, q);
   const pages = Math.max(1, Math.ceil(result.total / 12));
   const activeFilters = Object.entries(q).some(
@@ -81,6 +88,13 @@ export async function Catalog({
       <Suspense>
         <SearchBar category={category} />
       </Suspense>
+      <BrowseNavigation
+        query={q}
+        category={category}
+        searchCategory={
+          typeof raw.category === "string" ? raw.category : undefined
+        }
+      />
       <div className="catalog-shell">
         <Suspense>
           <FilterPanel category={category} query={q} />

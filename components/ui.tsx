@@ -41,10 +41,12 @@ export function SectionHeading({
 export async function EmptyState({
   category,
   filtered = false,
+  compact = false,
   state,
 }: {
   category?: CategoryKey;
   filtered?: boolean;
+  compact?: boolean;
   state?: string;
 }) {
   const t = await getTranslations();
@@ -52,7 +54,9 @@ export async function EmptyState({
     ? `empty${category.charAt(0).toUpperCase() + category.slice(1)}`
     : "noResults";
   return (
-    <div className={`empty-state ${filtered ? "compact-empty" : ""}`}>
+    <div
+      className={`empty-state ${filtered ? "compact-empty" : ""} ${compact ? "home-empty" : ""}`}
+    >
       <div className="empty-scene" aria-hidden="true">
         <div className="empty-orbit" />
         <span

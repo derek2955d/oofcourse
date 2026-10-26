@@ -20,6 +20,7 @@ import {
   type Locale,
 } from "@/lib/catalog";
 import { CategoryIcon } from "./icons";
+import { salaryRange, publishedDate } from "@/lib/browse-presentation";
 import { selectedState } from "@/lib/geography-server";
 import { loadTaxonomy } from "@/lib/taxonomy-server";
 export async function CategoryGrid({ state }: { state?: string } = {}) {
@@ -58,6 +59,13 @@ export async function ListingCard({ listing }: { listing: Listing }) {
     locale = (await getLocale()) as Locale;
   const money = formatMoney(listing.price, locale);
   const isJob = listing.category === "jobs";
+  const salary = salaryRange(listing.details);
+  const published = publishedDate(listing);
+  const taxonomy = await loadTaxonomy();
+  const area =
+    taxonomy.locations.find(([id]) => id === listing.location)?.[
+      locale === "zh" ? 2 : 1
+    ] || locationLabel(listing.location, locale);
   return (
     <article className={`listing-card ${isJob ? "job-card" : ""}`}>
       {!isJob && (
@@ -104,18 +112,28 @@ export async function ListingCard({ listing }: { listing: Listing }) {
         </div>
         <p className="card-price">
           {isJob
-            ? `${formatMoney(Number(listing.details.salary_min), locale)} – ${formatMoney(Number(listing.details.salary_max), locale)} / ${t(String(listing.details.pay_period))}`
-            : listing.price === 0
-              ? t("free")
-              : money || t("priceOnRequest")}
+            ? salary
+              ? `${formatMoney(salary.low, locale)}${salary.low === salary.high ? "" : ` – ${formatMoney(salary.high, locale)}`} / ${t(salary.period)}`
+              : t("browse.salaryUnavailable")
+            : listing.category === "services" &&
+                listing.details.price_type === "quote"
+              ? t("quote")
+              : listing.price === 0
+                ? t("free")
+                : money || t("browse.priceUnavailable")}
           {listing.category === "housing" &&
             listing.details.tenure === "rent" && (
               <small> {t("perMonth")}</small>
             )}
+          {listing.category === "services" &&
+            listing.details.price_type === "hourly" &&
+            listing.price !== null && (
+              <small> {t("browse.serviceHourly")}</small>
+            )}
         </p>
         <p className="card-location">
           <MapPin size={14} />
-          {locationLabel(listing.location, locale)}
+          {area}
         </p>
         {listing.category === "housing" && (
           <div className="card-specs">
@@ -136,14 +154,31 @@ export async function ListingCard({ listing }: { listing: Listing }) {
           </div>
         )}
         <div className="card-bottom">
-          <span>
-            <Clock size={13} />
-            {new Intl.DateTimeFormat(locale === "zh" ? "zh-CN" : "en-US", {
-              month: "short",
-              day: "numeric",
-              timeZone: "America/New_York",
-            }).format(new Date(listing.published_at || listing.created_at))}
-          </span>
+          {published && (
+            <span
+              title={t("browse.published", {
+                date: published.toLocaleDateString(
+                  locale === "zh" ? "zh-CN" : "en-US",
+                  {
+                    timeZone: "America/New_York",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  },
+                ),
+              })}
+            >
+              <Clock size={13} aria-hidden="true" />
+              <time dateTime={published.toISOString()}>
+                {new Intl.DateTimeFormat(locale === "zh" ? "zh-CN" : "en-US", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                  timeZone: "America/New_York",
+                }).format(published)}
+              </time>
+            </span>
+          )}
           <Link href={`/${listing.category}/${listing.id}`}>
             {t("viewListing")}
             <ArrowUpRight size={14} />

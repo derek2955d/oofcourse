@@ -389,5 +389,24 @@
     "allAreas": "All cities and areas",
     "noAreas": "No cities or areas have been added for this state yet.",
     "localFoot": "Everyday life in {state}."
+  },
+  "browse": {
+    "citywide": "Citywide",
+    "boroughs": "NYC boroughs",
+    "localAreas": "Local areas",
+    "quickAreas": "Browse by area",
+    "allAreas": "All areas",
+    "minimumRent": "Minimum monthly rent ($)",
+    "maximumRent": "Maximum monthly rent ($)",
+    "minimumBudget": "Minimum budget ($)",
+    "maximumBudget": "Maximum budget ($)",
+    "jobFilterHint": "Filter by pay period, employment type and workplace. Salary ranges are shown on each job.",
+    "mixedPriceHint": "Prices may use different units. Choose a category to compare like for like.",
+    "published": "Published {date}",
+    "salaryUnavailable": "Salary not provided",
+    "priceUnavailable": "Price not provided",
+    "removeFilter": "Remove {filter}",
+    "selectedFilters": "Your filters",
+    "serviceHourly": "/ hour"
   }
 }

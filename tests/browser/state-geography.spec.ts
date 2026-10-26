@@ -53,3 +53,51 @@ test("New York-only rollout hides other states and normalizes older state links 
     ),
   ).toBe(true);
 });
+
+test("local discovery preserves filters, removes individual chips and uses category-specific controls", async ({
+  page,
+}) => {
+  await page.goto(
+    "/zh/housing?state=NY&q=apartment&tenure=rent&sort=price-low&page=2",
+  );
+  const quick = page.getByRole("navigation", {
+    name: "按地区浏览",
+    exact: true,
+  });
+  await quick
+    .getByRole("link", { name: "法拉盛，皇后区", exact: true })
+    .click();
+  await expect(page).toHaveURL(/location=flushing/);
+  expect(new URL(page.url()).searchParams.get("q")).toBe("apartment");
+  expect(new URL(page.url()).searchParams.get("sort")).toBe("price-low");
+  expect(new URL(page.url()).searchParams.has("page")).toBe(false);
+  const chips = page.getByRole("navigation", { name: "已选条件", exact: true });
+  await chips.getByRole("link", { name: /移除.*apartment/ }).click();
+  await expect(page).toHaveURL((url) => !url.searchParams.has("q"));
+  await expect(page).toHaveURL(/location=flushing/);
+  const mobile = page.viewportSize()!.width < 761;
+  if (mobile)
+    await page.getByRole("button", { name: "筛选", exact: true }).click();
+  const filter = mobile
+    ? page.getByRole("dialog").locator("form")
+    : page.locator(".desktop-filter form");
+  await expect(filter.locator('optgroup[label="纽约市行政区"]')).toHaveCount(1);
+  await expect(filter.locator('optgroup[label="本地地区"]')).toHaveCount(1);
+  await expect(
+    filter.getByLabel("最低月租（美元）", { exact: true }),
+  ).toBeVisible();
+  await page.goto("/en/jobs?state=NY&min=99999&sort=price-low");
+  await expect(page.locator("main h1")).toBeVisible();
+  await expect(page.locator(".sort-control select")).toHaveValue("newest");
+  await expect(page.locator(".sort-control option")).toHaveCount(1);
+  if (mobile)
+    await page.getByRole("button", { name: "Filters", exact: true }).click();
+  const jobs = mobile
+    ? page.getByRole("dialog").locator("form")
+    : page.locator(".desktop-filter form");
+  await expect(
+    jobs.locator('input[name="min"], input[name="max"]'),
+  ).toHaveCount(0);
+  await expect(jobs.getByText(/Filter by pay period/)).toBeVisible();
+  await expect(jobs.locator('select[name="pay_period"]')).toBeVisible();
+});
