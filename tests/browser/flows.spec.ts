@@ -56,8 +56,29 @@ test("category-specific filters submit real URL state and empty results remain h
     .getByRole("link", { name: "Clear filters" })
     .click();
   await expect(page).toHaveURL("/en/housing?state=NY");
-  await page.goto("/en/jobs");
-  expect(await page.locator('select[name="workplace"]').count()).toBe(2);
+  await page.goto(
+    "/en/jobs?subcategory=tech&industry=IT&workplace=remote&pay_period=hour",
+  );
+  await expect(
+    page.locator(
+      'main [name="subcategory"], main [name="industry"], main [name="workplace"], main [name="pay_period"]',
+    ),
+  ).toHaveCount(0);
+  await expect(page.locator(".active-filters")).toHaveCount(0);
+  const jobForm = mobile
+    ? page.locator(".filter-drawer form")
+    : page.locator(".desktop-filter form");
+  await expect(jobForm.locator('select[name="employment"] option')).toHaveText([
+    "Any",
+    "Full-time",
+    "Part-time",
+  ]);
+  if (mobile)
+    await page.getByRole("button", { name: "Filters", exact: true }).click();
+  await jobForm.locator('select[name="employment"]').selectOption("full-time");
+  await jobForm.getByRole("button", { name: "Apply filters" }).click();
+  await expect(page).toHaveURL(/employment=full-time/);
+  await expect(page.locator(".active-filters")).toContainText("Full-time");
   expect(await page.locator('select[name="condition"]').count()).toBe(0);
   await page.goto("/en/marketplace?condition=new&free=1");
   expect(await page.locator('select[name="condition"]').count()).toBe(0);

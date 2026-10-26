@@ -102,3 +102,9 @@ No hosted database write or privileged API was used. This entry is managed in `l
 - Removed condition and free-only browse controls from desktop and mobile marketplace filters. Existing condition/free URL parameters are ignored by marketplace browsing and omitted from keyword-search submissions; price and other remaining filters stay available. Publishing fields and stored listing facts are unchanged.
 - Typecheck, lint, all 17 unit tests, production build and both desktop/mobile category-filter browser checks passed. Browser coverage checks removed controls and legacy query state while retaining min/max price inputs; housing and jobs filtering regression checks also pass.
 - No database migration or production-domain change.
+
+### Jobs filter simplification — 2026-10-26
+
+- Jobs browse filters now contain keyword, local area and employment type (Any / Full-time / Part-time). Removed subcategory, industry, workplace, pay-period controls and the explanatory hint from desktop/mobile filters. Publisher job fields and salary facts remain unchanged.
+- Jobs browsing ignores old removed-filter parameters and unsupported employment choices. Keyword submission drops those legacy parameters; full-time and part-time use the existing real employment query field.
+- Typecheck, lint, 17 unit tests, production build and desktop/mobile category-filter browser checks passed, including selecting full-time and submitting it, verifying only three employment options, and retaining housing/marketplace filtering checks. Hosted DB/auth flows were not retested without credentials.

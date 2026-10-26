@@ -51,6 +51,13 @@ export async function Catalog({
     q.condition = "";
     q.free = "";
   }
+  if (category === "jobs") {
+    q.subcategory = "";
+    q.industry = "";
+    q.workplace = "";
+    q.pay_period = "";
+    if (!["full-time", "part-time"].includes(q.employment)) q.employment = "";
+  }
   const result = await browseListings(category, q);
   const pages = Math.max(1, Math.ceil(result.total / 12));
   const activeFilters = Object.entries(q).some(

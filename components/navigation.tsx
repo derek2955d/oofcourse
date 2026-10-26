@@ -283,7 +283,7 @@ export function SearchBar({
       {!large &&
         Array.from(params.entries())
           .filter(
-            ([key]) =>
+            ([key, value]) =>
               ![
                 "q",
                 "page",
@@ -293,7 +293,15 @@ export function SearchBar({
                   ? ["location", "subcategory"]
                   : []),
                 ...(category === "marketplace" ? ["condition", "free"] : []),
-              ].includes(key),
+                ...(category === "jobs"
+                  ? ["subcategory", "industry", "workplace", "pay_period"]
+                  : []),
+              ].includes(key) &&
+              !(
+                category === "jobs" &&
+                key === "employment" &&
+                !["full-time", "part-time"].includes(value)
+              ),
           )
           .map(([key, value]) => (
             <input type="hidden" name={key} value={value} key={key} />

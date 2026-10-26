@@ -47,7 +47,7 @@ export function FilterPanel({
       {!locations.some((x) => locationStates[x[0]] === query.state) && (
         <p className="small-note">{t("geo.noAreas")}</p>
       )}
-      {category && (
+      {category && category !== "jobs" && (
         <label className="field">
           {t("subcategory")}
           <select name="subcategory" defaultValue={query.subcategory}>
@@ -96,9 +96,6 @@ export function FilterPanel({
           </label>
         </div>
       )}
-      {category === "jobs" && (
-        <p className="small-note">{t("browse.jobFilterHint")}</p>
-      )}
       {!category && <p className="small-note">{t("browse.mixedPriceHint")}</p>}
       {category &&
         filterFields[category].map((key) => {
@@ -112,7 +109,10 @@ export function FilterPanel({
                   defaultValue={String(query[key as keyof BrowseQuery] || "")}
                 >
                   <option value="">{t("any")}</option>
-                  {f.options!.map((o) => (
+                  {(category === "jobs" && key === "employment"
+                    ? ["full-time", "part-time"]
+                    : f.options!
+                  ).map((o) => (
                     <option key={o} value={o}>
                       {t(o)}
                     </option>

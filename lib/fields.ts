@@ -89,7 +89,7 @@ export const filterFields: Record<CategoryKey, string[]> = {
     "availability",
     "nearby",
   ],
-  jobs: ["industry", "employment", "workplace", "pay_period"],
+  jobs: ["employment"],
   marketplace: [],
   services: ["service_area", "provider_type", "price_type"],
   businesses: ["service_type"],
