@@ -408,5 +408,31 @@
     "removeFilter": "Remove {filter}",
     "selectedFilters": "Your filters",
     "serviceHourly": "/ hour"
+  },
+  "home": {
+    "eyebrow": "A little closer to everything.",
+    "browse": "Explore local listings",
+    "post": "Share something local",
+    "bilingual": "English & 中文",
+    "reviewed": "Reviewed before publishing",
+    "shortcuts": "Quick starts",
+    "rent": "Find a rental",
+    "work": "Find part-time work",
+    "free": "Find free items",
+    "moving": "Find moving help",
+    "freshTitle": "Your neighborhood. New possibilities.",
+    "freshText": "Housing, work and everyday discoveries — all in one place.",
+    "jump": "Explore listing sections",
+    "board": "YOUR LOCAL CONNECTION",
+    "boardText": "A place to live. A chance to grow. A community to call home.",
+    "categories": "What brings you here today?",
+    "categoryNote": "Six ways to make local life a little easier.",
+    "safetyTitle": "A little care goes a long way.",
+    "safetyText": "Know what to check before you meet, pay or sign.",
+    "safetyLink": "Explore safety tips",
+    "helpTitle": "Your first post starts here.",
+    "helpText": "A simple guide to sharing your listing with the neighborhood.",
+    "helpLink": "Visit the help center",
+    "postingEyebrow": "GOOD THINGS START LOCALLY"
   }
 }

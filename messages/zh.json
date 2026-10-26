@@ -408,5 +408,31 @@
     "removeFilter": "移除{filter}",
     "selectedFilters": "已选条件",
     "serviceHourly": "/ 小时"
+  },
+  "home": {
+    "eyebrow": "让生活，离你更近一点。",
+    "browse": "发现本地信息",
+    "post": "分享身边的机会",
+    "bilingual": "中文 / English",
+    "reviewed": "审核后公开展示",
+    "shortcuts": "从这里开始",
+    "rent": "找出租房",
+    "work": "找兼职",
+    "free": "免费物品",
+    "moving": "找搬家服务",
+    "freshTitle": "身边的新鲜事，生活的新可能。",
+    "freshText": "房子、工作、闲置好物，还有你需要的本地帮手。",
+    "jump": "浏览信息板块",
+    "board": "连接身边的生活",
+    "boardText": "一个安心的住处，一份新的机会，一个熟悉的社区。",
+    "categories": "今天，你想找什么？",
+    "categoryNote": "六大分类，装下生活里的大小事。",
+    "safetyTitle": "多一份留心，多一份安心。",
+    "safetyText": "见面、付款或签约前，先了解需要核实的事项。",
+    "safetyLink": "查看安全指南",
+    "helpTitle": "第一条信息，从这里开始。",
+    "helpText": "了解如何发布信息，让需要的人找到你。",
+    "helpLink": "前往帮助中心",
+    "postingEyebrow": "让好机会，从身边发生"
   }
 }
