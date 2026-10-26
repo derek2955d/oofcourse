@@ -89,3 +89,10 @@ No hosted database write or privileged API was used. This entry is managed in `l
 - Keyword, local-area, other-subcategory and paginated results omit the editorial/calendar block so these resources do not appear to match unrelated filters.
 - Typecheck, lint, all 17 unit tests and production build passed. Focused bilingual desktop/mobile browser coverage verifies both entry URLs, calendar links, editorial card counts, preserved search and no horizontal overflow.
 - Hosted Supabase writes/auth are not exercised by this local check. Production domain unchanged.
+
+### Unified community hub — 2026-10-26
+
+- Supersedes the conditional editorial resource display above: community now keeps editorial activities and official calendars visible together with member posts, including during keyword searches.
+- Removed the community filter sidebar, mobile filter drawer and quick-area links. Community listing queries ignore legacy location and subcategory parameters; keyword searches and pagination remain functional. Search forms do not carry those obsolete filters forward. NY state scope and publisher venue facts remain intact.
+- Housing, jobs and other category filters are unchanged. Community results are explicitly titled Community posts / 社区发布 so editorial resources are not counted as keyword matches.
+- Typecheck, lint, 17 unit tests and production build passed. Desktop/mobile browser checks cover bilingual community entry points and absence of area controls, with other-category filtering regression coverage. Hosted database identity/write flows remain untested locally without credentials.

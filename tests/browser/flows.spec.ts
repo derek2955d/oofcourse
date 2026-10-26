@@ -429,7 +429,7 @@ test("published editorial activity has truthful details, working source links an
   expect(missing).not.toContain("editorial-activity-detail");
 });
 
-test("community browse includes editorial activities and official calendars without replacing filters", async ({
+test("community hub combines activities, calendars and posts without area filters", async ({
   page,
 }) => {
   for (const locale of ["zh", "en"]) {
@@ -453,8 +453,18 @@ test("community browse includes editorial activities and official calendars with
       ).toBe(true);
     }
     await page.goto(`/${locale}/community?subcategory=volunteering`);
-    await expect(page.locator(".community-activities")).toHaveCount(0);
+    await expect(page.locator(".community-activities")).toBeVisible();
+    await expect(page.locator(".active-filters")).toHaveCount(0);
+    await expect(page.locator('main input[name="subcategory"]')).toHaveCount(0);
+    await page.goto(`/${locale}/community?location=queens`);
+    await expect(page.locator('main select[name="location"]')).toHaveCount(0);
+    await expect(page.locator(".browse-areas")).toHaveCount(0);
+    await expect(
+      page.locator(".desktop-filter, .mobile-filter-trigger"),
+    ).toHaveCount(0);
+    await expect(page.locator('main input[name="location"]')).toHaveCount(0);
+    await expect(page.locator(".active-filters")).toHaveCount(0);
     await page.goto(`/${locale}/community?q=library`);
-    await expect(page.locator(".community-activities")).toHaveCount(0);
+    await expect(page.locator(".community-activities")).toBeVisible();
   }
 });

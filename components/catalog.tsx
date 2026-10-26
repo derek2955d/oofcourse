@@ -42,6 +42,11 @@ export async function Catalog({
     q.max = "";
     q.sort = "newest";
   }
+  // Community is a statewide hub; legacy area URLs must not hide posts.
+  if (category === "community") {
+    q.location = "";
+    q.subcategory = "";
+  }
   const result = await browseListings(category, q);
   const pages = Math.max(1, Math.ceil(result.total / 12));
   const activeFilters = Object.entries(q).some(
@@ -88,28 +93,24 @@ export async function Catalog({
           </span>
         )}
       </div>
-      {category === "community" &&
-        (!q.subcategory || q.subcategory === "events") &&
-        !q.q &&
-        !q.location &&
-        q.page === 1 && (
-          <section
-            className="living-events community-activities"
-            aria-labelledby="community-activities-heading"
-          >
-            <div className="living-section-heading">
-              <h2 id="community-activities-heading">
-                {t("living.homeEventsHeading")}
-              </h2>
-            </div>
-            <EditorialActivityCards
-              locale={l}
-              label={t("editorialActivity.label")}
-              view={t("living.viewEvent")}
-            />
-            <OfficialCalendars />
-          </section>
-        )}
+      {category === "community" && (
+        <section
+          className="living-events community-activities"
+          aria-labelledby="community-activities-heading"
+        >
+          <div className="living-section-heading">
+            <h2 id="community-activities-heading">
+              {t("living.homeEventsHeading")}
+            </h2>
+          </div>
+          <EditorialActivityCards
+            locale={l}
+            label={t("editorialActivity.label")}
+            view={t("living.viewEvent")}
+          />
+          <OfficialCalendars />
+        </section>
+      )}
       <Suspense>
         <SearchBar category={category} />
       </Suspense>
@@ -120,14 +121,21 @@ export async function Catalog({
           typeof raw.category === "string" ? raw.category : undefined
         }
       />
-      <div className="catalog-shell">
-        <Suspense>
-          <FilterPanel category={category} query={q} />
-        </Suspense>
+      <div
+        className={`catalog-shell${category === "community" ? " community-shell" : ""}`}
+      >
+        {category !== "community" && (
+          <Suspense>
+            <FilterPanel category={category} query={q} />
+          </Suspense>
+        )}
         <section
           className="catalog-results"
           aria-label={t("results", { count: result.total })}
         >
+          {category === "community" && (
+            <h2>{t("living.communityEventsAll")}</h2>
+          )}
           <div className="results-toolbar">
             <p role="status">{t("results", { count: result.total })}</p>
             <SortControl category={category} query={q} />

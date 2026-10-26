@@ -282,7 +282,18 @@ export function SearchBar({
       {!large && <input type="hidden" name="state" value={state} />}
       {!large &&
         Array.from(params.entries())
-          .filter(([key]) => !["q", "page", "category", "state"].includes(key))
+          .filter(
+            ([key]) =>
+              ![
+                "q",
+                "page",
+                "category",
+                "state",
+                ...(category === "community"
+                  ? ["location", "subcategory"]
+                  : []),
+              ].includes(key),
+          )
           .map(([key, value]) => (
             <input type="hidden" name={key} value={value} key={key} />
           ))}

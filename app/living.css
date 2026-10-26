@@ -546,3 +546,10 @@
     margin-left: 0;
   }
 }
+
+.catalog-shell.community-shell {
+  grid-template-columns: minmax(0, 1fr);
+}
+.community-activities {
+  margin-bottom: 28px;
+}

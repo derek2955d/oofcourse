@@ -9,3 +9,4 @@ This is the new bilingual New York classifieds project. The old affiliate-shoppi
 - Privileged writes must re-check server identity and satisfy RLS. Never assign administrator roles through client metadata or simulate hosted authentication/payment success.
 - New production providers, DNS changes, purchases and production merges require the owner's explicit authorization. Feature-branch preview builds and reversible development are within the existing project scope.
 - Run typecheck, lint, unit tests and a production build. Use isolated database fixtures only in the disposable test database, never on Supabase. Report hosted flows that remain untested without credentials.
+- Community is a unified statewide hub: show editorial activities, official calendars and community posts together. Do not restore area or subcategory filtering on this page without an owner request; keep precise local-area filtering for housing, jobs and other classified categories.

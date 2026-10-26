@@ -72,7 +72,7 @@ export async function BrowseNavigation({
   );
   return (
     <div className="browse-navigation">
-      {!!quick.length && (
+      {category !== "community" && !!quick.length && (
         <nav className="browse-areas" aria-label={t("browse.quickAreas")}>
           <span>{t("browse.quickAreas")}</span>
           <Link
