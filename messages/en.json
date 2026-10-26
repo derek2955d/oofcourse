@@ -464,6 +464,18 @@
     "moreGuides": "More local guides",
     "guideIntro": "Useful checklists for everyday New York life.",
     "back": "New York life",
-    "newTab": "Opens in a new tab"
+    "newTab": "Opens in a new tab",
+    "homeEventsHeading": "Activities & calendars"
+  },
+  "homeFocus": {
+    "title": "A little more New York.",
+    "eyebrow": "DISCOVER LOCAL LIFE",
+    "intro": "Community activities and official calendars for your next day out.",
+    "essentials": "Local essentials",
+    "search": "Search housing, jobs & more",
+    "resources": "Useful links",
+    "guides": "Life guides",
+    "safety": "Safety tips",
+    "postEvent": "Share a community activity"
   }
 }

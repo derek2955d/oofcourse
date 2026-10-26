@@ -464,6 +464,18 @@
     "moreGuides": "更多生活指南",
     "guideIntro": "从实用的清单开始，慢慢熟悉纽约生活。",
     "back": "纽约生活",
-    "newTab": "在新标签页打开"
+    "newTab": "在新标签页打开",
+    "homeEventsHeading": "活动与日历"
+  },
+  "homeFocus": {
+    "title": "纽约，去发现一点新鲜。",
+    "eyebrow": "发现身边的生活",
+    "intro": "社区活动、官方日历，看看身边有哪些新安排。",
+    "essentials": "生活服务",
+    "search": "搜索房源、工作与二手",
+    "resources": "实用入口",
+    "guides": "生活指南",
+    "safety": "安全指南",
+    "postEvent": "发布社区活动"
   }
 }

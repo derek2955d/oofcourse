@@ -1,12 +1,13 @@
 import { test, expect } from "@playwright/test";
 import { readFileSync } from "node:fs";
-test("hero search, category selection and language switching retain query state", async ({
+test("secondary search, category selection and language switching retain query state", async ({
   page,
 }) => {
   await page.goto("/en");
   await expect(page.locator(".category-card")).toHaveCount(6);
   await expect(page.locator(".listing-card")).toHaveCount(0);
-  await expect(page.locator(".empty-state")).toHaveCount(6);
+  await expect(page.locator(".empty-state")).toHaveCount(0);
+  await page.locator(".home-side-search > summary").click();
   await page
     .getByRole("searchbox", { name: "Keyword", exact: true })
     .fill("公寓");
@@ -244,8 +245,11 @@ test("New York living guides, official calendars and bilingual article routes wo
   const { default: AxeBuilder } = await import("@axe-core/playwright");
   for (const locale of ["en", "zh"] as const) {
     await page.goto(`/${locale}`);
-    const section = page.locator(".living-home");
-    await expect(section.locator(".living-guide-card")).toHaveCount(3);
+    const section = page.locator(".activity-home-main");
+    await expect(page.locator("main .living-guide-card")).toHaveCount(0);
+    await expect(
+      page.locator(".activity-home-aside .category-card"),
+    ).toHaveCount(6);
     await expect(section.locator(".living-upcoming article")).toHaveCount(0);
     await expect(section.locator(".living-event-empty")).toBeVisible();
     const sources = section.locator(".living-calendar-grid > a");
@@ -257,8 +261,10 @@ test("New York living guides, official calendars and bilingual article routes wo
         "https:",
       );
     }
-    await section
-      .locator(".living-guide-card")
+    await page.locator(".home-living-index").click();
+    await expect(page).toHaveURL(new RegExp(`/${locale}/living$`));
+    await page
+      .locator("main .living-guide-card")
       .first()
       .getByRole("link")
       .click();

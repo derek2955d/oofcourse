@@ -10,11 +10,7 @@ import {
   MapPin,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import {
-  livingGuides,
-  officialCalendars,
-  type LivingGuide,
-} from "@/lib/living";
+import { officialCalendars, type LivingGuide } from "@/lib/living";
 import { upcomingEvents } from "@/lib/living-server";
 import { loadTaxonomy } from "@/lib/taxonomy-server";
 import type { Locale } from "@/lib/catalog";
@@ -85,7 +81,9 @@ export async function OfficialCalendars() {
   );
 }
 
-export async function LivingEvents() {
+export async function LivingEvents({
+  homepage = false,
+}: { homepage?: boolean } = {}) {
   const t = await getTranslations("living");
   const locale = (await getLocale()) as Locale;
   const [events, taxonomy] = await Promise.all([
@@ -100,9 +98,11 @@ export async function LivingEvents() {
     >
       <div className="living-section-heading">
         <div>
-          <p className="eyebrow">{t("upcoming")}</p>
-          <h2 id="living-events-heading">{t("events")}</h2>
-          <p>{t("eventsIntro")}</p>
+          {!homepage && <p className="eyebrow">{t("upcoming")}</p>}
+          <h2 id="living-events-heading">
+            {t(homepage ? "homeEventsHeading" : "events")}
+          </h2>
+          {!homepage && <p>{t("eventsIntro")}</p>}
         </div>
         <Link
           href="/community?state=NY&subcategory=events"
@@ -157,38 +157,6 @@ export async function LivingEvents() {
         )
       )}
       <OfficialCalendars />
-    </section>
-  );
-}
-
-export async function LivingSection({ state = "NY" }: { state?: string }) {
-  if (state !== "NY") return null;
-  const t = await getTranslations("living");
-  const locale = (await getLocale()) as Locale;
-  return (
-    <section className="living-home" aria-labelledby="living-home-heading">
-      <div className="living-section-heading">
-        <div>
-          <p className="eyebrow">{t("eyebrow")}</p>
-          <h2 id="living-home-heading">{t("title")}</h2>
-          <p>{t("intro")}</p>
-        </div>
-        <Link href="/living" className="text-link">
-          {t("all")}
-          <ArrowUpRight size={16} />
-        </Link>
-      </div>
-      <div className="living-guide-grid">
-        {livingGuides.map((guide) => (
-          <LivingGuideCard
-            guide={guide}
-            locale={locale}
-            read={t("read")}
-            key={guide.slug}
-          />
-        ))}
-      </div>
-      <LivingEvents />
     </section>
   );
 }
