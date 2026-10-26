@@ -130,17 +130,6 @@ export function FilterPanel({
             </label>
           );
         })}
-      {category === "marketplace" && (
-        <label className="check-field">
-          <input
-            type="checkbox"
-            name="free"
-            value="1"
-            defaultChecked={query.free === "1"}
-          />
-          {t("free")}
-        </label>
-      )}
       <div className="filter-buttons">
         <button className="button primary" type="submit">
           {t("apply")}

@@ -292,6 +292,7 @@ export function SearchBar({
                 ...(category === "community"
                   ? ["location", "subcategory"]
                   : []),
+                ...(category === "marketplace" ? ["condition", "free"] : []),
               ].includes(key),
           )
           .map(([key, value]) => (

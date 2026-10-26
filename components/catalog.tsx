@@ -47,6 +47,10 @@ export async function Catalog({
     q.location = "";
     q.subcategory = "";
   }
+  if (category === "marketplace") {
+    q.condition = "";
+    q.free = "";
+  }
   const result = await browseListings(category, q);
   const pages = Math.max(1, Math.ceil(result.total / 12));
   const activeFilters = Object.entries(q).some(

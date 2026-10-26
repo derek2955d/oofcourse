@@ -96,3 +96,9 @@ No hosted database write or privileged API was used. This entry is managed in `l
 - Removed the community filter sidebar, mobile filter drawer and quick-area links. Community listing queries ignore legacy location and subcategory parameters; keyword searches and pagination remain functional. Search forms do not carry those obsolete filters forward. NY state scope and publisher venue facts remain intact.
 - Housing, jobs and other category filters are unchanged. Community results are explicitly titled Community posts / 社区发布 so editorial resources are not counted as keyword matches.
 - Typecheck, lint, 17 unit tests and production build passed. Desktop/mobile browser checks cover bilingual community entry points and absence of area controls, with other-category filtering regression coverage. Hosted database identity/write flows remain untested locally without credentials.
+
+### Marketplace filter simplification — 2026-10-26
+
+- Removed condition and free-only browse controls from desktop and mobile marketplace filters. Existing condition/free URL parameters are ignored by marketplace browsing and omitted from keyword-search submissions; price and other remaining filters stay available. Publishing fields and stored listing facts are unchanged.
+- Typecheck, lint, all 17 unit tests, production build and both desktop/mobile category-filter browser checks passed. Browser coverage checks removed controls and legacy query state while retaining min/max price inputs; housing and jobs filtering regression checks also pass.
+- No database migration or production-domain change.

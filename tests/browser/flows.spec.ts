@@ -59,8 +59,14 @@ test("category-specific filters submit real URL state and empty results remain h
   await page.goto("/en/jobs");
   expect(await page.locator('select[name="workplace"]').count()).toBe(2);
   expect(await page.locator('select[name="condition"]').count()).toBe(0);
-  await page.goto("/en/marketplace");
-  expect(await page.locator('select[name="condition"]').count()).toBe(2);
+  await page.goto("/en/marketplace?condition=new&free=1");
+  expect(await page.locator('select[name="condition"]').count()).toBe(0);
+  await expect(
+    page.locator('input[name="free"], input[name="condition"]'),
+  ).toHaveCount(0);
+  await expect(page.locator(".active-filters")).toHaveCount(0);
+  await expect(page.locator('input[name="min"]')).toHaveCount(2);
+  await expect(page.locator('input[name="max"]')).toHaveCount(2);
 });
 test("four-step publishing validates, preserves browser progress and never simulates submission", async ({
   page,
