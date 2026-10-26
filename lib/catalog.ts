@@ -1,5 +1,7 @@
 import {
   normalizeState,
+  locationGroupState,
+  matchesBrowseLocation,
   nearManhattanNJ,
   referenceLocationState,
 } from "./geography";
@@ -250,7 +252,7 @@ export function parseQuery(
   ) as Omit<BrowseQuery, "page">;
   return {
     ...q,
-    state: normalizeState(q.state),
+    state: locationGroupState(q.location) || normalizeState(q.state),
     location: q.location,
     sort: ["newest", "price-low", "price-high"].includes(q.sort)
       ? q.sort
@@ -295,8 +297,19 @@ export function filterListings(
             ? referenceLocationState(p.location)
             : "")) === q.state,
     )
-    .filter(
-      (p) => !q.location || q.location === "nyc" || p.location === q.location,
+    .filter((p) =>
+      matchesBrowseLocation(
+        {
+          id: p.location,
+          state: p.state || referenceLocationState(p.location),
+          city:
+            referenceLocationState(p.location) === "NY" &&
+            locations.some((row) => row[0] === p.location)
+              ? "New York"
+              : "",
+        },
+        q.location,
+      ),
     )
     .filter((p) => !q.subcategory || p.subcategory === q.subcategory)
     .filter(

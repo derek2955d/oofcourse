@@ -8,6 +8,7 @@ import { SlidersHorizontal, X } from "lucide-react";
 import { type CategoryKey, type BrowseQuery, type Locale } from "@/lib/catalog";
 import { filterFields, detailFields } from "@/lib/fields";
 import { supportsPriceFilters } from "@/lib/browse-presentation";
+import { locationGroupState } from "@/lib/geography";
 import { LocationOptions } from "./location-options";
 export function FilterPanel({
   category,
@@ -44,7 +45,11 @@ export function FilterPanel({
           name="location"
           defaultValue={query.location}
           onChange={(event) =>
-            setFilterState(locationStates[event.target.value] || query.state)
+            setFilterState(
+              locationGroupState(event.target.value) ||
+                locationStates[event.target.value] ||
+                query.state,
+            )
           }
         >
           <option value="">{t("geo.allAreas")}</option>

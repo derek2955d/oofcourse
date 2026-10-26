@@ -2,7 +2,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { X } from "lucide-react";
 import type { BrowseQuery, CategoryKey, Locale } from "@/lib/catalog";
-import { nycBoroughIds, nearManhattanNJ } from "@/lib/geography";
+import { nycBoroughIds, nearManhattanNJ, njNearbyGroup } from "@/lib/geography";
 import { loadTaxonomy } from "@/lib/taxonomy-server";
 
 export async function BrowseNavigation({
@@ -39,6 +39,9 @@ export async function BrowseNavigation({
     return `${category ? `/${category}` : "/search"}?${params}`;
   }
   function valueLabel(key: string, value: string) {
+    if (key === "location" && value === "nyc") return t("browse.boroughs");
+    if (key === "location" && value === njNearbyGroup)
+      return t("browse.nearManhattanNJ");
     if (key === "location")
       return (
         areas.find(([id]) => id === value)?.[locale === "zh" ? 2 : 1] || value
@@ -80,6 +83,27 @@ export async function BrowseNavigation({
           >
             {t("browse.allAreas")}
           </Link>
+          {[
+            { id: "nyc", state: "NY", label: t("browse.boroughs") },
+            {
+              id: njNearbyGroup,
+              state: "NJ",
+              label: t("browse.nearManhattanNJ"),
+            },
+          ]
+            .filter((group) =>
+              quick.some(([id]) => taxonomy.locationStates[id] === group.state),
+            )
+            .map((group) => (
+              <Link
+                key={group.id}
+                prefetch={false}
+                href={href({ location: group.id, state: group.state })}
+                aria-current={query.location === group.id ? "true" : undefined}
+              >
+                {group.label}
+              </Link>
+            ))}
           {quick.map(([id, en, zh]) => (
             <Link
               key={id}

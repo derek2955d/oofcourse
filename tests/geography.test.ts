@@ -8,6 +8,8 @@ import {
   normalizeState,
   stateLabel,
   cookieState,
+  matchesBrowseLocation,
+  locationGroupState,
 } from "../lib/geography";
 import { defaultTaxonomy } from "../lib/taxonomy";
 import { parseQuery, filterListings, type Listing } from "../lib/catalog";
@@ -94,4 +96,42 @@ test("consumer rollout opens New York and nearby New Jersey and retains future g
   assert.equal(activeState("NJ"), "NJ");
   assert.equal(activeState("NY"), "NY");
   assert.equal(normalizeState("CA"), "CA");
+});
+
+test("region groups include children with the correct real state and exclude outside cities", () => {
+  assert.equal(locationGroupState("nyc"), "NY");
+  assert.equal(locationGroupState("nj-near-manhattan"), "NJ");
+  assert.equal(locationGroupState("hoboken"), undefined);
+  assert.equal(
+    parseQuery({ location: "nj-near-manhattan", state: "NY" }).state,
+    "NJ",
+  );
+  assert.equal(
+    matchesBrowseLocation(
+      { id: "flushing", state: "NY", city: "New York" },
+      "nyc",
+    ),
+    true,
+  );
+  assert.equal(
+    matchesBrowseLocation(
+      { id: "hoboken", state: "NJ", city: "Hoboken" },
+      "nj-near-manhattan",
+    ),
+    true,
+  );
+  assert.equal(
+    matchesBrowseLocation(
+      { id: "newark", state: "NJ", city: "Newark" },
+      "nj-near-manhattan",
+    ),
+    false,
+  );
+  assert.equal(
+    matchesBrowseLocation(
+      { id: "hoboken", state: "NY", city: "New York" },
+      "nj-near-manhattan",
+    ),
+    false,
+  );
 });

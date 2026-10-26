@@ -116,3 +116,25 @@ export const nearManhattanNJ = [
 export function referenceLocationState(id: string) {
   return nearManhattanNJ.some((row) => row[0] === id) ? "NJ" : "NY";
 }
+
+export const njNearbyGroup = "nj-near-manhattan";
+export function locationGroupState(location: string) {
+  return location === "nyc"
+    ? "NY"
+    : location === njNearbyGroup
+      ? "NJ"
+      : undefined;
+}
+export function matchesBrowseLocation(
+  area: { id: string; state: string; city: string },
+  location: string,
+) {
+  if (!location) return true;
+  if (location === "nyc")
+    return area.state === "NY" && area.city === "New York";
+  if (location === njNearbyGroup)
+    return (
+      area.state === "NJ" && nearManhattanNJ.some((row) => row[0] === area.id)
+    );
+  return area.id === location;
+}

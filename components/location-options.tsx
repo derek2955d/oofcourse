@@ -1,8 +1,9 @@
 "use client";
 
+import { Fragment } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useCatalogConfig } from "./catalog-provider";
-import { nycBoroughIds, nearManhattanNJ } from "@/lib/geography";
+import { nycBoroughIds, nearManhattanNJ, njNearbyGroup } from "@/lib/geography";
 
 export function LocationOptions({ state }: { state: string }) {
   const { locations, locationStates } = useCatalogConfig();
@@ -10,9 +11,15 @@ export function LocationOptions({ state }: { state: string }) {
   const t = useTranslations("browse");
   if (!["NY", "NJ"].includes(state)) return null;
   return [
-    { state: "NY", label: t("boroughs"), ids: [...nycBoroughIds] as string[] },
+    {
+      state: "NY",
+      groupId: "nyc",
+      label: t("boroughs"),
+      ids: [...nycBoroughIds] as string[],
+    },
     {
       state: "NJ",
+      groupId: njNearbyGroup,
       label: t("nearManhattanNJ"),
       ids: nearManhattanNJ.map((row) => row[0]) as string[],
     },
@@ -24,13 +31,14 @@ export function LocationOptions({ state }: { state: string }) {
       return row ? [row] : [];
     });
     return rows.length ? (
-      <optgroup key={group.state} label={group.label}>
+      <Fragment key={group.state}>
+        <option value={group.groupId}>{group.label}</option>
         {rows.map((row) => (
           <option value={row[0]} key={row[0]}>
-            {row[locale === "zh" ? 2 : 1]}
+            {`　${row[locale === "zh" ? 2 : 1]}`}
           </option>
         ))}
-      </optgroup>
+      </Fragment>
     ) : null;
   });
 }

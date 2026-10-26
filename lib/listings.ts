@@ -1,5 +1,5 @@
 import "server-only";
-import { legacyStateScope } from "./geography";
+import { legacyStateScope, njNearbyGroup } from "./geography";
 import { enabledAreas, selectedState } from "./geography-server";
 import { configured, publicDB } from "./supabase/server";
 import {
@@ -53,8 +53,12 @@ export async function browseListings(
       p_limit: take,
       p_offset: ((query.page || 1) - 1) * take,
     };
-    let { data, error } = await db.rpc("search_listings_by_state", args);
-    if (error?.code === "PGRST202") {
+    const groupedNJ = query.location === njNearbyGroup;
+    let { data, error } = await db.rpc(
+      groupedNJ ? "search_listings_by_region" : "search_listings_by_state",
+      args,
+    );
+    if (error?.code === "PGRST202" && !groupedNJ) {
       // Safe compatibility with the existing NY-only database until migration 007.
       // Never post-filter a paginated result or silently show another state's rows.
       const compatibility = legacyStateScope(

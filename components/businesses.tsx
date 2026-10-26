@@ -1,3 +1,4 @@
+import { matchesBrowseLocation, locationGroupState } from "@/lib/geography";
 import Image from "next/image";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
@@ -24,12 +25,7 @@ export async function BusinessDirectory({
   let scope: Awaited<ReturnType<typeof enabledAreas>>;
   try {
     scope = (await enabledAreas(targetState)).filter(
-      (a) =>
-        a.state === targetState &&
-        (!location ||
-          (location === "nyc"
-            ? targetState === "NY" && a.city === "New York"
-            : a.id === location)),
+      (a) => a.state === targetState && matchesBrowseLocation(a, location),
     );
   } catch {
     const t = await getTranslations();
@@ -50,7 +46,8 @@ export async function BusinessDirectory({
     )
     .order("created_at", { ascending: false })
     .limit(limit);
-  if (location && location !== "nyc") query = query.eq("location", location);
+  if (location && !locationGroupState(location))
+    query = query.eq("location", location);
   if (subtype) query = query.eq("category", subtype);
   if (keyword) query = query.ilike("name", `%${keyword.slice(0, 150)}%`);
   const { data, error } = await query;

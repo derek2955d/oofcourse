@@ -12,6 +12,7 @@
    - `202610230006_publication_boundary.sql`
    - `202610250007_state_geography.sql`
    - `202610260008_near_manhattan_nj.sql`
+   - `202610260009_region_groups.sql`
 3. 在 Authentication 设置中保留邮箱验证，并将本地开发地址和受信任的预览地址的 `/auth/confirm` 加入允许的重定向地址。设置符合生产需求的邮件服务与速率限制后再商业上线。
 4. 在 API 设置中获取 Project URL 和 Publishable key，安全填入云环境和 Vercel Preview 的 `NEXT_PUBLIC_SUPABASE_URL`、`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`。重新启动开发任务或重建预览；不要把值发送到聊天。
 5. 通过网站注册账号，按邮件完成验证。普通账号仅创建 profiles 记录，没有管理员权限。
@@ -46,3 +47,9 @@
 只执行 `supabase/migrations/202610260008_near_manhattan_nj.sql`，不要重跑前七份。该增量文件新增 Jersey City、Hoboken、Weehawken、Union City、West New York 五条真实 NJ 地区记录，不删除现有数据，不修改权限，也不创建示例帖子。重复执行不会覆盖已有同 ID 地区的设置。
 
 顶部地区选择器只保留纽约；浏览快捷入口和下拉框整合纽约五大区及 NJ 五地，下拉框按“纽约五大区 / 新泽西·近曼哈顿”分组。选择 NJ 城市时提交真实 `state=NJ`；详细地区仍可用于发布。连接 Supabase 的网站只列数据库中已启用的地区，所以执行本次迁移后 NJ 城市才会出现在测试站的下拉框中。没有执行迁移时，不应认为云端 NJ 地区已经配置成功。
+
+## 可选择的地区分组（已执行 001–008 的项目）
+
+只执行 `supabase/migrations/202610260009_region_groups.sql`，不要重跑前八份。名称可保存为“009 — 地区分组筛选”。它新增只读搜索函数 `search_listings_by_region`，让“新泽西·近曼哈顿”只匹配五个指定城市，在排序、统计和分页之前完成过滤；不创建或删除地区/帖子，不更改管理员角色或写入权限。
+
+“纽约市行政区”使用已有 `nyc` 城市范围，包含五大区及发布时选择的下属本地地区。两个分组仅用于浏览，不作为发布地址。“新泽西·近曼哈顿”的新函数缺失时，页面显示加载错误，不会悄悄扩大为整个 NJ 或假装结果为空。

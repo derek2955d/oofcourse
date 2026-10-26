@@ -80,7 +80,7 @@ test("local discovery preserves filters, removes individual chips and uses categ
     ? page.getByRole("dialog").locator("form")
     : page.locator(".desktop-filter form");
   await expect(filter.locator('select[name="location"] option')).toHaveCount(
-    11,
+    13,
   );
   expect(
     await filter
@@ -90,11 +90,13 @@ test("local discovery preserves filters, removes individual chips and uses categ
       ),
   ).toEqual([
     "",
+    "nyc",
     "manhattan",
     "brooklyn",
     "queens",
     "bronx",
     "staten-island",
+    "nj-near-manhattan",
     "jersey-city",
     "hoboken",
     "weehawken",
@@ -102,7 +104,7 @@ test("local discovery preserves filters, removes individual chips and uses categ
     "west-new-york",
   ]);
   await expect(filter.locator('select[name="location"] optgroup')).toHaveCount(
-    2,
+    0,
   );
   await expect(
     filter.getByLabel("最低月租（美元）", { exact: true }),
@@ -139,7 +141,7 @@ test("near-Manhattan NJ selection submits the correct state and survives languag
   await expect(page).toHaveURL(/location=jersey-city/);
   await expect(page.locator(".catalog-header .eyebrow")).toHaveText("新泽西");
   await expect(
-    page.locator('.site-header .location-compact:visible select option'),
+    page.locator(".site-header .location-compact:visible select option"),
   ).toHaveCount(1);
   const quick = page.locator(".browse-areas");
   await expect(
@@ -161,4 +163,50 @@ test("near-Manhattan NJ selection submits the correct state and survives languag
   await expect(page).toHaveURL(/location=jersey-city/);
   await expect(page.locator(".active-filters")).toContainText("Jersey City");
   await expect(page.locator(".footer-location")).toHaveText("New Jersey");
+});
+
+test("region group options submit all-child scopes and keep their translated names", async ({
+  page,
+}) => {
+  for (const locale of ["zh", "en"]) {
+    await page.goto(`/${locale}/housing?state=NY`);
+    const mobile = page.viewportSize()!.width < 761;
+    for (const group of [
+      {
+        id: "nj-near-manhattan",
+        state: "NJ",
+        label:
+          locale === "zh" ? "新泽西 · 近曼哈顿" : "New Jersey · Near Manhattan",
+      },
+      {
+        id: "nyc",
+        state: "NY",
+        label: locale === "zh" ? "纽约市行政区" : "NYC boroughs",
+      },
+    ]) {
+      if (mobile)
+        await page
+          .getByRole("button", {
+            name: locale === "zh" ? "筛选" : "Filters",
+            exact: true,
+          })
+          .click();
+      const form = mobile
+        ? page.getByRole("dialog").locator("form")
+        : page.locator(".desktop-filter form");
+      await form.locator('select[name="location"]').selectOption(group.id);
+      await form
+        .getByRole("button", {
+          name: locale === "zh" ? "应用筛选" : "Apply filters",
+          exact: true,
+        })
+        .click();
+      await expect(page).toHaveURL(new RegExp(`location=${group.id}`));
+      await expect(page).toHaveURL(new RegExp(`state=${group.state}`));
+      await expect(page.locator(".active-filters")).toContainText(group.label);
+      await expect(
+        page.locator('.browse-areas a[aria-current="true"]'),
+      ).toHaveText(group.label);
+    }
+  }
 });
