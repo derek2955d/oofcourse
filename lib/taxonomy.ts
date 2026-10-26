@@ -1,3 +1,4 @@
+import { referenceLocationState } from "./geography";
 import {
   categoryData,
   categoryKeys,
@@ -12,7 +13,9 @@ export type Taxonomy = {
 };
 export const defaultTaxonomy: Taxonomy = {
   locations: locations.map((x) => [...x]),
-  locationStates: Object.fromEntries(locations.map((x) => [x[0], "NY"])),
+  locationStates: Object.fromEntries(
+    locations.map((x) => [x[0], referenceLocationState(x[0])]),
+  ),
   categories: Object.fromEntries(
     categoryKeys.map((c) => [
       c,

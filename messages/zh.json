@@ -407,7 +407,8 @@
     "priceUnavailable": "未提供价格",
     "removeFilter": "移除{filter}",
     "selectedFilters": "已选条件",
-    "serviceHourly": "/ 小时"
+    "serviceHourly": "/ 小时",
+    "nearManhattanNJ": "新泽西 · 近曼哈顿"
   },
   "home": {
     "eyebrow": "让生活，离你更近一点。",

@@ -1,4 +1,8 @@
-import { normalizeState } from "./geography";
+import {
+  normalizeState,
+  nearManhattanNJ,
+  referenceLocationState,
+} from "./geography";
 export const locales = ["en", "zh"] as const;
 export type Locale = (typeof locales)[number];
 export const categoryKeys = [
@@ -151,6 +155,7 @@ export const locations = [
   ["astoria", "Astoria, Queens", "阿斯托里亚，皇后区"],
   ["sunset-park", "Sunset Park, Brooklyn", "日落公园，布鲁克林"],
   ["morningside-heights", "Morningside Heights", "晨边高地"],
+  ...nearManhattanNJ,
 ] as const;
 export const locationLabel = (slug: string, l: Locale) =>
   locations.find((x) => x[0] === slug)?.[l === "zh" ? 2 : 1] || slug;
@@ -286,7 +291,9 @@ export function filterListings(
     .filter(
       (p) =>
         (p.state ||
-          (locations.some((x) => x[0] === p.location) ? "NY" : "")) === q.state,
+          (locations.some((x) => x[0] === p.location)
+            ? referenceLocationState(p.location)
+            : "")) === q.state,
     )
     .filter(
       (p) => !q.location || q.location === "nyc" || p.location === q.location,

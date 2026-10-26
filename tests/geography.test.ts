@@ -19,6 +19,8 @@ test("state choices are states/DC, not city or neighborhood records", () => {
   assert.equal(stateLabel("NY", "zh"), "纽约");
   assert.equal(cookieState("x=1; oofcourse_state=CA"), "NY");
   assert.equal(defaultTaxonomy.locationStates.queens, "NY");
+  assert.equal(defaultTaxonomy.locationStates["jersey-city"], "NJ");
+  assert.equal(defaultTaxonomy.locationStates["west-new-york"], "NJ");
   assert.ok(
     !usStates.some((s) => ["Brooklyn", "New York City"].includes(s[1])),
   );
@@ -83,13 +85,13 @@ test("legacy NY compatibility proves scope before using the old RPC", () => {
   );
 });
 
-test("consumer rollout opens only New York and retains future geographic reference data", () => {
+test("consumer rollout opens New York and nearby New Jersey and retains future geographic reference data", () => {
   assert.deepEqual(
     availableStates.map((s) => s[0]),
-    ["NY"],
+    ["NY", "NJ"],
   );
   assert.equal(activeState("CA"), "NY");
-  assert.equal(activeState("NJ"), "NY");
+  assert.equal(activeState("NJ"), "NJ");
   assert.equal(activeState("NY"), "NY");
   assert.equal(normalizeState("CA"), "CA");
 });

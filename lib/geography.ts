@@ -53,9 +53,9 @@ export const usStates = [
   ["WY", "Wyoming", "怀俄明"],
 ] as const;
 // Consumer rollout. Keep full reference data for future launches and administration.
-export const enabledStateCodes: readonly string[] = ["NY"];
-export const availableStates = usStates.filter((state) =>
-  enabledStateCodes.includes(state[0]),
+export const enabledStateCodes: readonly string[] = ["NY", "NJ"];
+export const availableStates = enabledStateCodes.map((code) =>
+  usStates.find((state) => state[0] === code)!,
 );
 export function activeState(value: unknown) {
   const code = normalizeState(value);
@@ -105,3 +105,14 @@ export const nycBoroughIds = [
   "bronx",
   "staten-island",
 ] as const;
+
+export const nearManhattanNJ = [
+  ["jersey-city", "Jersey City", "泽西市"],
+  ["hoboken", "Hoboken", "霍博肯"],
+  ["weehawken", "Weehawken", "威霍肯"],
+  ["union-city", "Union City", "联合市"],
+  ["west-new-york", "West New York", "西纽约（NJ）"],
+] as const;
+export function referenceLocationState(id: string) {
+  return nearManhattanNJ.some((row) => row[0] === id) ? "NJ" : "NY";
+}

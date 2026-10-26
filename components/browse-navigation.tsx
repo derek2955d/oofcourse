@@ -2,7 +2,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { X } from "lucide-react";
 import type { BrowseQuery, CategoryKey, Locale } from "@/lib/catalog";
-import { nycBoroughIds } from "@/lib/geography";
+import { nycBoroughIds, nearManhattanNJ } from "@/lib/geography";
 import { loadTaxonomy } from "@/lib/taxonomy-server";
 
 export async function BrowseNavigation({
@@ -20,7 +20,9 @@ export async function BrowseNavigation({
   const areas = taxonomy.locations.filter(
     ([id]) => taxonomy.locationStates[id] === query.state,
   );
-  const quick = nycBoroughIds.flatMap((borough) => {
+  const quickIds: readonly string[] =
+    query.state === "NJ" ? nearManhattanNJ.map((row) => row[0]) : nycBoroughIds;
+  const quick = quickIds.flatMap((borough) => {
     const row = areas.find(([id]) => id === borough);
     return row ? [row] : [];
   });

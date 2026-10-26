@@ -407,7 +407,8 @@
     "priceUnavailable": "Price not provided",
     "removeFilter": "Remove {filter}",
     "selectedFilters": "Your filters",
-    "serviceHourly": "/ hour"
+    "serviceHourly": "/ hour",
+    "nearManhattanNJ": "New Jersey · Near Manhattan"
   },
   "home": {
     "eyebrow": "A little closer to everything.",

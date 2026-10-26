@@ -1,6 +1,6 @@
 "use client";
 import { useCatalogConfig } from "./catalog-provider";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { Link } from "@/i18n/navigation";
@@ -21,6 +21,7 @@ export function FilterPanel({
     l = useLocale() as Locale,
     dialog = useRef<HTMLDialogElement>(null),
     params = useSearchParams();
+  const [filterState, setFilterState] = useState(query.state);
   const path = category ? `/${l}/${category}` : `/${l}/search`;
   const form = (
     <form className="filter-form" action={path}>
@@ -29,7 +30,7 @@ export function FilterPanel({
         name="sort"
         value={supportsPriceFilters(category) ? query.sort : "newest"}
       />
-      <input type="hidden" name="state" value={query.state} />
+      <input type="hidden" name="state" value={filterState} />
       {!category && params.get("category") && (
         <input type="hidden" name="category" value={params.get("category")!} />
       )}
@@ -39,7 +40,13 @@ export function FilterPanel({
       </label>
       <label className="field">
         {t("location")}
-        <select name="location" defaultValue={query.location}>
+        <select
+          name="location"
+          defaultValue={query.location}
+          onChange={(event) =>
+            setFilterState(locationStates[event.target.value] || query.state)
+          }
+        >
           <option value="">{t("geo.allAreas")}</option>
           <LocationOptions state={query.state} />
         </select>
