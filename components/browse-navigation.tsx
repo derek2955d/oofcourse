@@ -2,6 +2,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { X } from "lucide-react";
 import type { BrowseQuery, CategoryKey, Locale } from "@/lib/catalog";
+import { nycBoroughIds } from "@/lib/geography";
 import { loadTaxonomy } from "@/lib/taxonomy-server";
 
 export async function BrowseNavigation({
@@ -19,20 +20,10 @@ export async function BrowseNavigation({
   const areas = taxonomy.locations.filter(
     ([id]) => taxonomy.locationStates[id] === query.state,
   );
-  const preferred = [
-    "flushing",
-    "brooklyn",
-    "manhattan",
-    "queens",
-    "sunset-park",
-  ];
-  const quick = [...areas]
-    .sort((a, b) => {
-      const rank = (id: string) =>
-        preferred.includes(id) ? preferred.indexOf(id) : preferred.length;
-      return rank(a[0]) - rank(b[0]);
-    })
-    .slice(0, 6);
+  const quick = nycBoroughIds.flatMap((borough) => {
+    const row = areas.find(([id]) => id === borough);
+    return row ? [row] : [];
+  });
   function href(change: Record<string, string>) {
     const params = new URLSearchParams();
     if (!category && searchCategory) params.set("category", searchCategory);

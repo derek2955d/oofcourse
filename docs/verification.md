@@ -108,3 +108,9 @@ No hosted database write or privileged API was used. This entry is managed in `l
 - Jobs browse filters now contain keyword, local area and employment type (Any / Full-time / Part-time). Removed subcategory, industry, workplace, pay-period controls and the explanatory hint from desktop/mobile filters. Publisher job fields and salary facts remain unchanged.
 - Jobs browsing ignores old removed-filter parameters and unsupported employment choices. Keyword submission drops those legacy parameters; full-time and part-time use the existing real employment query field.
 - Typecheck, lint, 17 unit tests, production build and desktop/mobile category-filter browser checks passed, including selecting full-time and submitting it, verifying only three employment options, and retaining housing/marketplace filtering checks. Hosted DB/auth flows were not retested without credentials.
+
+### Five-borough browse choices — 2026-10-26
+
+- Browse location dropdowns and quick-area links now list only Manhattan, Brooklyn, Queens, Bronx and Staten Island, plus the existing all-areas choice. Removed citywide/neighborhood option groups from browse controls. Full location taxonomy and publisher location fields remain intact.
+- Typecheck, lint, 17 unit tests, production build and desktop/mobile local-discovery browser checks passed. Tests verify exactly six dropdown options, no option groups, borough navigation preserving search/sort and clearing pagination, and individual filter-chip removal.
+- This is a browse-control change, not a database hierarchy migration: existing exact-location query semantics and legacy URL support are unchanged. No hosted database writes or production-domain changes.

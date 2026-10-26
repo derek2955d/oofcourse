@@ -96,3 +96,12 @@ export function legacyStateScope(
     return "safe";
   return areas.every((a) => a.state === state) ? "safe" : "migration-required";
 }
+
+// Consumer browse choices; publishing retains detailed location records.
+export const nycBoroughIds = [
+  "manhattan",
+  "brooklyn",
+  "queens",
+  "bronx",
+  "staten-island",
+] as const;
