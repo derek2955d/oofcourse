@@ -51,3 +51,39 @@ test("weekend filters combine area and interests without treating guides as live
     "liberty-state-park",
   );
 });
+
+test("member outing submissions require a real type and destination text", async () => {
+  const { listingInput, validateDetails } = await import("../lib/validation");
+  const item = {
+    category: "community",
+    subcategory: "outings",
+    location: "beacon",
+    title: "Private outing test fixture",
+    description:
+      "This is an isolated validation fixture and must never be published to any real service.",
+    price: null,
+    details: {
+      topic: "Weekend note",
+      outing_type: "art",
+      outing_place: "Test destination",
+    },
+  };
+  assert.equal(listingInput.safeParse(item).success, true);
+  assert.equal(
+    listingInput.safeParse({ ...item, details: { topic: "Weekend note" } })
+      .success,
+    false,
+  );
+  assert.equal(
+    listingInput.safeParse({
+      ...item,
+      details: { ...item.details, outing_type: "fake" },
+    }).success,
+    false,
+  );
+  assert.equal(
+    (validateDetails("community", item.details) as { outing_type: string })
+      .outing_type,
+    "art",
+  );
+});

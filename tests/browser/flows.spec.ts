@@ -666,3 +666,24 @@ test("weekend navigation, filters, details and bilingual SEO work on desktop and
     "/zh/weekend/dia-beacon",
   );
 });
+
+test("weekend submissions use the real draft and photo workflow without claiming unauthenticated publication", async ({
+  page,
+}) => {
+  await page.goto("/zh/weekend");
+  await page.locator(".weekend-submit").getByRole("link").click();
+  await expect(page).toHaveURL(/category=community/);
+  await expect(page).toHaveURL(/subcategory=outings/);
+  await page.getByRole("button", { name: "下一步", exact: true }).click();
+  await expect(page.locator('select[name="subcategory"]')).toHaveValue(
+    "outings",
+  );
+  await expect(
+    page.locator('select[name="details.outing_type"]'),
+  ).toBeVisible();
+  await expect(
+    page.locator('input[name="details.outing_place"]'),
+  ).toBeVisible();
+  await expect(page.locator('input[name="price"]')).toHaveCount(0);
+  await expect(page.locator(".connection-notice")).toBeVisible();
+});

@@ -75,6 +75,13 @@ export const detailFields: Record<CategoryKey, FieldSpec[]> = {
     { key: "opening_hours", type: "text", optional: true },
   ],
   community: [
+    {
+      key: "outing_type",
+      type: "select",
+      options: ["outdoors", "waterfront", "art", "daytrip"],
+      optional: true,
+    },
+    { key: "outing_place", type: "text", optional: true },
     { key: "topic", type: "text" },
     { key: "event_date", type: "date", optional: true },
   ],

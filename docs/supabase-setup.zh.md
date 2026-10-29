@@ -13,6 +13,7 @@
    - `202610250007_state_geography.sql`
    - `202610260008_near_manhattan_nj.sql`
    - `202610260009_region_groups.sql`
+   - `202610290010_weekend_submissions.sql`
 3. 在 Authentication 设置中保留邮箱验证，并将本地开发地址和受信任的预览地址的 `/auth/confirm` 加入允许的重定向地址。设置符合生产需求的邮件服务与速率限制后再商业上线。
 4. 在 API 设置中获取 Project URL 和 Publishable key，安全填入云环境和 Vercel Preview 的 `NEXT_PUBLIC_SUPABASE_URL`、`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`。重新启动开发任务或重建预览；不要把值发送到聊天。
 5. 通过网站注册账号，按邮件完成验证。普通账号仅创建 profiles 记录，没有管理员权限。
@@ -53,3 +54,7 @@
 只执行 `supabase/migrations/202610260009_region_groups.sql`，不要重跑前八份。名称可保存为“009 — 地区分组筛选”。它新增只读搜索函数 `search_listings_by_region`，让“新泽西·近曼哈顿”只匹配五个指定城市，在排序、统计和分页之前完成过滤；不创建或删除地区/帖子，不更改管理员角色或写入权限。
 
 “纽约市行政区”使用已有 `nyc` 城市范围，包含五大区及发布时选择的下属本地地区。两个分组仅用于浏览，不作为发布地址。“新泽西·近曼哈顿”的新函数缺失时，页面显示加载错误，不会悄悄扩大为整个 NJ 或假装结果为空。
+
+## 周末好去处投稿
+
+已执行 001–009 的项目只执行 `202610290010_weekend_submissions.sql`（“010 — 周末好去处投稿”），不要重跑前九份。它增加投稿类型、真实 Beacon 地区和出游字段验证，复用现有私有图片、用户归属与管理员审核策略。具体操作见 `docs/weekend-content.zh.md`。

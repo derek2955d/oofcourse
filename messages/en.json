@@ -553,6 +553,21 @@
       "nyc": "New York City",
       "nj": "New Jersey",
       "hudson": "Hudson Valley"
-    }
-  }
+    },
+    "upload": "Share a place",
+    "uploadIntro": "Sign in to upload photos, save drafts and edit your post. Approved posts appear publicly.",
+    "uploadHint": "Enter a destination and outing type. Describe travel, your plan and what to check. Only upload photos you own or are allowed to use. Supported areas: NYC, the five nearby NJ cities and Beacon.",
+    "shared": "Community outing notes",
+    "noShares": "No approved outing posts match these filters yet.",
+    "originalLanguage": "Posts keep their original language; photos and text come from their publishers.",
+    "setup": "Outing submissions are not configured yet. The project owner needs to apply migration 010.",
+    "pageEmpty": "No outing posts on this page. Return to the first page.",
+    "firstPage": "First page"
+  },
+  "outing_type": "Kind of outing",
+  "outing_place": "Destination or address",
+  "outdoors": "Outdoor walks",
+  "waterfront": "Waterfront",
+  "art": "Art & museums",
+  "daytrip": "Day trips"
 }

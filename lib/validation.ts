@@ -58,6 +58,11 @@ export const detailSchemas = {
     opening_hours: text.optional(),
   }),
   community: z.object({
+    outing_type: z
+      .enum(["outdoors", "waterfront", "art", "daytrip"])
+      .optional(),
+    outing_place: text.optional(),
+    outing_area: z.enum(["nyc", "nj", "hudson"]).optional(),
     event_date: z.union([z.literal(""), z.string().date()]).optional(),
     topic: text.min(2),
   }),
@@ -78,6 +83,27 @@ export const listingInput = z
     details: z.record(z.string(), z.unknown()),
   })
   .superRefine((v, ctx) => {
+    if (v.category === "community" && v.subcategory === "outings") {
+      if (
+        !["outdoors", "waterfront", "art", "daytrip"].includes(
+          String(v.details.outing_type),
+        )
+      )
+        ctx.addIssue({
+          code: "custom",
+          path: ["details", "outing_type"],
+          message: "validation",
+        });
+      if (
+        typeof v.details.outing_place !== "string" ||
+        v.details.outing_place.trim().length < 3
+      )
+        ctx.addIssue({
+          code: "custom",
+          path: ["details", "outing_place"],
+          message: "validation",
+        });
+    }
     const d = detailSchemas[v.category].safeParse(v.details);
     if (!d.success)
       for (const e of d.error.issues)
@@ -93,8 +119,20 @@ export const listingInput = z
         message: "priceRequired",
       });
   });
-export function validateDetails(category: CategoryKey, details: unknown) {
-  return detailSchemas[category].parse(details);
+export function validateDetails(
+  category: CategoryKey,
+  details: unknown,
+  subcategory?: string,
+) {
+  const parsed = detailSchemas[category].parse(details);
+  if (category === "community" && subcategory && subcategory !== "outings") {
+    const copy: Record<string, unknown> = { ...parsed };
+    delete copy.outing_type;
+    delete copy.outing_area;
+    delete copy.outing_place;
+    return copy;
+  }
+  return parsed;
 }
 export const profileInput = z.object({
   display_name: z.string().trim().min(2).max(80),

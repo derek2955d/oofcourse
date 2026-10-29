@@ -14,6 +14,8 @@ import {
   weekendQuery,
   filterWeekendPlaces,
 } from "@/lib/weekend";
+import { weekendSubmissions } from "@/lib/weekend-server";
+import { ListingGrid } from "@/components/cards";
 import { pageMetadata } from "@/lib/seo";
 import type { Locale } from "@/lib/catalog";
 import "../../weekend.css";
@@ -37,7 +39,21 @@ export default async function WeekendPage({
   setRequestLocale(locale);
   const t = await getTranslations("weekend");
   const shared = await getTranslations();
-  const query = weekendQuery(await searchParams);
+  const raw = await searchParams;
+  const query = weekendQuery(raw);
+  const page =
+    typeof raw.page === "string" && /^\d+$/.test(raw.page)
+      ? Math.max(1, Math.min(1000, Number(raw.page) || 1))
+      : 1;
+  const posted = await weekendSubmissions(query, page);
+  const pages = Math.max(1, Math.ceil(posted.total / 12));
+  const pageHref = (next: number) => {
+    const q = new URLSearchParams();
+    if (query.type) q.set("type", query.type);
+    if (query.area) q.set("area", query.area);
+    q.set("page", String(next));
+    return `/weekend?${q}#shared-outings`;
+  };
   const places = filterWeekendPlaces(query);
   const icons = {
     outdoors: Trees,
@@ -62,6 +78,15 @@ export default async function WeekendPage({
           <p>{t("intro")}</p>
         </div>
       </header>
+      <div className="weekend-submit">
+        <Link
+          className="button primary"
+          href="/post?category=community&subcategory=outings"
+        >
+          {t("upload")}
+        </Link>
+        <p>{t("uploadIntro")}</p>
+      </div>
       <form className="weekend-filters" action={`/${locale}/weekend`}>
         <label className="field">
           {t("type")}
@@ -93,7 +118,7 @@ export default async function WeekendPage({
         )}
       </form>
       <p className="weekend-results" role="status">
-        {t("results", { count: places.length })}
+        {t("results", { count: places.length + posted.total })}
       </p>
       {places.length ? (
         <section className="weekend-grid" aria-label={t("list")}>
@@ -123,7 +148,7 @@ export default async function WeekendPage({
             );
           })}
         </section>
-      ) : (
+      ) : !posted.total && !posted.error ? (
         <section className="surface centered">
           <h2>{t("empty")}</h2>
           <p>{t("emptyHint")}</p>
@@ -131,7 +156,52 @@ export default async function WeekendPage({
             {t("clear")}
           </Link>
         </section>
-      )}
+      ) : null}
+      <section
+        id="shared-outings"
+        className="weekend-shared"
+        aria-labelledby="shared-title"
+      >
+        <h2 id="shared-title">{t("shared")}</h2>
+        <p>{t("originalLanguage")}</p>
+        {posted.error ? (
+          <p className="notice error-notice" role="alert">
+            {shared("dataError")}
+          </p>
+        ) : posted.items.length ? (
+          <ListingGrid items={posted.items} category="community" />
+        ) : (
+          <div className="notice">
+            <p>{t(posted.total ? "pageEmpty" : "noShares")}</p>
+            {posted.total > 0 && (
+              <Link className="text-link" href={pageHref(1)}>
+                {t("firstPage")}
+              </Link>
+            )}
+          </div>
+        )}
+        {!posted.error && pages > 1 && page <= pages && (
+          <nav
+            className="pagination"
+            aria-label={shared("page", { page, pages })}
+          >
+            {page > 1 && (
+              <Link
+                className="button button-outline"
+                href={pageHref(Math.min(pages, page - 1))}
+              >
+                {shared("previous")}
+              </Link>
+            )}
+            <span>{shared("page", { page, pages })}</span>
+            {page < pages && (
+              <Link className="button button-outline" href={pageHref(page + 1)}>
+                {shared("next")}
+              </Link>
+            )}
+          </nav>
+        )}
+      </section>
       <p className="weekend-note">{t("note")}</p>
     </div>
   );

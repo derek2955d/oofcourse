@@ -46,20 +46,21 @@ function initial(category: CategoryKey): Values {
     description: "",
     price: null,
     details: Object.fromEntries(
-      detailFields[category].map((f) => [
-        f.key,
-        f.type === "number" ? 0 : f.options?.[0] || "",
-      ]),
+      detailFields[category]
+        .filter((f) => !f.key.startsWith("outing_"))
+        .map((f) => [f.key, f.type === "number" ? 0 : f.options?.[0] || ""]),
     ),
   };
 }
 export function PublishingWizard({
   connected,
   initialCategory = "housing",
+  initialSubtype,
   existing,
 }: {
   connected: boolean;
   initialCategory?: CategoryKey;
+  initialSubtype?: string;
   existing?: Listing;
 }) {
   const { locations, locationStates, subtypes } = useCatalogConfig();
@@ -101,13 +102,31 @@ export function PublishingWizard({
         }
       : {
           ...initial(initialCategory),
-          subcategory: subtypes[initialCategory][0]?.[0] || "",
+          details: {
+            ...initial(initialCategory).details,
+            ...(initialCategory === "community" && initialSubtype === "outings"
+              ? { outing_type: "outdoors", outing_place: "" }
+              : {}),
+          },
+          subcategory:
+            initialSubtype &&
+            subtypes[initialCategory].some(([id]) => id === initialSubtype)
+              ? initialSubtype
+              : subtypes[initialCategory][0]?.[0] || "",
           location: areaOptions.some((x) => x[0] === "nyc")
             ? "nyc"
             : areaOptions[0]?.[0] || "",
         },
   });
   const category = useWatch({ control: form.control, name: "category" });
+  const subtype = useWatch({ control: form.control, name: "subcategory" });
+  const isOuting = category === "community" && subtype === "outings";
+  useEffect(() => {
+    if (isOuting && form.getValues("price") !== null)
+      form.setValue("price", null);
+    if (isOuting && !form.getValues("details.outing_type"))
+      form.setValue("details.outing_type", "outdoors");
+  }, [isOuting, form]);
   const formLocation = useWatch({ control: form.control, name: "location" });
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>;
@@ -399,7 +418,7 @@ export function PublishingWizard({
                     ))}
                   </select>
                 </label>
-                {category !== "jobs" && (
+                {category !== "jobs" && !isOuting && (
                   <label className="field">
                     {t("price")}
                     {["housing", "marketplace"].includes(category) ? " *" : ""}
@@ -413,39 +432,52 @@ export function PublishingWizard({
                     />
                   </label>
                 )}
-                {detailFields[category].map((f) => (
-                  <label
-                    className={`field ${f.type === "textarea" ? "form-wide" : ""}`}
-                    key={`${category}-${f.key}`}
-                  >
-                    {t(f.key)}
-                    {!f.optional ? " *" : ""}
-                    {f.type === "select" ? (
-                      <select {...form.register(`details.${f.key}`)}>
-                        {f.options!.map((o) => (
-                          <option key={o} value={o}>
-                            {t(o)}
-                          </option>
-                        ))}
-                      </select>
-                    ) : f.type === "textarea" ? (
-                      <textarea
-                        maxLength={1500}
-                        {...form.register(`details.${f.key}`)}
-                      />
-                    ) : (
-                      <input
-                        type={f.type}
-                        min={f.type === "number" ? 0 : undefined}
-                        step={f.type === "number" ? "any" : undefined}
-                        maxLength={500}
-                        {...form.register(`details.${f.key}`, {
-                          valueAsNumber: f.type === "number",
-                        })}
-                      />
-                    )}
-                  </label>
-                ))}
+                {isOuting && (
+                  <p className="small-note form-wide">
+                    {t("weekend.uploadHint")}
+                  </p>
+                )}
+                {detailFields[category]
+                  .filter(
+                    (f) =>
+                      (!f.key.startsWith("outing_") || isOuting) &&
+                      (!isOuting || f.key !== "event_date"),
+                  )
+                  .map((f) => (
+                    <label
+                      className={`field ${f.type === "textarea" ? "form-wide" : ""}`}
+                      key={`${category}-${f.key}`}
+                    >
+                      {t(f.key)}
+                      {!f.optional || (isOuting && f.key.startsWith("outing_"))
+                        ? " *"
+                        : ""}
+                      {f.type === "select" ? (
+                        <select {...form.register(`details.${f.key}`)}>
+                          {f.options!.map((o) => (
+                            <option key={o} value={o}>
+                              {t(o)}
+                            </option>
+                          ))}
+                        </select>
+                      ) : f.type === "textarea" ? (
+                        <textarea
+                          maxLength={1500}
+                          {...form.register(`details.${f.key}`)}
+                        />
+                      ) : (
+                        <input
+                          type={f.type}
+                          min={f.type === "number" ? 0 : undefined}
+                          step={f.type === "number" ? "any" : undefined}
+                          maxLength={500}
+                          {...form.register(`details.${f.key}`, {
+                            valueAsNumber: f.type === "number",
+                          })}
+                        />
+                      )}
+                    </label>
+                  ))}
                 <label className="field form-wide">
                   {t("description")} *
                   <textarea

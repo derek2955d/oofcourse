@@ -110,27 +110,31 @@ export async function ListingCard({ listing }: { listing: Listing }) {
           </h3>
           {isJob && <p>{String(listing.details.company || "")}</p>}
         </div>
-        <p className="card-price">
-          {isJob
-            ? salary
-              ? `${formatMoney(salary.low, locale)}${salary.low === salary.high ? "" : ` – ${formatMoney(salary.high, locale)}`} / ${t(salary.period)}`
-              : t("browse.salaryUnavailable")
-            : listing.category === "services" &&
-                listing.details.price_type === "quote"
-              ? t("quote")
-              : listing.price === 0
-                ? t("free")
-                : money || t("browse.priceUnavailable")}
-          {listing.category === "housing" &&
-            listing.details.tenure === "rent" && (
-              <small> {t("perMonth")}</small>
-            )}
-          {listing.category === "services" &&
-            listing.details.price_type === "hourly" &&
-            listing.price !== null && (
-              <small> {t("browse.serviceHourly")}</small>
-            )}
-        </p>
+        {!(
+          listing.category === "community" && listing.subcategory === "outings"
+        ) && (
+          <p className="card-price">
+            {isJob
+              ? salary
+                ? `${formatMoney(salary.low, locale)}${salary.low === salary.high ? "" : ` – ${formatMoney(salary.high, locale)}`} / ${t(salary.period)}`
+                : t("browse.salaryUnavailable")
+              : listing.category === "services" &&
+                  listing.details.price_type === "quote"
+                ? t("quote")
+                : listing.price === 0
+                  ? t("free")
+                  : money || t("browse.priceUnavailable")}
+            {listing.category === "housing" &&
+              listing.details.tenure === "rent" && (
+                <small> {t("perMonth")}</small>
+              )}
+            {listing.category === "services" &&
+              listing.details.price_type === "hourly" &&
+              listing.price !== null && (
+                <small> {t("browse.serviceHourly")}</small>
+              )}
+          </p>
+        )}
         <p className="card-location">
           <MapPin size={14} />
           {area}

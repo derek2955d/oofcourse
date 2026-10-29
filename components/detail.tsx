@@ -27,6 +27,8 @@ export async function ListingDetail({
 }) {
   const t = await getTranslations(),
     l = (await getLocale()) as Locale;
+  const isOuting =
+    item?.category === "community" && item.subcategory === "outings";
   const title = item?.title || t("previewTitle");
   const date = (v: string) =>
     new Intl.DateTimeFormat(l === "zh" ? "zh-CN" : "en-US", {
@@ -65,7 +67,9 @@ export async function ListingDetail({
       <nav className="breadcrumbs" aria-label={t("breadcrumb")}>
         <Link href="/">{t("navHome")}</Link>
         <span>/</span>
-        <Link href={`/${category}`}>{categoryData[category][l]}</Link>
+        <Link href={isOuting ? "/weekend" : `/${category}`}>
+          {isOuting ? t("weekend.nav") : categoryData[category][l]}
+        </Link>
       </nav>
       <div className="detail-heading">
         <div>
@@ -106,7 +110,12 @@ export async function ListingDetail({
             <h2>{t("listingDetails")}</h2>
             <dl className="specs-grid">
               {detailFields[category]
-                .filter((f) => f.type !== "textarea")
+                .filter(
+                  (f) =>
+                    f.type !== "textarea" &&
+                    (!f.key.startsWith("outing_") || isOuting) &&
+                    (!isOuting || f.key !== "event_date"),
+                )
                 .map((f) => (
                   <div key={f.key}>
                     <dt>{t(f.key)}</dt>
@@ -153,19 +162,23 @@ export async function ListingDetail({
           </div>
         </div>
         <aside className="contact-card">
-          <p className="detail-price">
-            {price}
-            {!preview &&
-              item?.price !== null &&
-              item?.category === "housing" &&
-              item.details.tenure === "rent" && <small> {t("perMonth")}</small>}
-            {!preview &&
-              item?.price !== null &&
-              item?.category === "services" &&
-              item.details.price_type === "hourly" && (
-                <small> {t("browse.serviceHourly")}</small>
-              )}
-          </p>
+          {!isOuting && (
+            <p className="detail-price">
+              {price}
+              {!preview &&
+                item?.price !== null &&
+                item?.category === "housing" &&
+                item.details.tenure === "rent" && (
+                  <small> {t("perMonth")}</small>
+                )}
+              {!preview &&
+                item?.price !== null &&
+                item?.category === "services" &&
+                item.details.price_type === "hourly" && (
+                  <small> {t("browse.serviceHourly")}</small>
+                )}
+            </p>
+          )}
           <div className="publisher">
             <span className="publisher-icon">
               <UserRound size={21} />

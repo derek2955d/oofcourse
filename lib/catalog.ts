@@ -131,6 +131,7 @@ export const categoryData = {
     icon: "UsersRound",
     subtypes: [
       ["events", "Local events", "本地活动"],
+      ["outings", "Weekend outings", "周末好去处"],
       ["announcements", "Announcements", "社区公告"],
       ["carpool", "Carpool", "拼车信息"],
       ["lost-found", "Lost & found", "失物招领"],
@@ -158,6 +159,7 @@ export const locations = [
   ["sunset-park", "Sunset Park, Brooklyn", "日落公园，布鲁克林"],
   ["morningside-heights", "Morningside Heights", "晨边高地"],
   ...nearManhattanNJ,
+  ["beacon", "Beacon, Hudson Valley", "Beacon，哈德逊河谷"],
 ] as const;
 export const locationLabel = (slug: string, l: Locale) =>
   locations.find((x) => x[0] === slug)?.[l === "zh" ? 2 : 1] || slug;
@@ -304,6 +306,7 @@ export function filterListings(
           state: p.state || referenceLocationState(p.location),
           city:
             referenceLocationState(p.location) === "NY" &&
+            p.location !== "beacon" &&
             locations.some((row) => row[0] === p.location)
               ? "New York"
               : "",

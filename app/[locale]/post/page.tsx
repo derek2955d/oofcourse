@@ -1,5 +1,6 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import { loadTaxonomy } from "@/lib/taxonomy-server";
 import { configured, requireUser } from "@/lib/supabase/server";
 import { fromRow, attachImages } from "@/lib/listings";
 import { isCategory, type Listing, type Locale } from "@/lib/catalog";
@@ -20,12 +21,30 @@ export default async function Post({
   searchParams,
 }: {
   params: Promise<{ locale: Locale }>;
-  searchParams: Promise<{ category?: string; id?: string }>;
+  searchParams: Promise<{
+    category?: string;
+    subcategory?: string;
+    id?: string;
+  }>;
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations(),
     q = await searchParams;
+  const outingIntent =
+    q.category === "community" && q.subcategory === "outings";
+  const taxonomy = await loadTaxonomy();
+  if (
+    outingIntent &&
+    configured() &&
+    !taxonomy.subtypes.community.some(([id]) => id === "outings")
+  )
+    return (
+      <div className="container page">
+        <h1>{t("weekend.upload")}</h1>
+        <p className="notice">{t("weekend.setup")}</p>
+      </div>
+    );
   let existing: Listing | undefined;
   let needsLogin = false;
   let missing = false;
@@ -51,7 +70,10 @@ export default async function Post({
     return (
       <div className="container page centered">
         <h1>{t("authRequired")}</h1>
-        <Link href="/login?next=/post" className="button primary">
+        <Link
+          href={`/login?next=${encodeURIComponent(outingIntent ? "/post?category=community&subcategory=outings" : "/post")}`}
+          className="button primary"
+        >
           {t("login")}
         </Link>
       </div>
@@ -67,7 +89,9 @@ export default async function Post({
     <div className="container page">
       <div className="wizard">
         <p className="eyebrow">{t("freeBadge")}</p>
-        <h1 className="page-title">{t("postTitle")}</h1>
+        <h1 className="page-title">
+          {t(outingIntent ? "weekend.upload" : "postTitle")}
+        </h1>
         <p className="page-intro">{t("postIntro")}</p>
         {!configured() && <ConnectionNotice />}
       </div>
@@ -76,6 +100,7 @@ export default async function Post({
         initialCategory={
           q.category && isCategory(q.category) ? q.category : "housing"
         }
+        initialSubtype={q.subcategory}
         existing={existing}
       />
     </div>

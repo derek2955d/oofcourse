@@ -19,14 +19,19 @@ export async function saveListing(input: unknown, submit = false) {
     const raw = (submit ? listingInput : draftInput).safeParse(input);
     if (!raw.success) return { error: "validation" };
     const v = raw.data;
-    const details = submit ? validateDetails(v.category, v.details) : v.details;
+    const details = submit
+      ? validateDetails(v.category, v.details, v.subcategory)
+      : v.details;
     const record = {
       category_id: v.category,
       subcategory: v.subcategory,
       location_id: v.location,
       title: v.title,
       description: v.description,
-      price: v.price,
+      price:
+        v.category === "community" && v.subcategory === "outings"
+          ? null
+          : v.price,
       currency: "USD",
       details,
       status: submit ? "pending" : "draft",
@@ -53,6 +58,7 @@ export async function saveListing(input: unknown, submit = false) {
     for (const l of ["en", "zh"]) {
       revalidatePath(`/${l}/account`, "layout");
       revalidatePath(`/${l}/${v.category}`);
+      revalidatePath(`/${l}/weekend`);
       revalidatePath(`/${l}`);
     }
     return { id: result.data.id, success: submit ? "submitted" : "draftSaved" };
