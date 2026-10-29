@@ -1,3 +1,4 @@
+import { weekendPlaces } from "@/lib/weekend";
 import type { MetadataRoute } from "next";
 import { activeEditorialActivities } from "@/lib/editorial-activities";
 import { livingGuides } from "@/lib/living";
@@ -10,6 +11,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...categoryKeys.map((c) => "/" + c),
     "/categories",
     "/living",
+    "/weekend",
+    ...weekendPlaces.map((place) => `/weekend/${place.slug}`),
     ...activeEditorialActivities().map(
       (activity) => `/activities/${activity.slug}`,
     ),

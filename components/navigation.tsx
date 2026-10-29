@@ -175,6 +175,12 @@ export function SiteHeader({
               {categories[c][locale]}
             </Link>
           ))}
+          <Link
+            href="/weekend"
+            aria-current={pathname.startsWith("/weekend") ? "page" : undefined}
+          >
+            {t("weekend.nav")}
+          </Link>
         </nav>
         <div className="header-actions">
           <LocationSelector />
@@ -218,6 +224,10 @@ export function SiteHeader({
               <ArrowRight size={16} />
             </Link>
           ))}
+          <Link href="/weekend">
+            {t("weekend.nav")}
+            <ArrowRight size={16} />
+          </Link>
           <Link href="/living">
             {t("living.nav")}
             <ArrowRight size={16} />

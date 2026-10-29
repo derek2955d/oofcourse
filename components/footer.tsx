@@ -24,6 +24,7 @@ export async function SiteFooter() {
         </div>
         <div>
           <h2>{t("footerResources")}</h2>
+          <Link href="/weekend">{t("weekend.nav")}</Link>
           <Link href="/living">{t("living.nav")}</Link>
           {["help", "safety", "guidelines"].map((x) => (
             <Link href={`/${x}`} key={x}>

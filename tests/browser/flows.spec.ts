@@ -571,3 +571,98 @@ test("password-change fields require old-password verification and confirmation 
     }
   }
 });
+
+test("weekend navigation, filters, details and bilingual SEO work on desktop and mobile", async ({
+  page,
+  request,
+}) => {
+  const { default: AxeBuilder } = await import("@axe-core/playwright");
+  const mobile = page.viewportSize()!.width < 761;
+  for (const locale of ["zh", "en"]) {
+    await page.goto(`/${locale}`);
+    const label = locale === "zh" ? "周末好去处" : "Weekend";
+    if (mobile) {
+      await page.locator(".menu-button").click();
+      await page
+        .locator("#mobile-menu")
+        .getByRole("link", { name: label, exact: true })
+        .click();
+    } else
+      await page
+        .locator(".desktop-categories")
+        .getByRole("link", { name: label, exact: true })
+        .click();
+    await expect(page).toHaveURL(new RegExp(`/${locale}/weekend$`));
+    await expect(page.locator(".weekend-card")).toHaveCount(6);
+    await page.locator('select[name="area"]').selectOption("nj");
+    await page.locator('select[name="type"]').selectOption("art");
+    await page.locator(".weekend-filters button").click();
+    await expect(page.locator(".weekend-card")).toHaveCount(0);
+    await page.locator('select[name="area"]').selectOption("hudson");
+    await page.locator(".weekend-filters button").click();
+    await expect(page.locator(".weekend-card")).toHaveCount(1);
+    await page.locator(".language-switch button").click();
+    await page
+      .locator(".language-options")
+      .getByRole("link", {
+        name: locale === "zh" ? "English" : "中文",
+        exact: true,
+      })
+      .click();
+    await expect(page).toHaveURL(/area=hudson/);
+    await expect(page).toHaveURL(/type=art/);
+    await page.locator(".weekend-card a").click();
+    await expect(page).toHaveURL(/weekend\/dia-beacon$/);
+    await expect(page.locator(".weekend-detail section")).toHaveCount(3);
+    await expect(page.locator(".weekend-actions a")).toHaveCount(2);
+    for (const link of await page.locator(".weekend-actions a").all()) {
+      await expect(link).toHaveAttribute("rel", "noopener noreferrer");
+      await expect(link).toHaveAttribute("target", "_blank");
+    }
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
+    expect(
+      (
+        await new AxeBuilder({ page })
+          .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+          .analyze()
+      ).violations.map((v) => v.id),
+    ).toEqual([]);
+  }
+  for (const locale of ["zh", "en"]) {
+    await page.goto(`/${locale}/weekend`);
+    if (!mobile) {
+      await page.setViewportSize({ width: 1100, height: 1000 });
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= innerWidth,
+        ),
+      ).toBe(true);
+      await page.setViewportSize({ width: 1440, height: 1000 });
+    }
+    await page.evaluate(() => document.fonts.ready.then(() => true));
+    await page.screenshot({
+      path: `test-results/weekend-${locale}-${page.viewportSize()!.width}.png`,
+      fullPage: true,
+    });
+    expect(
+      (
+        await new AxeBuilder({ page })
+          .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+          .analyze()
+      ).violations.map((v) => v.id),
+    ).toEqual([]);
+  }
+  const detail = await (await request.get("/zh/weekend/met-cloisters")).text();
+  expect(detail).toContain("https://oofcourse.com/zh/weekend/met-cloisters");
+  expect(detail).toContain('hrefLang="en-US"');
+  expect(detail).not.toContain('"@type":"Event"');
+  const missing = await (await request.get("/en/weekend/not-real")).text();
+  expect(missing).toContain("noindex");
+  expect(await (await request.get("/sitemap.xml")).text()).toContain(
+    "/zh/weekend/dia-beacon",
+  );
+});
