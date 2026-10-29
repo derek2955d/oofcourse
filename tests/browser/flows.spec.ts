@@ -388,8 +388,10 @@ test("published editorial activity has truthful details, working source links an
     await expect(page.locator(".editorial-activity-card")).toHaveCount(
       activeEditorialActivities().length,
     );
-    if (activeEditorialActivities().length)
-      await page.locator(".editorial-activity-card h3 a").click();
+    if (activeEditorialActivities().some((item) => item.slug === activity.slug))
+      await page
+        .locator(`.editorial-activity-card h3 a[href$="/${activity.slug}"]`)
+        .click();
     else await page.goto(`/${locale}/activities/${activity.slug}`);
     await expect(page).toHaveURL(
       new RegExp(`/${locale}/activities/${activity.slug}`),
@@ -580,7 +582,7 @@ test("weekend navigation, filters, details and bilingual SEO work on desktop and
   const mobile = page.viewportSize()!.width < 761;
   for (const locale of ["zh", "en"]) {
     await page.goto(`/${locale}`);
-    const label = locale === "zh" ? "周末好去处" : "Weekend";
+    const label = locale === "zh" ? "周边活动" : "Nearby events";
     if (mobile) {
       await page.locator(".menu-button").click();
       await page
@@ -594,6 +596,8 @@ test("weekend navigation, filters, details and bilingual SEO work on desktop and
         .click();
     await expect(page).toHaveURL(new RegExp(`/${locale}/weekend$`));
     await expect(page.locator(".weekend-card")).toHaveCount(6);
+    await expect(page.locator(".living-events")).toBeVisible();
+    await page.locator(".weekend-destinations > summary").click();
     await page.locator('select[name="area"]').selectOption("nj");
     await page.locator('select[name="type"]').selectOption("art");
     await page.locator(".weekend-filters button").click();
@@ -667,23 +671,35 @@ test("weekend navigation, filters, details and bilingual SEO work on desktop and
   );
 });
 
-test("weekend submissions use the real draft and photo workflow without claiming unauthenticated publication", async ({
+test("public outing submissions remain paused while the nearby-events prototype is reviewed", async ({
   page,
 }) => {
   await page.goto("/zh/weekend");
-  await page.locator(".weekend-submit").getByRole("link").click();
-  await expect(page).toHaveURL(/category=community/);
-  await expect(page).toHaveURL(/subcategory=outings/);
-  await page.getByRole("button", { name: "下一步", exact: true }).click();
-  await expect(page.locator('select[name="subcategory"]')).toHaveValue(
-    "outings",
+  await expect(page.locator(".weekend-submit")).toHaveCount(0);
+  await expect(page.locator(".weekend-destinations")).not.toHaveAttribute(
+    "open",
+    "",
   );
-  await expect(
-    page.locator('select[name="details.outing_type"]'),
-  ).toBeVisible();
-  await expect(
-    page.locator('input[name="details.outing_place"]'),
-  ).toBeVisible();
-  await expect(page.locator('input[name="price"]')).toHaveCount(0);
-  await expect(page.locator(".connection-notice")).toBeVisible();
+  await page.goto("/zh/post?category=community&subcategory=outings");
+  await expect(page.locator(".notice")).toContainText("公开投稿暂未开放");
+  await expect(page.locator("input[name='title']")).toHaveCount(0);
+});
+
+test("nearby editorial dates have no invented start hour and show multi-day ranges", async ({
+  page,
+}) => {
+  for (const locale of ["zh", "en"]) {
+    await page.goto(`/${locale}/activities/queens-film-arts-festival-2026`);
+    const times = page.locator(".editorial-activity-facts time");
+    await expect(times).toHaveCount(2);
+    await expect(times.first()).toHaveAttribute("datetime", "2026-11-13");
+    await expect(times.last()).toHaveAttribute("datetime", "2026-11-14");
+    expect(await times.first().textContent()).not.toContain(":00");
+    await expect(
+      page.locator(".living-article-action a[target='_blank']"),
+    ).toHaveAttribute(
+      "href",
+      "https://www.nyctourism.com/events/queens-world-film-arts-fest/",
+    );
+  }
 });

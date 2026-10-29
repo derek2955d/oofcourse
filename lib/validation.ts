@@ -83,6 +83,16 @@ export const listingInput = z
     details: z.record(z.string(), z.unknown()),
   })
   .superRefine((v, ctx) => {
+    if (
+      v.category === "community" &&
+      v.subcategory === "events" &&
+      !z.string().date().safeParse(v.details.event_date).success
+    )
+      ctx.addIssue({
+        code: "custom",
+        path: ["details", "event_date"],
+        message: "validation",
+      });
     if (v.category === "community" && v.subcategory === "outings") {
       if (
         !["outdoors", "waterfront", "art", "daytrip"].includes(

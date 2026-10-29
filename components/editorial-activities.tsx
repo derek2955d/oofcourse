@@ -1,6 +1,9 @@
 import { CalendarDays, ArrowUpRight, MapPin } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { activeEditorialActivities } from "@/lib/editorial-activities";
+import {
+  activeEditorialActivities,
+  activityDateValue,
+} from "@/lib/editorial-activities";
 import type { Locale } from "@/lib/catalog";
 export function EditorialActivityCards({
   locale,
@@ -26,8 +29,23 @@ export function EditorialActivityCards({
                 month: "short",
                 day: "numeric",
                 timeZone: "America/New_York",
-              }).format(new Date(activity.startsAt))}
+              }).format(activityDateValue(activity.startsAt))}
             </time>
+            {activity.startsAt.slice(0, 10) !== activity.day && (
+              <>
+                <span aria-hidden="true">–</span>
+                <time dateTime={activity.day}>
+                  {new Intl.DateTimeFormat(
+                    locale === "zh" ? "zh-CN" : "en-US",
+                    {
+                      month: "short",
+                      day: "numeric",
+                      timeZone: "America/New_York",
+                    },
+                  ).format(activityDateValue(activity.day))}
+                </time>
+              </>
+            )}
           </div>
           <h3>
             <Link href={`/activities/${activity.slug}`}>

@@ -1,4 +1,5 @@
 import "server-only";
+import { nearManhattanNJ } from "./geography";
 import { cache } from "react";
 import { configured, publicDB } from "./supabase/server";
 import { enabledAreas } from "./geography-server";
@@ -10,10 +11,19 @@ export type CommunityEvent = {
   day: string;
 };
 export const upcomingEvents = cache(
-  async (): Promise<{ items: CommunityEvent[]; error: boolean }> => {
+  async (
+    nearby = false,
+  ): Promise<{ items: CommunityEvent[]; error: boolean }> => {
     if (!configured()) return { items: [], error: false };
     try {
-      const areas = await enabledAreas("NY");
+      const areas = (await enabledAreas(nearby ? undefined : "NY")).filter(
+        (area) =>
+          !nearby ||
+          (area.state === "NY" &&
+            (area.city === "New York" || area.id === "beacon")) ||
+          (area.state === "NJ" &&
+            nearManhattanNJ.some((row) => row[0] === area.id)),
+      );
       if (!areas.length) return { items: [], error: false };
       const today = newYorkToday();
       // Apply visibility, geography, date and sort BEFORE limiting the result.

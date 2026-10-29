@@ -5,6 +5,7 @@ import { Link } from "@/i18n/navigation";
 import {
   editorialActivities,
   getEditorialActivity,
+  activityDateValue,
 } from "@/lib/editorial-activities";
 import { newYorkToday } from "@/lib/living";
 import { pageMetadata } from "@/lib/seo";
@@ -64,12 +65,30 @@ export default async function EditorialActivityPage({
                   year: "numeric",
                   month: "long",
                   day: "numeric",
-                  hour: "numeric",
-                  minute: "2-digit",
+                  ...(activity.startsAt.includes("T")
+                    ? { hour: "numeric" as const, minute: "2-digit" as const }
+                    : {}),
                   timeZone: "America/New_York",
-                }).format(new Date(activity.startsAt))}{" "}
+                }).format(activityDateValue(activity.startsAt))}{" "}
                 ({t("timezone")})
               </time>
+              {activity.startsAt.slice(0, 10) !== activity.day && (
+                <>
+                  {" "}
+                  –{" "}
+                  <time dateTime={activity.day}>
+                    {new Intl.DateTimeFormat(
+                      locale === "zh" ? "zh-CN" : "en-US",
+                      {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        timeZone: "America/New_York",
+                      },
+                    ).format(activityDateValue(activity.day))}
+                  </time>
+                </>
+              )}
             </dd>
           </div>
           <div>

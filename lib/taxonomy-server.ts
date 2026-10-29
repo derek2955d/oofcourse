@@ -3,9 +3,19 @@ import { cache } from "react";
 import { configured, publicDB } from "./supabase/server";
 import { defaultTaxonomy, type Taxonomy } from "./taxonomy";
 import { isCategory } from "./catalog";
+function publishingPolicy(data: Taxonomy): Taxonomy {
+  if (process.env.WEEKEND_SUBMISSIONS_ENABLED === "true") return data;
+  return {
+    ...data,
+    subtypes: {
+      ...data.subtypes,
+      community: data.subtypes.community.filter(([id]) => id !== "outings"),
+    },
+  };
+}
 export const loadTaxonomy = cache(
   async function loadTaxonomy(): Promise<Taxonomy> {
-    if (!configured()) return defaultTaxonomy;
+    if (!configured()) return publishingPolicy(defaultTaxonomy);
     try {
       const db = publicDB();
       const [locations, categories, subtypes] = await Promise.all([
@@ -25,7 +35,7 @@ export const loadTaxonomy = cache(
           .order("sort_order"),
       ]);
       if (locations.error || categories.error || subtypes.error)
-        return defaultTaxonomy;
+        return publishingPolicy(defaultTaxonomy);
       const data: Taxonomy = structuredClone(defaultTaxonomy);
       data.locations = (locations.data || []).map((x) => [
         x.id,
@@ -42,9 +52,9 @@ export const loadTaxonomy = cache(
         data.subtypes[key as keyof typeof data.subtypes] = (subtypes.data || [])
           .filter((x) => x.category_id === key)
           .map((x) => [x.id, x.name_en, x.name_zh]);
-      return data;
+      return publishingPolicy(data);
     } catch {
-      return defaultTaxonomy;
+      return publishingPolicy(defaultTaxonomy);
     }
   },
 );

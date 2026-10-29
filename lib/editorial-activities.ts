@@ -28,11 +28,72 @@ export const editorialActivities = [
       zh: "官网另列出的滑冰场运营期为 2026 年 10 月 28 日至 2027 年 2 月 28 日，不代表节日商铺或全部项目也按相同日期开放。",
     },
   },
+  {
+    slug: "village-halloween-parade-2026",
+    checkedAt: "2026-10-29",
+    day: "2026-10-31",
+    startsAt: "2026-10-31",
+    source: "NYC Tourism + Conventions",
+    sourceUrl: "https://www.nyctourism.com/events/village-halloween-parade/",
+    title: {
+      en: "Village Halloween Parade · October 31",
+      zh: "格林威治村万圣节游行 · 10 月 31 日",
+    },
+    summary: {
+      en: "NYC Tourism lists the 2026 Halloween parade in Greenwich Village, with a route along Sixth Avenue.",
+      zh: "纽约市旅游机构列出今年格林威治村万圣节游行，将沿第六大道展开。",
+    },
+    place: {
+      en: "Greenwich Village, Manhattan · Sixth Avenue",
+      zh: "曼哈顿格林威治村 · 第六大道",
+    },
+    fees: {
+      en: "Check the organizer's current participation, viewing and reservation rules. No ticket price or availability is confirmed here.",
+      zh: "参与、观看及预约规则请核对主办方最新说明。本页不确认票价或余位。",
+    },
+    seasonNote: {
+      en: "The source lists October 31, 2026. Exact start time, route access and any changes should be checked before leaving; no start time is asserted here.",
+      zh: "来源列明活动日期为 2026 年 10 月 31 日。出发前确认准确开始时间、路线入口及临时变更；本页不编写未经核实的具体时刻。",
+    },
+  },
+  {
+    slug: "queens-film-arts-festival-2026",
+    checkedAt: "2026-10-29",
+    day: "2026-11-14",
+    startsAt: "2026-11-13",
+    source: "NYC Tourism + Conventions",
+    sourceUrl: "https://www.nyctourism.com/events/queens-world-film-arts-fest/",
+    title: {
+      en: "Queens World First Amendment Film & Arts Festival · November 13–14",
+      zh: "Queens World 第一修正案电影与艺术节 · 11 月 13–14 日",
+    },
+    summary: {
+      en: "A two-day film and arts festival listed in the Kaufman Astoria Arts District, with screenings, performances and conversation.",
+      zh: "纽约市旅游机构列出的两日电影与艺术活动，地点位于 Kaufman Astoria 艺术区，包含放映、表演与交流。",
+    },
+    place: {
+      en: "Kaufman Astoria Arts District, Queens",
+      zh: "皇后区 Kaufman Astoria 艺术区",
+    },
+    fees: {
+      en: "Check the organizer's registration and admission details for each program. This note does not promise free entry or remaining tickets.",
+      zh: "各场次的报名和入场规则请查主办方详情，本条不承诺免费入场或仍有余票。",
+    },
+    seasonNote: {
+      en: "The source lists November 13–14, 2026. Individual venues and times may differ by program; confirm the specific session before making plans.",
+      zh: "来源列明日期为 2026 年 11 月 13–14 日。不同场次可能有不同地址和时刻，出发前请确认具体安排。",
+    },
+  },
 ] as const;
 export const getEditorialActivity = (slug: string) =>
   editorialActivities.find((activity) => activity.slug === slug);
 export function activeEditorialActivities(today = newYorkToday()) {
-  return editorialActivities.filter(
-    (activity) => activity.checkedAt <= today && today <= activity.day,
-  );
+  return editorialActivities
+    .filter((activity) => activity.checkedAt <= today && today <= activity.day)
+    .sort((a, b) => a.startsAt.localeCompare(b.startsAt));
+}
+
+// Date-only sources must not accidentally acquire midnight UTC or a made-up time.
+export function activityDateValue(value: string) {
+  return new Date(value.length === 10 ? `${value}T12:00:00Z` : value);
 }

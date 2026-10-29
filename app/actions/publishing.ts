@@ -19,6 +19,12 @@ export async function saveListing(input: unknown, submit = false) {
     const raw = (submit ? listingInput : draftInput).safeParse(input);
     if (!raw.success) return { error: "validation" };
     const v = raw.data;
+    if (
+      v.category === "community" &&
+      v.subcategory === "outings" &&
+      process.env.WEEKEND_SUBMISSIONS_ENABLED !== "true"
+    )
+      return { error: "weekend.paused" };
     const details = submit
       ? validateDetails(v.category, v.details, v.subcategory)
       : v.details;

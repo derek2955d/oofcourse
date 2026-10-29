@@ -467,7 +467,8 @@
     "back": "纽约生活",
     "newTab": "在新标签页打开",
     "homeEventsHeading": "城市活动",
-    "communityEventsAll": "社区发布"
+    "communityEventsAll": "社区发布",
+    "nearbyHeading": "近期活动"
   },
   "homeFocus": {
     "title": "纽约，去发现一点新鲜。",
@@ -491,7 +492,7 @@
     "checked": "信息核对日期：{date}",
     "note": "根据公开事实自行撰写的简短介绍，不代表主办方授权宣传。最新安排请向主办方核实；OofCourse 不代售门票、不代办预约，也不保证名额。",
     "official": "查看官网与预约入口",
-    "past": "开季日期已过，后续季节安排请查看官方网站。"
+    "past": "活动日期已过，请核对来源中的最新安排。"
   },
   "ownerListings": {
     "statusFilters": "按信息状态筛选",
@@ -518,10 +519,10 @@
     "signInAgain": "密码已修改，请使用新密码重新登录。"
   },
   "weekend": {
-    "nav": "周末好去处",
-    "eyebrow": "纽约及周边 · 周日小灵感",
-    "title": "周日去哪儿？选一个喜欢的地方。",
-    "intro": "看海、逛园、看艺术，或坐车去周边走走。给周末留一点发现新地方的时间。",
+    "nav": "周边活动",
+    "eyebrow": "纽约及周边 · 近期活动",
+    "title": "附近有什么新活动？",
+    "intro": "看看近期的节庆、展览和社区活动，按日期安排下一次出门。",
     "type": "想怎样度过",
     "area": "目的地",
     "allTypes": "所有玩法",
@@ -542,7 +543,7 @@
     "map": "打开地图",
     "source": "参考来源",
     "newTab": "在新标签页打开",
-    "back": "返回周末好去处",
+    "back": "返回周边活动",
     "types": {
       "outdoors": "轻松散步",
       "waterfront": "海边与滨水",
@@ -562,7 +563,10 @@
     "originalLanguage": "投稿保留作者原文，照片及内容由发布者提供。",
     "setup": "投稿类型尚未配置，请由项目管理员执行第 10 份数据库更新后使用。",
     "pageEmpty": "这一页没有投稿，请返回第一页。",
-    "firstPage": "返回第一页"
+    "firstPage": "返回第一页",
+    "guideToggle": "也想随时出去走走？查看常设出游指南",
+    "updateNote": "编辑精选，出发前请核对主办方的最新安排。",
+    "paused": "目前由编辑整理周边活动，公开投稿暂未开放。"
   },
   "outing_type": "玩法类型",
   "outing_place": "具体地点或地址",

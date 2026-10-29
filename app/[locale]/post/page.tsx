@@ -33,6 +33,16 @@ export default async function Post({
     q = await searchParams;
   const outingIntent =
     q.category === "community" && q.subcategory === "outings";
+  if (outingIntent && process.env.WEEKEND_SUBMISSIONS_ENABLED !== "true")
+    return (
+      <div className="container page">
+        <h1>{t("weekend.nav")}</h1>
+        <p className="notice">{t("weekend.paused")}</p>
+        <Link className="text-link" href="/weekend">
+          {t("weekend.back")}
+        </Link>
+      </div>
+    );
   const taxonomy = await loadTaxonomy();
   if (
     outingIntent &&

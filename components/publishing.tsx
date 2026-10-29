@@ -449,7 +449,11 @@ export function PublishingWizard({
                       key={`${category}-${f.key}`}
                     >
                       {t(f.key)}
-                      {!f.optional || (isOuting && f.key.startsWith("outing_"))
+                      {!f.optional ||
+                      (isOuting && f.key.startsWith("outing_")) ||
+                      (category === "community" &&
+                        subtype === "events" &&
+                        f.key === "event_date")
                         ? " *"
                         : ""}
                       {f.type === "select" ? (

@@ -250,3 +250,22 @@
 .weekend-shared > p {
   margin: 12px 0 20px;
 }
+.weekend-destinations {
+  margin-top: 36px;
+}
+.weekend-destinations > summary {
+  cursor: pointer;
+  font-weight: 650;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+  color: #285c9e;
+}
+.weekend-destinations[open] > summary {
+  margin-bottom: 20px;
+}
+.weekend-destinations > summary:focus-visible {
+  outline: 3px solid #3478f6;
+  outline-offset: 3px;
+}

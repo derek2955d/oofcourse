@@ -467,7 +467,8 @@
     "back": "New York life",
     "newTab": "Opens in a new tab",
     "homeEventsHeading": "City activities",
-    "communityEventsAll": "Community posts"
+    "communityEventsAll": "Community posts",
+    "nearbyHeading": "Upcoming nearby"
   },
   "homeFocus": {
     "title": "A little more New York.",
@@ -491,7 +492,7 @@
     "checked": "Information checked: {date}",
     "note": "An independently written summary of public facts, not organizer-authorized promotional copy. Check current arrangements with the organizer. OofCourse does not sell tickets, make reservations or guarantee availability.",
     "official": "Official details & reservations",
-    "past": "The opening date has passed. See the official website for ongoing seasonal arrangements."
+    "past": "These event dates have passed. Check the source for current arrangements."
   },
   "ownerListings": {
     "statusFilters": "Filter listings by status",
@@ -518,10 +519,10 @@
     "signInAgain": "Your password changed. Sign in with your new password."
   },
   "weekend": {
-    "nav": "Weekend",
-    "eyebrow": "NEW YORK & NEARBY · SUNDAY IDEAS",
-    "title": "A little adventure for your Sunday.",
-    "intro": "A waterfront walk, a garden, some art or a day beyond the city. Make room for a change of scenery.",
+    "nav": "Nearby events",
+    "eyebrow": "NEW YORK & NEARBY · UPCOMING",
+    "title": "What’s happening nearby?",
+    "intro": "Discover upcoming festivals, arts and community events, and plan your next day out.",
     "type": "What feels right?",
     "area": "Destination",
     "allTypes": "All ideas",
@@ -542,7 +543,7 @@
     "map": "Open map",
     "source": "Reference",
     "newTab": "Opens in a new tab",
-    "back": "Back to weekend ideas",
+    "back": "Back to nearby events",
     "types": {
       "outdoors": "Outdoor walks",
       "waterfront": "Waterfront",
@@ -562,7 +563,10 @@
     "originalLanguage": "Posts keep their original language; photos and text come from their publishers.",
     "setup": "Outing submissions are not configured yet. The project owner needs to apply migration 010.",
     "pageEmpty": "No outing posts on this page. Return to the first page.",
-    "firstPage": "First page"
+    "firstPage": "First page",
+    "guideToggle": "Looking for an anytime outing? Explore destination guides",
+    "updateNote": "Editorial picks. Confirm the organizer’s latest details before you go.",
+    "paused": "Nearby events are currently curated by the editorial team. Public submissions are paused."
   },
   "outing_type": "Kind of outing",
   "outing_place": "Destination or address",

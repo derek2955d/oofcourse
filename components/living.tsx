@@ -55,11 +55,12 @@ export function LivingGuideCard({
 
 export async function LivingEvents({
   homepage = false,
-}: { homepage?: boolean } = {}) {
+  nearby = false,
+}: { homepage?: boolean; nearby?: boolean } = {}) {
   const t = await getTranslations("living");
   const locale = (await getLocale()) as Locale;
   const [events, taxonomy] = await Promise.all([
-    upcomingEvents(),
+    upcomingEvents(nearby),
     loadTaxonomy(),
   ]);
   return (
@@ -72,7 +73,13 @@ export async function LivingEvents({
         <div>
           {!homepage && <p className="eyebrow">{t("upcoming")}</p>}
           <h2 id="living-events-heading">
-            {t(homepage ? "homeEventsHeading" : "events")}
+            {t(
+              nearby
+                ? "nearbyHeading"
+                : homepage
+                  ? "homeEventsHeading"
+                  : "events",
+            )}
           </h2>
           {!homepage && <p>{t("eventsIntro")}</p>}
         </div>
