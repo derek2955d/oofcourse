@@ -492,5 +492,15 @@
     "note": "An independently written summary of public facts, not organizer-authorized promotional copy. Check current arrangements with the organizer. OofCourse does not sell tickets, make reservations or guarantee availability.",
     "official": "Official details & reservations",
     "past": "The opening date has passed. See the official website for ongoing seasonal arrangements."
+  },
+  "ownerListings": {
+    "statusFilters": "Filter listings by status",
+    "all": "All",
+    "dates": "Updated & expiry",
+    "updated": "Updated",
+    "expires": "Expires",
+    "emptyStatus": "No listings with this status yet.",
+    "backAll": "View all my listings",
+    "missingPage": "No listings on this page."
   }
 }

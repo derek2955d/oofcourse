@@ -2,7 +2,7 @@
 
 ## External integration still required
 
-- The owner reports creating the independent Supabase project, applying all seven migrations, setting Preview configuration and completing signup/verification/login. Independently verify administrator provisioning, password reset, cookie refresh, private Storage uploads and the entire hosted two-account submit → review → publish → contact cycle. The current execution environment has no Supabase credentials; local PostgreSQL fixtures do not prove these provider-specific flows.
+- The owner reports creating the independent Supabase project, applying migrations 001–009, setting Preview configuration and completing signup/verification/login. Independently verify administrator provisioning, password reset, cookie refresh, private Storage uploads and the entire hosted two-account submit → review → publish → contact cycle. The current execution environment has no Supabase credentials; local PostgreSQL fixtures do not prove these provider-specific flows.
 - Configure authenticated SMTP, appropriate Auth rate limits/password rules and anti-bot protection. Optional Google OAuth has not been activated.
 - Set correct callback origins/allowlists in each environment. Preview Vercel access may require the project owner's login.
 
@@ -18,7 +18,7 @@
 ## Launch-size limits
 
 - Category catalogs have true SQL-backed counting and pagination, 12 records/page (up to page 1,000); broad public searches are not a client-side demo array.
-- Owner management currently loads the latest 100 records/favorites, 50 conversations and 500 messages; admin worklists load 25 listings, 50 members/reports/businesses and 100 audit entries per filtered view. Add paginated drill-downs before sustained high-volume operation; do not describe these views as a complete data export.
+- Owner listing management now uses exact counts and 12 records/page with a maximum page of 1,000; favorites still load the latest 100 records, messages 50 conversations and 500 messages; admin worklists load 25 listings, 50 members/reports/businesses and 100 audit entries per filtered view. Add paginated drill-downs before sustained high-volume operation; do not describe these views as a complete data export.
 - The public business-profile directory displays a small latest subset; listing-category filters remain separate from the free business-profile directory.
 - Sitemaps cap listing URLs at 5,000 and businesses at 1,000; add paginated sitemap generation as volume grows.
 - Image signatures are short-lived and should be refreshed for long editor sessions. Storage cleanup and strict cross-request byte quotas need ongoing operational monitoring.
@@ -29,14 +29,21 @@ Stripe, purchases, paid promotion activation, ad networks and affiliate marketin
 
 Administrator member controls currently restrict posting/contact and hide the member's public content; they do not claim to delete or ban the Supabase Auth identity. A full identity ban, session revocation and verified account-erasure workflow require a separately reviewed server-only Auth administration integration before enabling those controls.
 
-Geography: the consumer header currently opens only New York; the full 50-state plus DC reference remains available for future launches. Detailed areas come only from enabled database records; the launch seed still contains New York City areas. Operators must add factual city/borough/neighborhood records for other states. Apply migration 007 for mixed-state statewide search. Taxonomy and directory area lists currently need pagination beyond 1,000 enabled records in a request scope; compatibility checks fail closed when the registry is truncated.
+Geography: the consumer header currently opens only New York; the full 50-state plus DC reference remains available for future launches. Detailed areas come only from enabled database records; the enabled reference records include NYC areas and five near-Manhattan NJ cities. The header remains New York-only while browse controls combine those areas. The owner reports migrations 007–009 applied for state and selectable-region search. Operators must add factual city/borough/neighborhood records for future regions. Taxonomy and directory area lists currently need pagination beyond 1,000 enabled records in a request scope; compatibility checks fail closed when the registry is truncated.
 
 ## Next local-discovery improvements
 
 - Local areas now have grouped options and quick links, with individual removable filter chips. Matching retains the existing exact-area semantics (and existing NYC-wide aggregation). A borough selection does not yet aggregate all neighborhood records; implement a factual parent/descendant geography model and database-side filtering before claiming cascading city/borough/neighborhood search.
-- Generic price filtering/sorting is offered only for housing, marketplace and services. Jobs use existing structured work/pay-period filters and display validated salary ranges; true salary-overlap filtering/sorting needs a dedicated database query and tests, rather than filtering the generic price column.
+- Generic price filtering/sorting is offered only for housing, marketplace and services. Jobs offer full-time/part-time filtering and display validated salary ranges; true salary-overlap filtering/sorting needs a dedicated database query and tests, rather than filtering the generic price column.
 - Next operational work: unread/read message tracking and notifications, explicit category-specific completion statuses, and verified hosted account workflows. The deferred session-limit requirement above remains open.
 
 ## New York life editorial content
 
-Three original bilingual guides and an official-calendar directory are maintained in `lib/living.ts`; see `docs/local-life-content.zh.md`. Community activities use existing approved listings with date/geography/expiry filtering before limiting. Editorial guides currently deploy through source control, not an admin CMS; no automatic news/event scraping or live organizer availability is claimed. Schedule periodic source/content review before commercial operation.
+Three original bilingual guides are maintained in `lib/living.ts`; the official-calendar directory is disabled at the owner’s request. see `docs/local-life-content.zh.md`. Community activities use existing approved listings with date/geography/expiry filtering before limiting. Editorial guides currently deploy through source control, not an admin CMS; no automatic news/event scraping or live organizer availability is claimed. Schedule periodic source/content review before commercial operation.
+
+
+## Member listing management checkpoint (2026-10-29)
+
+Owner listing tables now have All / Draft / Pending / Approved / Rejected / Expired / Archived filters, exact counts and stable server pagination. Draft/pending sidebar scopes cannot be overridden by query parameters. Approved records past their expiry date appear under Expired even before the scheduler changes the stored status; the Approved filter and overview count exclude those overdue records. Timestamps use New York time. Existing archive confirmation remains, with no redundant archive action on already archived rows.
+
+No migration is needed for this checkpoint. Local PostgreSQL verifies owner boundaries, matching counts and pages, more than 100 records and expiry behavior; unauthenticated browser flows remain closed. The current execution environment still lacks Supabase configuration, so positive hosted login/management interactions require an owner test account check before claiming operational completion.

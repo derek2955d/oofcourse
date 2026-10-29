@@ -492,5 +492,15 @@
     "note": "根据公开事实自行撰写的简短介绍，不代表主办方授权宣传。最新安排请向主办方核实；OofCourse 不代售门票、不代办预约，也不保证名额。",
     "official": "查看官网与预约入口",
     "past": "开季日期已过，后续季节安排请查看官方网站。"
+  },
+  "ownerListings": {
+    "statusFilters": "按信息状态筛选",
+    "all": "全部",
+    "dates": "更新时间与有效期",
+    "updated": "更新于",
+    "expires": "到期日",
+    "emptyStatus": "此状态下暂无信息",
+    "backAll": "查看全部信息",
+    "missingPage": "这一页暂时没有信息"
   }
 }

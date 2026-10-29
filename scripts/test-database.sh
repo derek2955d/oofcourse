@@ -21,3 +21,4 @@ docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 < tests/database
 docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 < tests/database/geography.sql
 docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 < tests/database/living.sql
 docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 < tests/database/region-groups.sql
+docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 < tests/database/owner-pagination.sql

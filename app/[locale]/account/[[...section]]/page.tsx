@@ -20,8 +20,10 @@ export async function generateMetadata({
 }
 export default async function Account({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: Locale; section?: string[] }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { locale, section } = await params;
   if (
@@ -40,5 +42,5 @@ export default async function Account({
   )
     notFound();
   setRequestLocale(locale);
-  return <AccountDashboard section={section?.[0]} />;
+  return <AccountDashboard section={section?.[0]} raw={await searchParams} />;
 }

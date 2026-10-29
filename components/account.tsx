@@ -1,3 +1,10 @@
+import {
+  ownerListingQuery,
+  ownerListingHref,
+  ownerListingStatuses,
+  ownerListingDisplayStatus,
+  ownerPageSize,
+} from "@/lib/account-listings";
 import { getTranslations, getLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { configured, requireUser } from "@/lib/supabase/server";
@@ -23,8 +30,10 @@ import {
 } from "lucide-react";
 export async function AccountDashboard({
   section = "overview",
+  raw = {},
 }: {
   section?: string;
+  raw?: Record<string, string | string[] | undefined>;
 }) {
   const t = await getTranslations(),
     l = await getLocale();
@@ -69,59 +78,171 @@ export async function AccountDashboard({
   const active = nav.find((x) => x[0] === section)?.[0] || "overview";
   let content: React.ReactNode;
   if (["listings", "drafts", "pending"].includes(active)) {
+    const filter = ownerListingQuery(active, raw);
+    const now = new Date().toISOString();
     let q = db
       .from("listings")
-      .select("*")
-      .eq("user_id", user.id)
+      .select("*", { count: "exact" })
+      .eq("user_id", user.id);
+    if (filter.status === "expired") {
+      q = q.or(
+        `status.eq.expired,and(status.eq.approved,expires_at.lte.${now})`,
+      );
+    } else if (filter.status) {
+      q = q.eq("status", filter.status);
+      if (filter.status === "approved") q = q.gt("expires_at", now);
+    }
+    const { data, error, count } = await q
       .order("updated_at", { ascending: false })
-      .limit(100);
-    if (active === "drafts") q = q.eq("status", "draft");
-    if (active === "pending") q = q.eq("status", "pending");
-    const { data, error } = await q;
-    content = error ? (
-      <p role="alert">{t("dataError")}</p>
-    ) : data?.length ? (
-      <div className="table-wrap">
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>{t("title")}</th>
-              <th>{t("status")}</th>
-              <th>{t("category")}</th>
-              <th>{t("edit")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((row) => (
-              <tr key={row.id}>
-                <td>{row.title || t("draft")}</td>
-                <td>
-                  <StatusBadge status={row.status} label={t(row.status)} />
-                </td>
-                <td>{t(row.category_id)}</td>
-                <td>
-                  <div className="table-actions">
-                    <Link
-                      className="button button-outline"
-                      href={`/post?id=${row.id}`}
-                    >
-                      {t("edit")}
-                    </Link>
-                    <ConfirmationDialog id={row.id} />
-                  </div>
-                </td>
-              </tr>
+      .order("id")
+      .range(filter.from, filter.to);
+    const pages = Math.max(1, Math.ceil((count || 0) / ownerPageSize));
+    const formatDate = (value: string | null) =>
+      value && Number.isFinite(Date.parse(value))
+        ? new Date(value).toLocaleDateString(l === "zh" ? "zh-CN" : "en-US", {
+            timeZone: "America/New_York",
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          })
+        : "—";
+    content = (
+      <>
+        {active === "listings" && (
+          <nav
+            className="owner-status-filters"
+            aria-label={t("ownerListings.statusFilters")}
+          >
+            {["", ...ownerListingStatuses].map((status) => (
+              <Link
+                key={status}
+                href={ownerListingHref(active, status)}
+                aria-current={filter.status === status ? "page" : undefined}
+              >
+                {status ? t(status) : t("ownerListings.all")}
+              </Link>
             ))}
-          </tbody>
-        </table>
-      </div>
-    ) : (
-      <div className="surface centered">
-        <h2>{t("noListings")}</h2>
-        <Link href="/post" className="button primary">
-          {t("navPost")}
-        </Link>
-      </div>
+          </nav>
+        )}
+        <p className="owner-listing-summary" role="status">
+          {error ? t("dataError") : t("results", { count: count || 0 })}
+        </p>
+        {error ? (
+          <p className="notice error-notice" role="alert">
+            {t("dataError")}
+          </p>
+        ) : data?.length ? (
+          <div className="table-wrap">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>{t("title")}</th>
+                  <th>{t("status")}</th>
+                  <th>{t("category")}</th>
+                  <th>{t("ownerListings.dates")}</th>
+                  <th>{t("edit")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.map((row) => (
+                  <tr key={row.id}>
+                    <td>{row.title || t("draft")}</td>
+                    <td>
+                      <StatusBadge
+                        status={ownerListingDisplayStatus(
+                          row.status,
+                          row.expires_at,
+                        )}
+                        label={t(
+                          ownerListingDisplayStatus(row.status, row.expires_at),
+                        )}
+                      />
+                    </td>
+                    <td>{t(row.category_id)}</td>
+                    <td>
+                      <span className="owner-record-date">
+                        {t("ownerListings.updated")}{" "}
+                        <time dateTime={row.updated_at}>
+                          {formatDate(row.updated_at)}
+                        </time>
+                      </span>
+                      {row.expires_at && (
+                        <span className="owner-record-date">
+                          {t("ownerListings.expires")}{" "}
+                          <time dateTime={row.expires_at}>
+                            {formatDate(row.expires_at)}
+                          </time>
+                        </span>
+                      )}
+                    </td>
+                    <td>
+                      <div className="table-actions">
+                        <Link
+                          className="button button-outline"
+                          href={`/post?id=${row.id}`}
+                        >
+                          {t("edit")}
+                        </Link>
+                        {row.status !== "archived" && (
+                          <ConfirmationDialog id={row.id} />
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="surface centered">
+            <h2>
+              {t(
+                filter.page > pages
+                  ? "ownerListings.missingPage"
+                  : filter.status
+                    ? "ownerListings.emptyStatus"
+                    : "noListings",
+              )}
+            </h2>
+            {(filter.status || filter.page > 1) && (
+              <Link href={ownerListingHref("listings")} className="text-link">
+                {t("ownerListings.backAll")}
+              </Link>
+            )}
+            <Link href="/post" className="button primary">
+              {t("navPost")}
+            </Link>
+          </div>
+        )}
+        {!error && pages > 1 && filter.page <= pages && (
+          <nav
+            className="pagination"
+            aria-label={t("page", { page: filter.page, pages })}
+          >
+            {filter.page > 1 && (
+              <Link
+                className="button button-outline"
+                href={ownerListingHref(
+                  active,
+                  filter.status,
+                  Math.min(pages, filter.page - 1),
+                )}
+              >
+                {t("previous")}
+              </Link>
+            )}
+            <span>{t("page", { page: filter.page, pages })}</span>
+            {filter.page < pages && (
+              <Link
+                className="button button-outline"
+                href={ownerListingHref(active, filter.status, filter.page + 1)}
+              >
+                {t("next")}
+              </Link>
+            )}
+          </nav>
+        )}
+      </>
     );
   } else if (active === "saved") {
     const { data, error } = await db
@@ -265,13 +386,16 @@ export async function AccountDashboard({
       );
   } else {
     const counts = await Promise.all(
-      ["draft", "pending", "approved"].map((status) =>
-        db
+      ["draft", "pending", "approved"].map((status) => {
+        let query = db
           .from("listings")
           .select("id", { count: "exact", head: true })
           .eq("user_id", user.id)
-          .eq("status", status),
-      ),
+          .eq("status", status);
+        if (status === "approved")
+          query = query.gt("expires_at", new Date().toISOString());
+        return query;
+      }),
     );
     const { data: notes } = await db
       .from("notifications")
@@ -285,10 +409,14 @@ export async function AccountDashboard({
       <>
         <div className="metric-grid">
           {["draft", "pending", "approved"].map((s, i) => (
-            <div className="metric" key={s}>
+            <Link
+              className="metric owner-metric"
+              key={s}
+              href={ownerListingHref("listings", s)}
+            >
               <span>{t(s)}</span>
               <strong>{counts[i].count || 0}</strong>
-            </div>
+            </Link>
           ))}
         </div>
         <div className="surface">

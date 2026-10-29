@@ -140,6 +140,8 @@ test("authentication, account and admin fail closed without external configurati
     "/en/reset-password",
     "/zh/account",
     "/en/account/messages",
+    "/en/account/listings?status=expired&page=2&user_id=someone-else",
+    "/zh/account/drafts?page=999999",
     "/zh/admin/users",
   ]) {
     expect((await page.goto(route))?.status()).toBe(200);

@@ -3654,3 +3654,11 @@ select {
   .feed-services .home-empty, .feed-businesses .home-empty, .feed-community .home-empty { grid-template-columns: 1fr; }
   .feed-services .home-empty > a, .feed-businesses .home-empty > a, .feed-community .home-empty > a { grid-column: 1; grid-row: auto; justify-self: start; margin-top: 8px; }
 }
+
+.owner-status-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.owner-status-filters a { display: inline-flex; align-items: center; min-height: 44px; padding: 8px 14px; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+.owner-status-filters a[aria-current="page"] { color: #2059bc; background: #eaf2ff; border-color: #bdd3ff; }
+.owner-status-filters a:focus-visible, .owner-metric:focus-visible { outline: 3px solid #3478f6; outline-offset: 3px; }
+.owner-metric:hover { border-color: #3478f6; }
+.owner-listing-summary { margin-bottom: 16px; color: var(--text-secondary); }
+.owner-record-date { display: block; white-space: nowrap; font-size: 13px; line-height: 1.8; }
