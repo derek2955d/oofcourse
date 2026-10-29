@@ -47,3 +47,10 @@ Three original bilingual guides are maintained in `lib/living.ts`; the official-
 Owner listing tables now have All / Draft / Pending / Approved / Rejected / Expired / Archived filters, exact counts and stable server pagination. Draft/pending sidebar scopes cannot be overridden by query parameters. Approved records past their expiry date appear under Expired even before the scheduler changes the stored status; the Approved filter and overview count exclude those overdue records. Timestamps use New York time. Existing archive confirmation remains, with no redundant archive action on already archived rows.
 
 No migration is needed for this checkpoint. Local PostgreSQL verifies owner boundaries, matching counts and pages, more than 100 records and expiry behavior; unauthenticated browser flows remain closed. The current execution environment still lacks Supabase configuration, so positive hosted login/management interactions require an owner test account check before claiming operational completion.
+
+
+## Password changes (2026-10-29)
+
+Website password changes now require verified current-password authentication for the same member plus matching new-password confirmation. Recent provider-verified OTP/recovery AMR can support the existing email recovery flow for ten minutes; plain URL/client flags cannot grant that exception. Successful changes request provider global sign-out, clear temporary verification sessions and route back to login. Details and required provider checks: `docs/password-security.zh.md`.
+
+The Supabase Auth setting `security_update_password_require_current_password` must still be confirmed enabled by the project owner to protect direct Auth API calls as well as the website. Its value has not been read or changed from this environment. The reauthentication/secure-password-change setting alone exempts recently signed-in sessions and does not replace the current-password requirement. Live old-password/new-password and email-recovery checks remain unverified without hosted credentials. No SQL migration is needed.

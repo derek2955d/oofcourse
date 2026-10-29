@@ -5,6 +5,7 @@ import {
   ownerListingDisplayStatus,
   ownerPageSize,
 } from "@/lib/account-listings";
+import { hasRecentRecoveryAuthentication } from "@/lib/password-security";
 import { getTranslations, getLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { configured, requireUser } from "@/lib/supabase/server";
@@ -292,16 +293,25 @@ export async function AccountDashboard({
         <AccountForm kind="profile" initial={data || {}} />
       </div>
     );
-  } else if (active === "security")
+  } else if (active === "security") {
+    let recoveryVerified = false;
+    try {
+      const claims = await db.auth.getClaims();
+      recoveryVerified =
+        !claims.error &&
+        hasRecentRecoveryAuthentication(claims.data?.claims, user.id);
+    } catch {
+      /* Requiring current-password verification is the safe fallback. */
+    }
     content = (
       <div className="surface">
-        <AccountForm kind="security" />
+        <AccountForm kind="security" recoveryVerified={recoveryVerified} />
         <div style={{ marginTop: 24 }}>
           <LogoutButton />
         </div>
       </div>
     );
-  else if (active === "business") {
+  } else if (active === "business") {
     const { data, error } = await db
       .from("business_profiles")
       .select("*")

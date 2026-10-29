@@ -2,7 +2,7 @@
 import { useCatalogConfig } from "./catalog-provider";
 import { useRef, useState, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { archiveListing } from "@/app/actions/publishing";
 import {
   updateProfile,
@@ -10,6 +10,7 @@ import {
   replyMessage,
 } from "@/app/actions/account";
 import { changePassword, logout } from "@/app/actions/auth";
+import { PasswordFields } from "./password-fields";
 import { type Locale } from "@/lib/catalog";
 export function ConfirmationDialog({ id }: { id: string }) {
   const t = useTranslations(),
@@ -70,9 +71,11 @@ export function LogoutButton() {
 export function AccountForm({
   kind,
   initial = {},
+  recoveryVerified = false,
 }: {
   kind: "profile" | "business" | "security";
   initial?: Record<string, unknown>;
+  recoveryVerified?: boolean;
 }) {
   const { locations, subtypes } = useCatalogConfig();
   const t = useTranslations(),
@@ -80,13 +83,15 @@ export function AccountForm({
     router = useRouter(),
     [pending, start] = useTransition(),
     [message, setMessage] = useState(""),
+    [requireCurrent, setRequireCurrent] = useState(!recoveryVerified),
     [error, setError] = useState("");
   return (
     <form
       className="stack"
       onSubmit={(e) => {
         e.preventDefault();
-        const form = new FormData(e.currentTarget);
+        const element = e.currentTarget;
+        const form = new FormData(element);
         start(async () => {
           const v = Object.fromEntries(form);
           const r =
@@ -97,6 +102,15 @@ export function AccountForm({
                 : await changePassword(form);
           setError(r.error || "");
           setMessage(r.success || "");
+          if (r.error === "passwordSecurity.currentRequired")
+            setRequireCurrent(true);
+          if (r.success && kind === "security") {
+            element.reset();
+            if (!r.error) {
+              router.replace("/login?passwordChanged=1");
+              router.refresh();
+            }
+          }
           if (r.success && kind === "profile") router.refresh();
         });
       }}
@@ -124,17 +138,25 @@ export function AccountForm({
           <p className="small-note">{t("publicProfileHint")}</p>
         </>
       ) : kind === "security" ? (
-        <label className="field">
-          {t("newPassword")}
-          <input
-            name="password"
-            type="password"
-            autoComplete="new-password"
-            minLength={12}
-            maxLength={128}
-            required
+        <>
+          <PasswordFields
+            requireCurrent={requireCurrent}
+            pending={pending}
+            labels={{
+              current: t("passwordSecurity.current"),
+              next: t("newPassword"),
+              confirm: t("passwordSecurity.confirm"),
+              hint: t(
+                requireCurrent
+                  ? "passwordSecurity.hint"
+                  : "passwordSecurity.recoveryHint",
+              ),
+            }}
           />
-        </label>
+          <Link href="/reset-password" className="text-link">
+            {t("forgot")}
+          </Link>
+        </>
       ) : (
         <>
           <label className="field">

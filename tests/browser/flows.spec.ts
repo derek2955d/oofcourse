@@ -140,6 +140,7 @@ test("authentication, account and admin fail closed without external configurati
     "/en/reset-password",
     "/zh/account",
     "/en/account/messages",
+    "/zh/account/security?recoveryVerified=true&verified=1",
     "/en/account/listings?status=expired&page=2&user_id=someone-else",
     "/zh/account/drafts?page=999999",
     "/zh/admin/users",
@@ -154,7 +155,7 @@ test("authentication, account and admin fail closed without external configurati
   const manifest = JSON.parse(
     readFileSync(".next/server/server-reference-manifest.json", "utf8"),
   );
-  for (const actionName of ["moderateMany", "saveListing"]) {
+  for (const actionName of ["moderateMany", "saveListing", "changePassword"]) {
     const action = Object.entries(manifest.node).find(
       ([, v]) => (v as { exportedName: string }).exportedName === actionName,
     )?.[0];
@@ -172,7 +173,11 @@ test("authentication, account and admin fail closed without external configurati
     );
     const body = await r.text();
     expect(body).toContain(
-      actionName === "moderateMany" ? "adminOnly" : "setupMessage",
+      actionName === "moderateMany"
+        ? "adminOnly"
+        : actionName === "changePassword"
+          ? "validation"
+          : "setupMessage",
     );
   }
   expect((await request.get("/api/cron/expire")).status()).toBe(503);
@@ -484,5 +489,85 @@ test("community hub combines activities and posts without calendar directories o
     await expect(page.locator(".active-filters")).toHaveCount(0);
     await page.goto(`/${locale}/community?q=library`);
     await expect(page.locator(".community-activities")).toBeVisible();
+  }
+});
+
+test("password-change fields require old-password verification and confirmation in both languages", async ({
+  page,
+}) => {
+  const { renderToStaticMarkup } = await import("react-dom/server");
+  const { createElement } = await import("react");
+  const { PasswordFields } = await import("../../components/password-fields");
+  const { default: AxeBuilder } = await import("@axe-core/playwright");
+  for (const locale of ["zh", "en"]) {
+    await page.goto(`/${locale}/login?passwordChanged=1`);
+    await expect(page.locator('.notice[role="status"]')).toContainText(
+      locale === "zh" ? "新密码" : "new password",
+    );
+    const styles = await page
+      .locator('link[rel="stylesheet"]')
+      .evaluateAll((links) => links.map((link) => link.outerHTML).join(""));
+    const labels =
+      locale === "zh"
+        ? {
+            current: "当前密码",
+            next: "新密码",
+            confirm: "再次输入新密码",
+            hint: "隔离表单测试，不代表已登录账号。",
+          }
+        : {
+            current: "Current password",
+            next: "New password",
+            confirm: "Confirm new password",
+            hint: "Isolated form test, not an authenticated account.",
+          };
+    for (const requireCurrent of [true, false]) {
+      const fields = renderToStaticMarkup(
+        createElement(PasswordFields, { requireCurrent, labels }),
+      );
+      await page.setContent(
+        `<!doctype html><html lang="${locale === "zh" ? "zh-CN" : "en-US"}"><head><title>Isolated security fields</title>${styles}</head><body><main class="container page"><h1>Security form fields</h1><form class="surface stack">${fields}<button type="submit">Check fields</button></form></main></body></html>`,
+      );
+      await expect(page.locator('input[name="current_password"]')).toHaveCount(
+        requireCurrent ? 1 : 0,
+      );
+      await expect(
+        page.getByLabel(labels.next, { exact: true }),
+      ).toHaveAttribute("autocomplete", "new-password");
+      expect(
+        await page
+          .locator("form")
+          .evaluate((form) => (form as HTMLFormElement).checkValidity()),
+      ).toBe(false);
+      if (requireCurrent)
+        await page
+          .getByLabel(labels.current, { exact: true })
+          .fill("test-old-password");
+      await page
+        .getByLabel(labels.next, { exact: true })
+        .fill("test-new-password");
+      expect(
+        await page
+          .locator("form")
+          .evaluate((form) => (form as HTMLFormElement).checkValidity()),
+      ).toBe(false);
+      await page
+        .getByLabel(labels.confirm, { exact: true })
+        .fill("test-new-password");
+      expect(
+        await page
+          .locator("form")
+          .evaluate((form) => (form as HTMLFormElement).checkValidity()),
+      ).toBe(true);
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= innerWidth,
+        ),
+      ).toBe(true);
+      const accessibility = await new AxeBuilder({ page })
+        .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+        .analyze();
+      expect(accessibility.violations.map((value) => value.id)).toEqual([]);
+    }
   }
 });

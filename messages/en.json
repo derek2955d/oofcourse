@@ -502,5 +502,19 @@
     "emptyStatus": "No listings with this status yet.",
     "backAll": "View all my listings",
     "missingPage": "No listings on this page."
+  },
+  "passwordSecurity": {
+    "current": "Current password",
+    "confirm": "Confirm new password",
+    "hint": "Verify your current password first. Use at least 12 characters and choose a different new password.",
+    "recoveryHint": "You recently verified your identity. Set your new password within 10 minutes of that verification, or verify again.",
+    "mismatch": "The new passwords do not match.",
+    "different": "Choose a different new password.",
+    "currentRequired": "Enter your current password, or verify again using Forgot password.",
+    "currentInvalid": "Current password verification failed. Check it and try again.",
+    "weak": "Choose a stronger password that meets the security requirements.",
+    "updateFailed": "Your password could not be updated. Try again, or verify again using Forgot password.",
+    "signOutRetry": "Your password changed, but automatic sign-out failed. Use Log out below, then sign in with your new password.",
+    "signInAgain": "Your password changed. Sign in with your new password."
   }
 }

@@ -23,6 +23,11 @@ export function AuthForm({
     [success, setSuccess] = useState("");
   return (
     <>
+      {mode === "login" && params.get("passwordChanged") === "1" && (
+        <p className="notice" role="status">
+          {t("passwordSecurity.signInAgain")}
+        </p>
+      )}
       {success ? (
         <div className="notice" role="status">
           {t(success)}
