@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { CalendarDays, ArrowUpRight, MapPin } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import {
@@ -18,49 +19,74 @@ export function EditorialActivityCards({
   if (!activities.length) return null;
   return (
     <div className="editorial-activity-cards" aria-label={label}>
-      {activities.map((activity) => (
-        <article className="editorial-activity-card" key={activity.slug}>
-          <div className="editorial-activity-label">
-            <CalendarDays size={17} aria-hidden="true" />
-            <span>{label}</span>
-            <time dateTime={activity.startsAt}>
-              {new Intl.DateTimeFormat(locale === "zh" ? "zh-CN" : "en-US", {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-                timeZone: "America/New_York",
-              }).format(activityDateValue(activity.startsAt))}
-            </time>
-            {activity.startsAt.slice(0, 10) !== activity.day && (
-              <>
-                <span aria-hidden="true">–</span>
-                <time dateTime={activity.day}>
-                  {new Intl.DateTimeFormat(
-                    locale === "zh" ? "zh-CN" : "en-US",
-                    {
-                      month: "short",
-                      day: "numeric",
-                      timeZone: "America/New_York",
-                    },
-                  ).format(activityDateValue(activity.day))}
-                </time>
-              </>
-            )}
-          </div>
-          <h3>
-            <Link href={`/activities/${activity.slug}`}>
-              {activity.title[locale]}
-            </Link>
-          </h3>
-          <p>{activity.summary[locale]}</p>
-          <p className="editorial-activity-place">
-            <MapPin size={14} aria-hidden="true" />
-            {activity.place[locale]}
-          </p>
-          <Link href={`/activities/${activity.slug}`} className="text-link">
-            {view}
-            <ArrowUpRight size={14} />
+      {activities.map((activity, index) => (
+        <article
+          className={`editorial-activity-card ${index === 0 ? "editorial-featured" : ""}`}
+          key={activity.slug}
+        >
+          <Link
+            href={`/activities/${activity.slug}`}
+            className="editorial-art-link"
+            aria-label={activity.title[locale]}
+          >
+            <Image
+              src={
+                activity.slug.includes("halloween")
+                  ? "/illustrations/parade.svg"
+                  : "/illustrations/cinema.svg"
+              }
+              alt=""
+              width={600}
+              height={400}
+              sizes="(max-width: 760px) 100vw, 600px"
+            />
+            <span>
+              {locale === "zh" ? "主题插画" : "Editorial illustration"}
+            </span>
           </Link>
+          <div className="editorial-activity-body">
+            <div className="editorial-activity-label">
+              <CalendarDays size={17} aria-hidden="true" />
+              <span>{label}</span>
+              <time dateTime={activity.startsAt}>
+                {new Intl.DateTimeFormat(locale === "zh" ? "zh-CN" : "en-US", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                  timeZone: "America/New_York",
+                }).format(activityDateValue(activity.startsAt))}
+              </time>
+              {activity.startsAt.slice(0, 10) !== activity.day && (
+                <>
+                  <span aria-hidden="true">–</span>
+                  <time dateTime={activity.day}>
+                    {new Intl.DateTimeFormat(
+                      locale === "zh" ? "zh-CN" : "en-US",
+                      {
+                        month: "short",
+                        day: "numeric",
+                        timeZone: "America/New_York",
+                      },
+                    ).format(activityDateValue(activity.day))}
+                  </time>
+                </>
+              )}
+            </div>
+            <h3>
+              <Link href={`/activities/${activity.slug}`}>
+                {activity.title[locale]}
+              </Link>
+            </h3>
+            <p>{activity.summary[locale]}</p>
+            <p className="editorial-activity-place">
+              <MapPin size={14} aria-hidden="true" />
+              {activity.place[locale]}
+            </p>
+            <Link href={`/activities/${activity.slug}`} className="text-link">
+              {view}
+              <ArrowUpRight size={14} />
+            </Link>
+          </div>
         </article>
       ))}
     </div>

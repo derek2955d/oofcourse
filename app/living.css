@@ -553,4 +553,121 @@
 .community-activities {
   margin-bottom: 28px;
 }
-.editorial-activity-cards {display:grid;gap:16px;}
+.editorial-activity-cards {
+  display: grid;
+  gap: 16px;
+}
+
+/* A quiet visual hierarchy: one lead story, then compact illustrated cards. */
+.editorial-activity-cards {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+}
+.editorial-activity-card {
+  padding: 0;
+  overflow: hidden;
+  border-color: #dde5ef;
+  border-radius: 22px;
+  box-shadow: 0 8px 28px #233b5b06;
+}
+.editorial-activity-card.editorial-featured {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  background: #fff;
+}
+.editorial-art-link {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  background: #e7edf9;
+}
+.editorial-art-link img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 220px;
+  object-fit: cover;
+  transition: transform 0.25s ease;
+}
+.editorial-art-link:hover img {
+  transform: scale(1.025);
+}
+.editorial-art-link > span {
+  position: absolute;
+  bottom: 12px;
+  left: 16px;
+  background: #ffffffed;
+  color: #31465e;
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 10px;
+}
+.editorial-activity-body {
+  padding: 26px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+.editorial-activity-body > p {
+  font-size: 14px;
+  color: #586d63;
+  line-height: 1.85;
+  margin-top: 12px;
+}
+.editorial-activity-body > .text-link {
+  margin-top: 22px;
+  font-size: 13px;
+}
+.editorial-activity-body .editorial-activity-label {
+  gap: 6px;
+}
+.editorial-activity-body .editorial-activity-label time {
+  margin-left: 0;
+}
+.editorial-featured h3 {
+  font-size: clamp(22px, 2.3vw, 30px);
+  line-height: 1.45;
+  letter-spacing: -0.025em;
+}
+.editorial-activity-card:not(.editorial-featured) .editorial-art-link {
+  aspect-ratio: 2 / 1;
+}
+@media (max-width: 760px) {
+  .editorial-activity-cards {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+  .editorial-activity-card.editorial-featured {
+    display: block;
+  }
+  .editorial-art-link,
+  .editorial-activity-card:not(.editorial-featured) .editorial-art-link {
+    aspect-ratio: 3 / 2;
+  }
+  .editorial-art-link img {
+    min-height: 0;
+  }
+  .editorial-activity-body {
+    padding: 21px;
+  }
+  .editorial-featured h3 {
+    font-size: 24px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .editorial-art-link img {
+    transition: none;
+  }
+}
+@media (min-width: 761px) {
+  .editorial-activity-card:last-child:nth-child(even) {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, .7fr) minmax(0, 1fr);
+  }
+  .editorial-activity-card:last-child:nth-child(even) .editorial-art-link {
+    aspect-ratio: auto;
+  }
+}
