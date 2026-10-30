@@ -703,3 +703,39 @@ test("nearby editorial dates have no invented start hour and show multi-day rang
     );
   }
 });
+
+test("website assistant denies anonymous generation and draft creation", async ({
+  page,
+  request,
+}) => {
+  for (const locale of ["en", "zh"]) {
+    await page.goto(`/${locale}/admin/assistant`);
+    await expect(page.locator(".connection-notice")).toBeVisible();
+    await expect(page.locator("textarea")).toHaveCount(0);
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+      "content",
+      /noindex/,
+    );
+  }
+  const manifest = JSON.parse(
+    readFileSync(".next/server/server-reference-manifest.json", "utf8"),
+  );
+  for (const [name, expected] of [
+    ["prepareActivity", "setupMessage"],
+    ["storeActivityDraft", "save"],
+  ]) {
+    const action = Object.entries(manifest.node).find(
+      ([, v]) => (v as { exportedName: string }).exportedName === name,
+    )?.[0];
+    expect(action).toBeTruthy();
+    const result = await request.post("/en/admin/assistant", {
+      headers: {
+        "Next-Action": action!,
+        "Content-Type": "text/plain;charset=UTF-8",
+        Origin: "http://127.0.0.1:3100",
+      },
+      data: JSON.stringify([{}]),
+    });
+    expect(await result.text()).toContain(expected);
+  }
+});

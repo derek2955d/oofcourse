@@ -181,3 +181,9 @@ No hosted database write or privileged API was used. This entry is managed in `l
 - Shared homepage/community/nearby editorial cards now lead with one large activity and responsive illustrated cards. Two original local SVG artworks are clearly labeled as illustrations, not event photography. No new tags, filter controls or detail fields.
 - Typecheck, ESLint, 32 unit tests and production build passed. Four desktop/mobile Playwright flows passed, including bilingual navigation, activity dates and accessibility checks. Homepage English/Chinese screenshots at 1440/390 were inspected; no horizontal overflow. The final desktop lone-card adjustment avoids an empty half row.
 - No database migration, hosted authentication changes or production deployment.
+
+## Website assistant foundation — 2026-10-30
+- Admin-only bilingual assistant UI at /admin/assistant. Server actions prepare structured bilingual activity candidates from pasted public source text and save reviewed private drafts through migration 011. The source URL is attribution, not an implemented scraper. No scheduled discovery or automatic publication.
+- Source evidence validation, date validation, per-admin generation/save limits, transactional duplicate prevention, private provenance with RLS, and audit records. Existing editor/moderation remains the publication path.
+- Typecheck, ESLint, 34 unit tests and production build passed. Eight isolated PostgreSQL suites passed, including assistant admin denial/quotas/draft privacy/source RLS/deduplication/audit. Two Playwright desktop/mobile tests passed: no anonymous assistant controls, noindex and rejected direct Server Action requests.
+- No hosted admin generation/save/publish test: no Supabase or AI credentials available. AI provider is disabled by default, no paid requests made. Migration 011 and provider/budget approval/configuration remain operator prerequisites. Formal production was not updated.

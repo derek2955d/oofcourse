@@ -22,7 +22,9 @@ import {
   History,
   ShieldCheck,
 } from "lucide-react";
+import { WebsiteAssistant } from "./website-assistant";
 const tabs = [
+  ["assistant", "adminAssistant", Sparkles],
   ["overview", "adminOverview", LayoutDashboard],
   ["listings", "adminListings", Files],
   ["users", "adminUsers", UsersRound],
@@ -67,7 +69,31 @@ export async function AdminDashboard({
     );
   else {
     const { db } = context;
-    if (active === "overview") {
+    if (active === "assistant") {
+      const { data: locations } = await db
+        .from("locations")
+        .select("id,name_en,name_zh")
+        .eq("enabled", true)
+        .order("name_en");
+      const { data: imports, error: importsError } = await db
+        .from("assistant_imports")
+        .select("listing_id,source_url,event_day,created_at")
+        .order("created_at", { ascending: false })
+        .limit(10);
+      content = (
+        <WebsiteAssistant
+          locale={l === "zh" ? "zh" : "en"}
+          configured={
+            process.env.ASSISTANT_ENABLED === "true" &&
+            !!process.env.OPENAI_API_KEY &&
+            !!process.env.ASSISTANT_MODEL
+          }
+          locations={locations || []}
+          imports={imports || []}
+          historyAvailable={!importsError}
+        />
+      );
+    } else if (active === "overview") {
       const { data, error } = await db.rpc("admin_summary");
       const summary = data as {
         users: number;

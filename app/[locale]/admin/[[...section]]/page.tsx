@@ -30,6 +30,7 @@ export default async function Admin({
     (section?.length || 0) > 1 ||
     (section?.[0] &&
       ![
+        "assistant",
         "listings",
         "users",
         "reports",
