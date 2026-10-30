@@ -3662,3 +3662,21 @@ select {
 .owner-metric:hover { border-color: #3478f6; }
 .owner-listing-summary { margin-bottom: 16px; color: var(--text-secondary); }
 .owner-record-date { display: block; white-space: nowrap; font-size: 13px; line-height: 1.8; }
+
+/* One compact mobile header; account identity remains available in the menu. */
+@media (max-width: 760px) {
+  .site-header .header-main { min-height: 68px; gap: 8px; }
+  .site-header .wordmark { font-size: 24px; }
+  .site-header .header-actions { gap: 0; margin-left: auto; }
+  .site-header .header-actions .location-compact { display: flex; }
+  .site-header .location-compact, .site-header .header-setting-button,
+  .site-header .menu-button { width: 40px; min-width: 40px; height: 40px; min-height: 40px; }
+  .site-header .location-compact select { min-height: 40px; }
+  .site-header .header-actions .header-account { display: inline-flex; min-width: 36px; max-width: 36px; padding: 0; border: 0; }
+  .site-header .header-actions .header-account-name { display: none; }
+  .site-header .header-actions .login-link, .site-header .post-desktop { display: none; }
+  .mobile-menu { border-top: 1px solid #edf1f7; }
+}
+@media (max-width: 360px) {
+  .site-header .wordmark { font-size: 22px; }
+}

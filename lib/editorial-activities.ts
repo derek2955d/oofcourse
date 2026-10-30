@@ -12,8 +12,8 @@ export const editorialActivities = [
     sourceUrl:
       "https://bryantpark.org/activities/bank-of-america-winter-village-at-bryant-park",
     title: {
-      en: "Bryant Park Winter Village opens October 28",
-      zh: "Bryant Park 冬季村 10 月 28 日开季",
+      en: "Bryant Park Winter Village opening",
+      zh: "Bryant Park 冬季村开季",
     },
     summary: {
       en: "The official website announces a noon opening with skating, holiday shops and food options in Manhattan.",
@@ -37,8 +37,8 @@ export const editorialActivities = [
     source: "NYC Tourism + Conventions",
     sourceUrl: "https://www.nyctourism.com/events/village-halloween-parade/",
     title: {
-      en: "Village Halloween Parade · October 31",
-      zh: "格林威治村万圣节游行 · 10 月 31 日",
+      en: "Village Halloween Parade",
+      zh: "格林威治村万圣节游行",
     },
     summary: {
       en: "NYC Tourism lists the 2026 Halloween parade in Greenwich Village, with a route along Sixth Avenue.",
@@ -65,8 +65,8 @@ export const editorialActivities = [
     source: "NYC Tourism + Conventions",
     sourceUrl: "https://www.nyctourism.com/events/queens-world-film-arts-fest/",
     title: {
-      en: "Queens World First Amendment Film & Arts Festival · November 13–14",
-      zh: "Queens World 第一修正案电影与艺术节 · 11 月 13–14 日",
+      en: "Queens World First Amendment Film & Arts Festival",
+      zh: "Queens World 第一修正案电影与艺术节",
     },
     summary: {
       en: "A two-day film and arts festival listed in the Kaufman Astoria Arts District, with screenings, performances and conversation.",

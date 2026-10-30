@@ -51,7 +51,7 @@ export function EditorialActivityCards({
           <div className="editorial-activity-body">
             <div className="editorial-activity-label">
               <CalendarDays size={17} aria-hidden="true" />
-              <span>{label}</span>
+              <span className="sr-only">{label}</span>
               <time dateTime={activity.startsAt}>
                 {new Intl.DateTimeFormat(locale === "zh" ? "zh-CN" : "en-US", {
                   year: "numeric",

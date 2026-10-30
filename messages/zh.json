@@ -363,11 +363,11 @@
   "viewBusiness": "查看公开商家资料",
   "authDesign": {
     "eyebrow": "很高兴，在这里遇见你",
-    "headline": "找到生活的落点，",
-    "accent": "开启身边的可能。",
-    "intro": "一个新住处、一份新机会、一件心仪的闲置。让日常所需，在你的社区里找到答案。",
+    "headline": "收藏想去的活动，",
+    "accent": "安排自己的城市生活。",
+    "intro": "收藏感兴趣的活动，管理自己的发布，也能继续寻找身边的房源、工作和生活服务。",
     "city": "从纽约出发，为日常生活而来",
-    "saved": "收藏心动发现，随时回来看看",
+    "saved": "收藏想去的活动，随时回来查看",
     "post": "发布所需，与社区分享好物和机会",
     "connect": "继续你的本地生活探索",
     "back": "返回探索",
@@ -574,5 +574,13 @@
   "waterfront": "海边与滨水",
   "art": "艺术与展馆",
   "daytrip": "周边小旅行",
-  "adminAssistant": "网站管理助手"
+  "adminAssistant": "网站管理助手",
+  "searchPlaceholders": {
+    "housing": "搜索房源、街区或房型…",
+    "jobs": "搜索职位或公司…",
+    "marketplace": "搜索商品名称…",
+    "services": "搜索服务项目…",
+    "businesses": "搜索商家名称或业务…",
+    "community": "搜索活动或内容…"
+  }
 }

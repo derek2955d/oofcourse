@@ -19,7 +19,7 @@ export const sourcedActivities = [
       en: "All five NYC boroughs",
       zh: "纽约五大区",
     },
-    image: "city",
+    image: "sports",
     fees: {
       en: "Check the organizer’s admission and booking information. No current price, free admission or remaining tickets are asserted here.",
       zh: "入场、报名及费用以主办方说明为准；本页不承诺免费、实时票价或剩余名额。",
@@ -79,7 +79,7 @@ export const sourcedActivities = [
       en: "Radio City Music Hall, Manhattan",
       zh: "曼哈顿 Radio City Music Hall",
     },
-    image: "cinema",
+    image: "stage",
     fees: {
       en: "Check the organizer’s admission and booking information. No current price, free admission or remaining tickets are asserted here.",
       zh: "入场、报名及费用以主办方说明为准；本页不承诺免费、实时票价或剩余名额。",
@@ -109,7 +109,7 @@ export const sourcedActivities = [
       en: "David H. Koch Theater, Manhattan",
       zh: "曼哈顿 David H. Koch Theater",
     },
-    image: "cinema",
+    image: "stage",
     fees: {
       en: "Check the organizer’s admission and booking information. No current price, free admission or remaining tickets are asserted here.",
       zh: "入场、报名及费用以主办方说明为准；本页不承诺免费、实时票价或剩余名额。",
@@ -139,7 +139,7 @@ export const sourcedActivities = [
       en: "USTA Billie Jean King National Tennis Center, Queens",
       zh: "皇后区 USTA Billie Jean King National Tennis Center",
     },
-    image: "city",
+    image: "sports",
     fees: {
       en: "Check the organizer’s admission and booking information. No current price, free admission or remaining tickets are asserted here.",
       zh: "入场、报名及费用以主办方说明为准；本页不承诺免费、实时票价或剩余名额。",

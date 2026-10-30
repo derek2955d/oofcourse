@@ -788,3 +788,69 @@ test("real activity list combines all sourced entries without ended blocks", asy
     ).toBe(true);
   }
 });
+
+test("activity-first polish keeps navigation direct and search singular", async ({
+  page,
+}) => {
+  for (const locale of ["zh", "en"]) {
+    await page.goto(`/${locale}`);
+    await expect(page.locator(".desktop-categories a").first()).toHaveAttribute(
+      "href",
+      `/${locale}/weekend`,
+    );
+    await expect(page.locator(".mobile-header-tools")).toHaveCount(0);
+    if (page.viewportSize()!.width < 761) {
+      expect(
+        (await page.locator(".site-header").boundingBox())!.height,
+      ).toBeLessThanOrEqual(80);
+      await page.locator('.mobile-bottom a[href$="/weekend"]').click();
+    } else await page.locator(".desktop-categories a").first().click();
+    await expect(page).toHaveURL(new RegExp(`/${locale}/weekend$`));
+    await expect(
+      page.locator('.living-section-heading a[href$="/weekend"]'),
+    ).toHaveCount(0);
+    await expect(
+      page.locator(".editorial-activity-card h3").first(),
+    ).not.toContainText(" · ");
+    await page.goto(`/${locale}/housing?q=studio&sort=price-low`);
+    await expect(
+      page.locator('main input[type="search"][name="q"]'),
+    ).toHaveCount(1);
+    await expect(
+      page.locator('.desktop-filter input[name="q"]'),
+    ).toHaveAttribute("type", "hidden");
+    await expect(
+      page.locator('main input[type="search"][name="q"]'),
+    ).toHaveAttribute(
+      "placeholder",
+      locale === "zh"
+        ? "搜索房源、街区或房型…"
+        : "Search homes, neighborhoods or property types…",
+    );
+    if (page.viewportSize()!.width < 761)
+      await page
+        .getByRole("button", {
+          name: locale === "zh" ? "筛选" : "Filters",
+          exact: true,
+        })
+        .click();
+    const form =
+      page.viewportSize()!.width < 761
+        ? page.getByRole("dialog").locator("form")
+        : page.locator(".desktop-filter form");
+    await form.locator('select[name="location"]').selectOption("queens");
+    await form
+      .getByRole("button", {
+        name: locale === "zh" ? "应用筛选" : "Apply filters",
+        exact: true,
+      })
+      .click();
+    await expect(page).toHaveURL(/q=studio/);
+    await expect(page).toHaveURL(/location=queens/);
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
+  }
+});

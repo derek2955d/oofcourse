@@ -90,10 +90,12 @@ export async function LivingEvents({
           </h2>
           {!homepage && <p>{t("eventsIntro")}</p>}
         </div>
-        <Link href="/weekend" className="text-link">
-          {t("viewEvents")}
-          <ArrowUpRight size={15} />
-        </Link>
+        {!nearby && (
+          <Link href="/weekend" className="text-link">
+            {t("viewEvents")}
+            <ArrowUpRight size={15} />
+          </Link>
+        )}
       </div>
       <EditorialActivityCards
         locale={locale}

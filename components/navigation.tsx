@@ -14,7 +14,7 @@ import {
   Menu,
   X,
   House,
-  Grid2X2,
+  CalendarDays,
   Heart,
   UserRound,
   ArrowRight,
@@ -166,6 +166,12 @@ export function SiteHeader({
           <i />
         </Link>
         <nav className="desktop-categories" aria-label={t("navCategories")}>
+          <Link
+            href="/weekend"
+            aria-current={pathname.startsWith("/weekend") ? "page" : undefined}
+          >
+            {t("weekend.nav")}
+          </Link>
           {visibleCategoryKeys.map((c) => (
             <Link
               key={c}
@@ -175,12 +181,6 @@ export function SiteHeader({
               {categories[c][locale]}
             </Link>
           ))}
-          <Link
-            href="/weekend"
-            aria-current={pathname.startsWith("/weekend") ? "page" : undefined}
-          >
-            {t("weekend.nav")}
-          </Link>
         </nav>
         <div className="header-actions">
           <LocationSelector />
@@ -201,16 +201,6 @@ export function SiteHeader({
           </button>
         </div>
       </div>
-      <div className="container mobile-header-tools">
-        <LocationSelector />
-        <div className="mobile-header-links">
-          <Link href="/search" className="text-link">
-            <Search size={16} />
-            {t("navSearch")}
-          </Link>
-          {viewer && accountLink}
-        </div>
-      </div>
       {open && (
         <nav
           id="mobile-menu"
@@ -218,15 +208,19 @@ export function SiteHeader({
           aria-label={t("navCategories")}
           onClick={() => setOpen(false)}
         >
+          <Link href="/weekend">
+            {t("weekend.nav")}
+            <ArrowRight size={16} />
+          </Link>
           {visibleCategoryKeys.map((c) => (
             <Link href={`/${c}?state=${state}`} key={c}>
               {categories[c][locale]}
               <ArrowRight size={16} />
             </Link>
           ))}
-          <Link href="/weekend">
-            {t("weekend.nav")}
-            <ArrowRight size={16} />
+          <Link href="/search">
+            <Search size={16} />
+            {t("navSearch")}
           </Link>
           <Link href="/living">
             {t("living.nav")}
@@ -250,7 +244,7 @@ export function MobileBottomNav() {
     pathname = usePathname();
   const nav = [
     ["/", "navHome", House],
-    ["/categories", "navCategories", Grid2X2],
+    ["/weekend", "weekend.nav", CalendarDays],
     ["/post", "navPost", Plus],
     ["/saved", "navSaved", Heart],
     ["/account", "navAccount", UserRound],
@@ -262,7 +256,14 @@ export function MobileBottomNav() {
           key={path}
           href={path}
           className={path === "/post" ? "post-tab" : ""}
-          aria-current={pathname === path ? "page" : undefined}
+          aria-current={
+            pathname === path ||
+            (path === "/weekend" &&
+              (pathname.startsWith("/weekend/") ||
+                pathname.startsWith("/activities/")))
+              ? "page"
+              : undefined
+          }
         >
           <span>
             <Icon size={21} />
@@ -325,7 +326,11 @@ export function SearchBar({
         <input
           type="search"
           name="q"
-          placeholder={t("searchPlaceholder")}
+          placeholder={
+            category && t.has(`searchPlaceholders.${category}`)
+              ? t(`searchPlaceholders.${category}`)
+              : t("searchPlaceholder")
+          }
           aria-label={t("keyword")}
           maxLength={150}
           defaultValue={params.get("q") || ""}

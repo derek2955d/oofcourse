@@ -363,11 +363,11 @@
   "viewBusiness": "View public business profile",
   "authDesign": {
     "eyebrow": "GOOD TO SEE YOU HERE",
-    "headline": "Find your place.",
-    "accent": "Make it yours.",
-    "intro": "A new home, your next opportunity, a great secondhand find. Your neighborhood is full of possibilities.",
+    "headline": "Save your next outing.",
+    "accent": "Make more of local life.",
+    "intro": "Save activities you like, manage your posts and discover local homes, jobs and everyday services.",
     "city": "Made for everyday life in New York",
-    "saved": "Keep your favorite finds close",
+    "saved": "Save outings and return to them anytime",
     "post": "Share something with your neighborhood",
     "connect": "Pick up where you left off",
     "back": "Back to exploring",
@@ -574,5 +574,13 @@
   "waterfront": "Waterfront",
   "art": "Art & museums",
   "daytrip": "Day trips",
-  "adminAssistant": "Website assistant"
+  "adminAssistant": "Website assistant",
+  "searchPlaceholders": {
+    "housing": "Search homes, neighborhoods or property types…",
+    "jobs": "Search jobs or companies…",
+    "marketplace": "Search item names…",
+    "services": "Search local services…",
+    "businesses": "Search businesses or services…",
+    "community": "Search activities or posts…"
+  }
 }

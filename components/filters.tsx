@@ -35,10 +35,7 @@ export function FilterPanel({
       {!category && params.get("category") && (
         <input type="hidden" name="category" value={params.get("category")!} />
       )}
-      <label className="field">
-        {t("keyword")}
-        <input type="search" name="q" defaultValue={query.q} maxLength={150} />
-      </label>
+      <input type="hidden" name="q" value={query.q || ""} />
       <label className="field">
         {t("location")}
         <select

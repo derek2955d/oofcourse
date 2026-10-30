@@ -96,7 +96,7 @@ export default async function Home({
           </nav>
           <Link
             href={`/post?category=community&state=${state}`}
-            className="button primary activity-post"
+            className="button button-outline activity-post"
           >
             <Plus size={17} aria-hidden="true" />
             {t("postEvent")}
