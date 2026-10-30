@@ -93,6 +93,7 @@ export async function LivingEvents({
       </div>
       <EditorialActivityCards
         locale={locale}
+        limit={homepage && !nearby ? 3 : undefined}
         label={(await getTranslations("editorialActivity"))("label")}
         view={t("viewEvent")}
       />

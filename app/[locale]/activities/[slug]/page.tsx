@@ -125,7 +125,11 @@ export default async function EditorialActivityPage({
             target="_blank"
             rel="noopener noreferrer"
           >
-            {t("official")}
+            {passed
+              ? locale === "zh"
+                ? "查看历史来源"
+                : "View historical source"
+              : t("official")}
             <ExternalLink size={15} aria-hidden="true" />
             <span className="sr-only">{shared("living.newTab")}</span>
           </a>

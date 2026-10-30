@@ -1,3 +1,4 @@
+import { sourcedActivities } from "./sourced-activities";
 import { newYorkToday } from "./living";
 
 // Source-controlled editorial facts, not member listings or organizer-authorized copy.
@@ -84,12 +85,42 @@ export const editorialActivities = [
       zh: "来源列明日期为 2026 年 11 月 13–14 日。不同场次可能有不同地址和时刻，出发前请确认具体安排。",
     },
   },
+  ...sourcedActivities,
 ] as const;
 export const getEditorialActivity = (slug: string) =>
   editorialActivities.find((activity) => activity.slug === slug);
-export function activeEditorialActivities(today = newYorkToday()) {
+export type EditorialActivity = (typeof editorialActivities)[number];
+function monthBoundary(today: string, offset: number) {
+  const date = new Date(`${today}T12:00:00Z`);
+  const end = new Date(
+    Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + offset + 1, 0),
+  );
+  return new Date(
+    Date.UTC(
+      end.getUTCFullYear(),
+      end.getUTCMonth(),
+      Math.min(date.getUTCDate(), end.getUTCDate()),
+      12,
+    ),
+  )
+    .toISOString()
+    .slice(0, 10);
+}
+export function archivedEditorialActivities(today = newYorkToday()) {
+  const since = monthBoundary(today, -3);
   return editorialActivities
-    .filter((activity) => activity.checkedAt <= today && today <= activity.day)
+    .filter((a) => a.day < today && a.day >= since && a.checkedAt <= today)
+    .sort((a, b) => b.day.localeCompare(a.day));
+}
+export function activeEditorialActivities(today = newYorkToday()) {
+  const until = monthBoundary(today, 1);
+  return editorialActivities
+    .filter(
+      (activity) =>
+        activity.checkedAt <= today &&
+        today <= activity.day &&
+        activity.startsAt.slice(0, 10) <= until,
+    )
     .sort((a, b) => a.startsAt.localeCompare(b.startsAt));
 }
 

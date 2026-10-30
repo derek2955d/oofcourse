@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
   activeEditorialActivities,
+  archivedEditorialActivities,
   editorialActivities,
   getEditorialActivity,
 } from "../lib/editorial-activities";
@@ -43,7 +44,12 @@ test("new nearby event notes expire after their last calendar day and keep unkno
       (item) => item.slug === "queens-film-arts-festival-2026",
     ),
   );
-  assert.equal(activeEditorialActivities("2026-11-15").length, 0);
+  assert.equal(
+    activeEditorialActivities("2026-11-15").some(
+      (a) => a.slug === "queens-film-arts-festival-2026",
+    ),
+    false,
+  );
   assert.equal(
     getEditorialActivity("queens-film-arts-festival-2026")?.startsAt,
     "2026-11-13",
@@ -73,5 +79,29 @@ test("event publishing requires a real date while ordinary community announcemen
   assert.equal(
     listingInput.safeParse({ ...item, subcategory: "announcements" }).success,
     true,
+  );
+});
+
+test("sourced activity archive uses real dated records within three months and upcoming notes within one month", () => {
+  const past = archivedEditorialActivities("2026-10-30");
+  const upcoming = activeEditorialActivities("2026-10-30");
+  assert.equal(past.length, 7);
+  assert.equal(upcoming.length, 6);
+  assert.ok(past.every((a) => a.day >= "2026-07-30" && a.day < "2026-10-30"));
+  assert.ok(
+    upcoming.every(
+      (a) => a.day >= "2026-10-30" && a.startsAt.slice(0, 10) <= "2026-11-30",
+    ),
+  );
+  for (const a of [...past, ...upcoming]) {
+    assert.equal(new URL(a.sourceUrl).protocol, "https:");
+    assert.ok(a.title.en && a.title.zh && a.summary.en && a.summary.zh);
+  }
+  assert.ok(
+    upcoming.some((a) => a.slug === "macys-thanksgiving-day-parade-2026"),
+  );
+  assert.equal(
+    past.some((a) => a.slug.includes("2027")),
+    false,
   );
 });

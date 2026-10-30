@@ -288,7 +288,7 @@ test("New York living guides and bilingual article routes work without calendar 
     ).toHaveCount(6);
     await expect(section.locator(".living-upcoming article")).toHaveCount(0);
     await expect(section.locator(".editorial-activity-card")).toHaveCount(
-      activeEditorialActivities().length,
+      Math.min(3, activeEditorialActivities().length),
     );
     if (!activeEditorialActivities().length)
       await expect(section.locator(".living-event-empty")).toBeVisible();
@@ -386,7 +386,7 @@ test("published editorial activity has truthful details, working source links an
   for (const locale of ["zh", "en"] as const) {
     await page.goto(`/${locale}`);
     await expect(page.locator(".editorial-activity-card")).toHaveCount(
-      activeEditorialActivities().length,
+      Math.min(3, activeEditorialActivities().length),
     );
     if (activeEditorialActivities().some((item) => item.slug === activity.slug))
       await page
@@ -740,46 +740,43 @@ test("website assistant denies anonymous generation and draft creation", async (
   }
 });
 
-test("year content sample is labeled, navigable and isolated from real feeds", async ({
+test("real recent activity archive replaces fictional sample and separates past dates", async ({
   page,
-  request,
 }) => {
-  for (const locale of ["zh", "en"]) {
+  const { activeEditorialActivities, archivedEditorialActivities } =
+    await import("../../lib/editorial-activities");
+  for (const locale of ["en", "zh"]) {
     await page.goto(`/${locale}/preview/activity-year`);
+    await expect(page).toHaveURL(new RegExp(`/${locale}/weekend$`));
+    await expect(
+      page.locator(".living-events .editorial-activity-card"),
+    ).toHaveCount(activeEditorialActivities().length);
+    const archive = page.locator(
+      'section[aria-labelledby="recent-archive-heading"]',
+    );
+    await archive.locator("summary").click();
+    await expect(archive.locator(".editorial-activity-card")).toHaveCount(
+      archivedEditorialActivities().length,
+    );
+    await archive
+      .locator(".editorial-activity-body .text-link")
+      .first()
+      .click();
+    await expect(
+      page.locator(".editorial-activity-detail .notice"),
+    ).toBeVisible();
+    await expect(page.locator(".living-article-sources a")).toHaveAttribute(
+      "href",
+      /^https:\/\//,
+    );
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
       "content",
       /noindex/,
     );
-    await expect(page.locator(".editorial-activity-card")).toHaveCount(32);
-    await expect(page.locator("details")).toHaveCount(12);
-    await expect(page.locator('aside[role="note"]')).toContainText(
-      locale === "zh" ? "非真实活动库" : "Not a real event feed",
-    );
-    await expect(
-      page.locator(
-        "#sample-upcoming + .editorial-activity-cards .editorial-activity-card",
-      ),
-    ).toHaveCount(8);
-    await page.locator(".editorial-activity-body .text-link").first().click();
-    await expect(page).toHaveURL(/preview\/activity-year\/upcoming-/);
-    await expect(page.locator(".living-article .notice")).toContainText(
-      locale === "zh" ? "演示内容" : "Sample content",
-    );
-    await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
-      "content",
-      /noindex/,
-    );
-    await page.goto(`/${locale}`);
-    await expect(
-      page.locator('a[href*="/preview/activity-year/"]'),
-    ).toHaveCount(0);
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
       ),
     ).toBe(true);
   }
-  expect(await (await request.get("/sitemap.xml")).text()).not.toContain(
-    "/preview/activity-year",
-  );
 });

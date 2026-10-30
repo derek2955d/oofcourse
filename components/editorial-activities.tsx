@@ -4,18 +4,23 @@ import { Link } from "@/i18n/navigation";
 import {
   activeEditorialActivities,
   activityDateValue,
+  type EditorialActivity,
 } from "@/lib/editorial-activities";
 import type { Locale } from "@/lib/catalog";
 export function EditorialActivityCards({
   locale,
   label,
   view,
+  items,
+  limit,
 }: {
   locale: Locale;
   label: string;
   view: string;
+  items?: readonly EditorialActivity[];
+  limit?: number;
 }) {
-  const activities = activeEditorialActivities();
+  const activities = (items || activeEditorialActivities()).slice(0, limit);
   if (!activities.length) return null;
   return (
     <div className="editorial-activity-cards" aria-label={label}>
@@ -24,13 +29,15 @@ export function EditorialActivityCards({
           <Link
             href={`/activities/${activity.slug}`}
             className="editorial-art-link"
-            aria-label={activity.title[locale]}
+            aria-label={`${activity.title[locale]} — ${locale === "zh" ? "主题插画" : "Editorial illustration"}`}
           >
             <Image
               src={
-                activity.slug.includes("halloween")
-                  ? "/illustrations/parade.svg"
-                  : "/illustrations/cinema.svg"
+                "image" in activity
+                  ? `/illustrations/${activity.image}.svg`
+                  : activity.slug.includes("halloween")
+                    ? "/illustrations/parade.svg"
+                    : "/illustrations/cinema.svg"
               }
               alt=""
               width={600}
