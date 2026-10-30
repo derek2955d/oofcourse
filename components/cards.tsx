@@ -11,7 +11,7 @@ import {
   ImageOff,
 } from "lucide-react";
 import {
-  categoryKeys,
+  visibleCategoryKeys,
   categoryData,
   locationLabel,
   formatMoney,
@@ -29,7 +29,7 @@ export async function CategoryGrid({ state }: { state?: string } = {}) {
   const taxonomy = await loadTaxonomy();
   return (
     <div className="category-grid">
-      {categoryKeys.map((c) => (
+      {visibleCategoryKeys.map((c) => (
         <Link
           key={c}
           href={`/${c}?state=${scope}`}

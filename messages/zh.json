@@ -24,7 +24,7 @@
   "searchButton": "搜索身边信息",
   "allCategories": "全部分类",
   "exploreCategories": "你想找什么？",
-  "categorySubtitle": "六大分类，让生活更轻松。",
+  "categorySubtitle": "找到适合你的本地信息。",
   "latestHousing": "找到理想的家",
   "latestJobs": "开启职业新篇章",
   "latestMarketplace": "好物循环，生活焕新。",
@@ -427,7 +427,7 @@
     "board": "连接身边的生活",
     "boardText": "一个安心的住处，一份新的机会，一个熟悉的社区。",
     "categories": "今天，你想找什么？",
-    "categoryNote": "六大分类，装下生活里的大小事。",
+    "categoryNote": "发现让生活更方便的本地信息。",
     "safetyTitle": "多一份留心，多一份安心。",
     "safetyText": "见面、付款或签约前，先了解需要核实的事项。",
     "safetyLink": "查看安全指南",
@@ -454,7 +454,7 @@
     "upcoming": "纽约 · 活动",
     "noEvents": "暂时没有可展示的近期社区活动。",
     "eventError": "社区活动暂时无法加载，请稍后重试。",
-    "viewEvents": "浏览社区活动",
+    "viewEvents": "浏览全部活动",
     "viewEvent": "查看活动",
     "sources": "官方资源与延伸阅读",
     "updated": "更新于 {date}",
@@ -479,7 +479,7 @@
     "resources": "实用入口",
     "guides": "生活指南",
     "safety": "安全指南",
-    "postEvent": "发布社区活动"
+    "postEvent": "发布活动"
   },
   "editorialActivity": {
     "label": "OofCourse 编辑整理",

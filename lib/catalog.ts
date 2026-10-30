@@ -15,6 +15,10 @@ export const categoryKeys = [
   "businesses",
   "community",
 ] as const;
+// Public navigation only; keep community available for existing content and administration.
+export const visibleCategoryKeys = categoryKeys.filter(
+  (key) => key !== "community",
+);
 export type CategoryKey = (typeof categoryKeys)[number];
 export const categoryData = {
   housing: {

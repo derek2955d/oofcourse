@@ -4,7 +4,20 @@ test("secondary search, category selection and language switching retain query s
   page,
 }) => {
   await page.goto("/en");
-  await expect(page.locator(".category-card")).toHaveCount(6);
+  await expect(page.locator(".category-card")).toHaveCount(5);
+  await expect(
+    page.locator('.desktop-categories a[href*="/community"]'),
+  ).toHaveCount(0);
+  await expect(page.locator('.category-card[href*="/community"]')).toHaveCount(
+    0,
+  );
+  if (page.viewportSize()!.width < 761) {
+    await page.locator(".menu-button").click();
+    await expect(
+      page.locator('#mobile-menu a[href*="/community"]'),
+    ).toHaveCount(0);
+    await page.locator(".menu-button").click();
+  }
   await expect(page.locator(".listing-card")).toHaveCount(0);
   await expect(page.locator(".empty-state")).toHaveCount(0);
   await page.locator(".home-side-search > summary").click();
@@ -285,7 +298,7 @@ test("New York living guides and bilingual article routes work without calendar 
     await expect(page.locator("main .living-guide-card")).toHaveCount(0);
     await expect(
       page.locator(".activity-home-aside .category-card"),
-    ).toHaveCount(6);
+    ).toHaveCount(5);
     await expect(section.locator(".living-upcoming article")).toHaveCount(0);
     await expect(section.locator(".editorial-activity-card")).toHaveCount(
       Math.min(3, homepageEditorialActivities().length),

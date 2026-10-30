@@ -90,10 +90,7 @@ export async function LivingEvents({
           </h2>
           {!homepage && <p>{t("eventsIntro")}</p>}
         </div>
-        <Link
-          href="/community?state=NY&subcategory=events"
-          className="text-link"
-        >
+        <Link href="/weekend" className="text-link">
           {t("viewEvents")}
           <ArrowUpRight size={15} />
         </Link>

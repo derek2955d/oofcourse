@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import { useSelectedState } from "./use-geography";
 import { availableStates, stateLabel } from "@/lib/geography";
-import { categoryKeys, type Locale } from "@/lib/catalog";
+import { visibleCategoryKeys, type Locale } from "@/lib/catalog";
 export function LanguageSwitcher() {
   const t = useTranslations(),
     locale = useLocale(),
@@ -166,7 +166,7 @@ export function SiteHeader({
           <i />
         </Link>
         <nav className="desktop-categories" aria-label={t("navCategories")}>
-          {categoryKeys.map((c) => (
+          {visibleCategoryKeys.map((c) => (
             <Link
               key={c}
               href={`/${c}?state=${state}`}
@@ -218,7 +218,7 @@ export function SiteHeader({
           aria-label={t("navCategories")}
           onClick={() => setOpen(false)}
         >
-          {categoryKeys.map((c) => (
+          {visibleCategoryKeys.map((c) => (
             <Link href={`/${c}?state=${state}`} key={c}>
               {categories[c][locale]}
               <ArrowRight size={16} />
@@ -337,7 +337,7 @@ export function SearchBar({
             <span className="sr-only">{t("category")}</span>
             <select name="category" aria-label={t("category")} defaultValue="">
               <option value="">{t("allCategories")}</option>
-              {categoryKeys.map((c) => (
+              {visibleCategoryKeys.map((c) => (
                 <option value={c} key={c}>
                   {categories[c][locale]}
                 </option>

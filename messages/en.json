@@ -24,7 +24,7 @@
   "searchButton": "Find it locally",
   "allCategories": "All categories",
   "exploreCategories": "What are you looking for?",
-  "categorySubtitle": "Six ways to make yourself at home.",
+  "categorySubtitle": "Find the local information you need.",
   "latestHousing": "Find your place",
   "latestJobs": "Make your next move",
   "latestMarketplace": "Good things. New beginnings.",
@@ -427,7 +427,7 @@
     "board": "YOUR LOCAL CONNECTION",
     "boardText": "A place to live. A chance to grow. A community to call home.",
     "categories": "What brings you here today?",
-    "categoryNote": "Six ways to make local life a little easier.",
+    "categoryNote": "Discover local information that makes everyday life easier.",
     "safetyTitle": "A little care goes a long way.",
     "safetyText": "Know what to check before you meet, pay or sign.",
     "safetyLink": "Explore safety tips",
@@ -454,7 +454,7 @@
     "upcoming": "New York · Activities",
     "noEvents": "No upcoming community activities to show yet.",
     "eventError": "Community activities are temporarily unavailable. Please try again later.",
-    "viewEvents": "Browse community activities",
+    "viewEvents": "Browse all activities",
     "viewEvent": "View activity",
     "sources": "Official resources and further reading",
     "updated": "Updated {date}",
@@ -479,7 +479,7 @@
     "resources": "Useful links",
     "guides": "Life guides",
     "safety": "Safety tips",
-    "postEvent": "Share a community activity"
+    "postEvent": "Share an activity"
   },
   "editorialActivity": {
     "label": "OofCourse editorial",
