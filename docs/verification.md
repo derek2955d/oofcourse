@@ -217,3 +217,7 @@ No hosted database write or privileged API was used. This entry is managed in `l
 ## Hide community category entry — 2026-10-30
 - Public category navigation, mobile menu, home/category grids and search choices now use five visible categories without community. The six-category data model, existing community routes/content and publisher/admin workflows are preserved. Activity discovery CTAs link to /weekend and use activity wording. Removed fixed six-category marketing copy.
 - Typecheck, ESLint, 37 unit tests and final production build passed. Four desktop/mobile Playwright flows passed for hidden community navigation/cards, five public cards, mobile menu, search, language switching, guide navigation and accessibility. No database or permission changes; hiding an entry does not make existing content private.
+
+## Remove duplicate region shortcuts — 2026-10-30
+- Removed the top browse-area quick-link strip. Sidebar/mobile filters remain the location selector, including NYC/NJ parents and their children. Kept removable active-filter chips and omit the empty wrapper when nothing is selected.
+- Typecheck, ESLint, 37 unit tests and production build passed. Six desktop/mobile geography flows passed: selecting an area via the retained form, preserving keyword/sort, resetting pagination, removing chips, correct NJ state, language switching and parent-region selection. No geography data or database policies changed.

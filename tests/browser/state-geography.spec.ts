@@ -60,11 +60,17 @@ test("local discovery preserves filters, removes individual chips and uses categ
   await page.goto(
     "/zh/housing?state=NY&q=apartment&tenure=rent&sort=price-low&page=2",
   );
-  const quick = page.getByRole("navigation", {
-    name: "按地区浏览",
-    exact: true,
-  });
-  await quick.getByRole("link", { name: "皇后区", exact: true }).click();
+  await expect(page.locator(".browse-areas")).toHaveCount(0);
+  const initialMobile = page.viewportSize()!.width < 761;
+  if (initialMobile)
+    await page.getByRole("button", { name: "筛选", exact: true }).click();
+  const initialForm = initialMobile
+    ? page.getByRole("dialog").locator("form")
+    : page.locator(".desktop-filter form");
+  await initialForm.locator('select[name="location"]').selectOption("queens");
+  await initialForm
+    .getByRole("button", { name: "应用筛选", exact: true })
+    .click();
   await expect(page).toHaveURL(/location=queens/);
   expect(new URL(page.url()).searchParams.get("q")).toBe("apartment");
   expect(new URL(page.url()).searchParams.get("sort")).toBe("price-low");
@@ -143,16 +149,10 @@ test("near-Manhattan NJ selection submits the correct state and survives languag
   await expect(
     page.locator(".site-header .location-compact:visible select option"),
   ).toHaveCount(1);
-  const quick = page.locator(".browse-areas");
+  await expect(page.locator(".browse-areas")).toHaveCount(0);
   await expect(
-    quick.getByRole("link", { name: "曼哈顿", exact: true }),
-  ).toBeVisible();
-  await expect(
-    quick.getByRole("link", { name: "霍博肯", exact: true }),
-  ).toHaveAttribute("href", /state=NJ/);
-  await expect(
-    quick.getByRole("link", { name: "曼哈顿", exact: true }),
-  ).toHaveAttribute("href", /state=NY/);
+    page.locator('.desktop-filter select[name="location"]'),
+  ).toHaveValue("jersey-city");
   await expect(page.locator(".active-filters")).toContainText("泽西市");
   await page.locator(".language-switch").getByRole("button").click();
   await page
@@ -204,9 +204,10 @@ test("region group options submit all-child scopes and keep their translated nam
       await expect(page).toHaveURL(new RegExp(`location=${group.id}`));
       await expect(page).toHaveURL(new RegExp(`state=${group.state}`));
       await expect(page.locator(".active-filters")).toContainText(group.label);
+      await expect(page.locator(".browse-areas")).toHaveCount(0);
       await expect(
-        page.locator('.browse-areas a[aria-current="true"]'),
-      ).toHaveText(group.label);
+        page.locator('.desktop-filter select[name="location"]'),
+      ).toHaveValue(group.id);
     }
   }
 });

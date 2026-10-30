@@ -2,7 +2,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { X } from "lucide-react";
 import type { BrowseQuery, CategoryKey, Locale } from "@/lib/catalog";
-import { nycBoroughIds, nearManhattanNJ, njNearbyGroup } from "@/lib/geography";
+import { njNearbyGroup } from "@/lib/geography";
 import { loadTaxonomy } from "@/lib/taxonomy-server";
 
 export async function BrowseNavigation({
@@ -20,17 +20,6 @@ export async function BrowseNavigation({
   const areas = taxonomy.locations.filter(
     ([id]) => taxonomy.locationStates[id] === query.state,
   );
-  const quickIds: readonly string[] = [
-    ...nycBoroughIds,
-    ...nearManhattanNJ.map((row) => row[0]),
-  ];
-  const quick = quickIds.flatMap((id) => {
-    const row = taxonomy.locations.find(
-      (row) =>
-        row[0] === id && ["NY", "NJ"].includes(taxonomy.locationStates[id]),
-    );
-    return row ? [row] : [];
-  });
   function href(change: Record<string, string>) {
     const params = new URLSearchParams();
     if (!category && searchCategory) params.set("category", searchCategory);
@@ -71,51 +60,9 @@ export async function BrowseNavigation({
   const filters = Object.entries(query).filter(
     ([key, value]) => !["page", "sort", "state"].includes(key) && value,
   );
+  if (!filters.length) return null;
   return (
     <div className="browse-navigation">
-      {category !== "community" && !!quick.length && (
-        <nav className="browse-areas" aria-label={t("browse.quickAreas")}>
-          <span>{t("browse.quickAreas")}</span>
-          <Link
-            prefetch={false}
-            href={href({ location: "" })}
-            aria-current={!query.location ? "true" : undefined}
-          >
-            {t("browse.allAreas")}
-          </Link>
-          {[
-            { id: "nyc", state: "NY", label: t("browse.boroughs") },
-            {
-              id: njNearbyGroup,
-              state: "NJ",
-              label: t("browse.nearManhattanNJ"),
-            },
-          ]
-            .filter((group) =>
-              quick.some(([id]) => taxonomy.locationStates[id] === group.state),
-            )
-            .map((group) => (
-              <Link
-                key={group.id}
-                prefetch={false}
-                href={href({ location: group.id, state: group.state })}
-                aria-current={query.location === group.id ? "true" : undefined}
-              >
-                {group.label}
-              </Link>
-            ))}
-          {quick.map(([id, en, zh]) => (
-            <Link
-              key={id}
-              prefetch={false}
-              href={href({ location: id, state: taxonomy.locationStates[id] })}
-              aria-current={query.location === id ? "true" : undefined}
-            >
-              {locale === "zh" ? zh : en}
-            </Link>
-          ))}
-        </nav>
-      )}
       {!!filters.length && (
         <nav
           className="active-filters"
