@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
   activeEditorialActivities,
+  homepageEditorialActivities,
   archivedEditorialActivities,
   editorialActivities,
   getEditorialActivity,
@@ -104,4 +105,23 @@ test("sourced activity archive uses real dated records within three months and u
     past.some((a) => a.slug.includes("2027")),
     false,
   );
+});
+
+test("homepage prioritizes activities within fourteen New York calendar days and keeps monthly browsing intact", () => {
+  const home = homepageEditorialActivities("2026-10-30");
+  assert.ok(home.some((a) => a.slug === "queens-film-arts-festival-2026"));
+  assert.equal(
+    home.some((a) => a.slug === "macys-thanksgiving-day-parade-2026"),
+    false,
+  );
+  assert.ok(
+    activeEditorialActivities("2026-10-30").some(
+      (a) => a.slug === "macys-thanksgiving-day-parade-2026",
+    ),
+  );
+  const ongoing = homepageEditorialActivities("2026-11-28");
+  assert.ok(
+    ongoing.some((a) => a.slug === "radio-city-christmas-spectacular-2026"),
+  );
+  assert.ok(ongoing.every((a) => a.day >= "2026-11-28"));
 });

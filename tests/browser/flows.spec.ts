@@ -276,7 +276,7 @@ test("New York living guides and bilingual article routes work without calendar 
 }) => {
   test.setTimeout(180000);
   const { livingGuides } = await import("../../lib/living");
-  const { activeEditorialActivities } =
+  const { homepageEditorialActivities } =
     await import("../../lib/editorial-activities");
   const { default: AxeBuilder } = await import("@axe-core/playwright");
   for (const locale of ["en", "zh"] as const) {
@@ -288,9 +288,9 @@ test("New York living guides and bilingual article routes work without calendar 
     ).toHaveCount(6);
     await expect(section.locator(".living-upcoming article")).toHaveCount(0);
     await expect(section.locator(".editorial-activity-card")).toHaveCount(
-      Math.min(3, activeEditorialActivities().length),
+      Math.min(3, homepageEditorialActivities().length),
     );
-    if (!activeEditorialActivities().length)
+    if (!homepageEditorialActivities().length)
       await expect(section.locator(".living-event-empty")).toBeVisible();
     await expect(page.locator(".living-official")).toHaveCount(0);
     await page.locator(".home-living-index").click();
@@ -379,16 +379,18 @@ test("published editorial activity has truthful details, working source links an
   page,
   request,
 }) => {
-  const { activeEditorialActivities, editorialActivities } =
+  const { homepageEditorialActivities, editorialActivities } =
     await import("../../lib/editorial-activities");
   const { default: AxeBuilder } = await import("@axe-core/playwright");
   const activity = editorialActivities[0];
   for (const locale of ["zh", "en"] as const) {
     await page.goto(`/${locale}`);
     await expect(page.locator(".editorial-activity-card")).toHaveCount(
-      Math.min(3, activeEditorialActivities().length),
+      Math.min(3, homepageEditorialActivities().length),
     );
-    if (activeEditorialActivities().some((item) => item.slug === activity.slug))
+    if (
+      homepageEditorialActivities().some((item) => item.slug === activity.slug)
+    )
       await page
         .locator(`.editorial-activity-card h3 a[href$="/${activity.slug}"]`)
         .click();

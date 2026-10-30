@@ -3,7 +3,7 @@ import { nearManhattanNJ } from "./geography";
 import { cache } from "react";
 import { configured, publicDB } from "./supabase/server";
 import { enabledAreas } from "./geography-server";
-import { eventDay, newYorkToday } from "./living";
+import { eventDay, newYorkToday, eventHorizon } from "./living";
 export type CommunityEvent = {
   id: string;
   title: string;
@@ -13,6 +13,7 @@ export type CommunityEvent = {
 export const upcomingEvents = cache(
   async (
     nearby = false,
+    days = 31,
   ): Promise<{ items: CommunityEvent[]; error: boolean }> => {
     if (!configured()) return { items: [], error: false };
     try {
@@ -39,13 +40,14 @@ export const upcomingEvents = cache(
           areas.map((area) => area.id),
         )
         .gte("details->>event_date", today)
+        .lte("details->>event_date", eventHorizon(today, days))
         .order("details->>event_date", { ascending: true })
         .order("id")
         .limit(3);
       if (error) throw error;
       const items = (data || []).flatMap((row) => {
         const day = eventDay(row.details?.event_date);
-        return day && day >= today
+        return day && day >= today && day <= eventHorizon(today, days)
           ? [{ id: row.id, title: row.title, location: row.location_id, day }]
           : [];
       });

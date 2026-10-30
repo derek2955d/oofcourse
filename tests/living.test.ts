@@ -67,3 +67,9 @@ test("event dates reject impossible dates and use New York rather than the serve
   assert.equal(newYorkToday(new Date("2026-07-01T03:30:00Z")), "2026-06-30");
   assert.equal(newYorkToday(new Date("2026-01-01T05:30:00Z")), "2026-01-01");
 });
+
+test("event horizon remains a calendar-date window across daylight saving and year boundaries", async () => {
+  const { eventHorizon } = await import("../lib/living");
+  assert.equal(eventHorizon("2026-10-30", 14), "2026-11-13");
+  assert.equal(eventHorizon("2026-12-25", 14), "2027-01-08");
+});

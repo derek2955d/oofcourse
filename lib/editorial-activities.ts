@@ -1,5 +1,5 @@
 import { sourcedActivities } from "./sourced-activities";
-import { newYorkToday } from "./living";
+import { newYorkToday, eventHorizon } from "./living";
 
 // Source-controlled editorial facts, not member listings or organizer-authorized copy.
 export const editorialActivities = [
@@ -122,6 +122,14 @@ export function activeEditorialActivities(today = newYorkToday()) {
         activity.startsAt.slice(0, 10) <= until,
     )
     .sort((a, b) => a.startsAt.localeCompare(b.startsAt));
+}
+
+// The homepage is for plans that can happen soon; larger event browsing stays monthly.
+export function homepageEditorialActivities(today = newYorkToday()) {
+  const until = eventHorizon(today, 14);
+  return activeEditorialActivities(today).filter(
+    (activity) => activity.startsAt.slice(0, 10) <= until,
+  );
 }
 
 // One browsing list: upcoming entries first, followed by recent source records.

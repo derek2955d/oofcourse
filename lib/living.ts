@@ -300,3 +300,10 @@ export function newYorkToday(now = new Date()) {
 export function guideCopy(guide: LivingGuide, locale: Locale) {
   return { title: guide.title[locale], summary: guide.summary[locale] };
 }
+
+// Add calendar days to a New York date without DST changing the date boundary.
+export function eventHorizon(today: string, days: number) {
+  const date = new Date(`${today}T12:00:00Z`);
+  date.setUTCDate(date.getUTCDate() + days);
+  return date.toISOString().slice(0, 10);
+}

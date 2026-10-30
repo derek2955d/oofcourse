@@ -208,3 +208,8 @@ No hosted database write or privileged API was used. This entry is managed in `l
 - Removed the separate past-three-month section, archive disclosure and ended labels/notices. Nearby/community browsing now renders all 13 sourced entries together (upcoming then recent records). Homepage retains three upcoming picks. Historical noindex metadata remains; source dates are unchanged and no missing dates are invented.
 - Date ranges retain known ends, one-day entries show one date, and cross-year card ranges now include the end year. No prices, records, sources or SQL changed.
 - Typecheck, ESLint, 35 unit tests and final production build passed. Six desktop/mobile Playwright flows passed for English/Chinese combined lists, absence of ended blocks/notices, community browsing, date-only/multi-day facts and source links.
+
+## Homepage planning window — 2026-10-30
+- Homepage editorial picks now include ongoing activities and starts within 14 New York calendar days, capped at three. The full nearby list keeps the one-month horizon and recent past records last. No new tags or filters.
+- Community event queries apply the homepage 14-day upper bound before ordering/limit; other event browsing uses a 31-day bound. Date-only arithmetic uses UTC calendar days based on the New York date so DST does not shift the cutoff.
+- Typecheck, ESLint, 37 unit tests and production build passed. Four desktop/mobile Playwright flows passed for bilingual homepage navigation/accessibility and the full merged activity list. Boundary tests cover an event starting exactly on day 14, exclusion of a later-month event, ongoing seasonal performances, DST and year rollover. Hosted database reads were not exercised without credentials; no SQL changes.

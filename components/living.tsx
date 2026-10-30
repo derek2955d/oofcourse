@@ -14,7 +14,7 @@ import { upcomingEvents } from "@/lib/living-server";
 import { loadTaxonomy } from "@/lib/taxonomy-server";
 import type { Locale } from "@/lib/catalog";
 import {
-  activeEditorialActivities,
+  homepageEditorialActivities,
   recentEditorialActivities,
 } from "@/lib/editorial-activities";
 import { EditorialActivityCards } from "./editorial-activities";
@@ -63,12 +63,12 @@ export async function LivingEvents({
   const t = await getTranslations("living");
   const locale = (await getLocale()) as Locale;
   const [events, taxonomy] = await Promise.all([
-    upcomingEvents(nearby),
+    upcomingEvents(nearby, homepage && !nearby ? 14 : 31),
     loadTaxonomy(),
   ]);
   const editorialItems =
     homepage && !nearby
-      ? activeEditorialActivities()
+      ? homepageEditorialActivities()
       : recentEditorialActivities();
   return (
     <section
