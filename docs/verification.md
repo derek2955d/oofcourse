@@ -192,3 +192,8 @@ No hosted database write or privileged API was used. This entry is managed in `l
 - Removed featured-card size differences. All desktop rows share a 260px illustration column (200px on intermediate screens), equal row heights, 20px titles and tighter spacing. Mobile illustrations all use 168px height.
 - Typecheck, ESLint, 34 unit tests and production build passed. Browser checks covered home and nearby pages in English/Chinese at 1440px/390px, comparing positive image widths/heights/left alignment, checking horizontal overflow and following detail links. Final screenshots inspected; Chinese nearby desktop images both measure 260×228px, mobile 348×168px.
 - No database or provider configuration changes.
+
+## One-year content-density preview — 2026-10-30
+- Added a separate bilingual preview with 24 historical content concepts across twelve months and eight next-30-day concepts, original prose, a new self-authored city SVG, month disclosures and individual detail pages. Sample dates do not assert actual publication or event history. No Supabase writes or invented users, traffic, bookings or Event schema.
+- Typecheck, ESLint, 35 unit tests and production build passed. Two desktop/mobile browser tests passed for both languages: 32 cards, twelve month groups, eight future cards, source-independent detail navigation, noindex and no sample links on the real homepage or sitemap. Desktop/mobile screenshots captured and desktop inspected; compact equal images retained.
+- Preview pages respect ENABLE_LAYOUT_PREVIEWS=false. No production merge, DNS or provider changes.
