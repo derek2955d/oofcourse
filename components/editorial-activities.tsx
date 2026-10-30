@@ -19,11 +19,8 @@ export function EditorialActivityCards({
   if (!activities.length) return null;
   return (
     <div className="editorial-activity-cards" aria-label={label}>
-      {activities.map((activity, index) => (
-        <article
-          className={`editorial-activity-card ${index === 0 ? "editorial-featured" : ""}`}
-          key={activity.slug}
-        >
+      {activities.map((activity) => (
+        <article className="editorial-activity-card" key={activity.slug}>
           <Link
             href={`/activities/${activity.slug}`}
             className="editorial-art-link"
@@ -38,7 +35,7 @@ export function EditorialActivityCards({
               alt=""
               width={600}
               height={400}
-              sizes="(max-width: 760px) 100vw, 600px"
+              sizes="(max-width: 760px) 100vw, (max-width: 1000px) 200px, 260px"
             />
             <span>
               {locale === "zh" ? "主题插画" : "Editorial illustration"}

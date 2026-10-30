@@ -187,3 +187,8 @@ No hosted database write or privileged API was used. This entry is managed in `l
 - Source evidence validation, date validation, per-admin generation/save limits, transactional duplicate prevention, private provenance with RLS, and audit records. Existing editor/moderation remains the publication path.
 - Typecheck, ESLint, 34 unit tests and production build passed. Eight isolated PostgreSQL suites passed, including assistant admin denial/quotas/draft privacy/source RLS/deduplication/audit. Two Playwright desktop/mobile tests passed: no anonymous assistant controls, noindex and rejected direct Server Action requests.
 - No hosted admin generation/save/publish test: no Supabase or AI credentials available. AI provider is disabled by default, no paid requests made. Migration 011 and provider/budget approval/configuration remain operator prerequisites. Formal production was not updated.
+
+## Compact equal activity cards — 2026-10-30
+- Removed featured-card size differences. All desktop rows share a 260px illustration column (200px on intermediate screens), equal row heights, 20px titles and tighter spacing. Mobile illustrations all use 168px height.
+- Typecheck, ESLint, 34 unit tests and production build passed. Browser checks covered home and nearby pages in English/Chinese at 1440px/390px, comparing positive image widths/heights/left alignment, checking horizontal overflow and following detail links. Final screenshots inspected; Chinese nearby desktop images both measure 260×228px, mobile 348×168px.
+- No database or provider configuration changes.
