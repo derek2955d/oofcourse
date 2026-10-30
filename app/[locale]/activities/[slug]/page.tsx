@@ -41,7 +41,6 @@ export default async function EditorialActivityPage({
   setRequestLocale(locale);
   const t = await getTranslations("editorialActivity"),
     shared = await getTranslations();
-  const passed = newYorkToday() > activity.day;
   return (
     <div className="container page">
       <nav className="breadcrumbs" aria-label={shared("breadcrumb")}>
@@ -55,7 +54,6 @@ export default async function EditorialActivityPage({
           <h1>{activity.title[locale]}</h1>
           <p className="living-article-summary">{activity.summary[locale]}</p>
         </header>
-        {passed && <p className="notice">{t("past")}</p>}
         <dl className="editorial-activity-facts">
           <div>
             <dt>{t("when")}</dt>
@@ -125,11 +123,7 @@ export default async function EditorialActivityPage({
             target="_blank"
             rel="noopener noreferrer"
           >
-            {passed
-              ? locale === "zh"
-                ? "查看历史来源"
-                : "View historical source"
-              : t("official")}
+            {locale === "zh" ? "查看来源" : "View source"}
             <ExternalLink size={15} aria-hidden="true" />
             <span className="sr-only">{shared("living.newTab")}</span>
           </a>

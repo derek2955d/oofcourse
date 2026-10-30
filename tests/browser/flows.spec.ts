@@ -465,11 +465,11 @@ test("community hub combines activities and posts without calendar directories o
       await page.goto(`/${locale}/community${suffix}`);
       await expect(page.locator(".community-activities")).toBeVisible();
       await expect(page.locator(".living-official")).toHaveCount(0);
-      const { activeEditorialActivities } =
+      const { recentEditorialActivities } =
         await import("../../lib/editorial-activities");
       await expect(
         page.locator(".community-activities .editorial-activity-card"),
-      ).toHaveCount(activeEditorialActivities().length);
+      ).toHaveCount(recentEditorialActivities().length);
       await expect(page.locator('main input[name="q"]').first()).toBeAttached();
       expect(
         await page.evaluate(
@@ -740,38 +740,31 @@ test("website assistant denies anonymous generation and draft creation", async (
   }
 });
 
-test("real recent activity archive replaces fictional sample and separates past dates", async ({
+test("real activity list combines all sourced entries without ended blocks", async ({
   page,
 }) => {
-  const { activeEditorialActivities, archivedEditorialActivities } =
+  const { recentEditorialActivities, archivedEditorialActivities } =
     await import("../../lib/editorial-activities");
   for (const locale of ["en", "zh"]) {
     await page.goto(`/${locale}/preview/activity-year`);
     await expect(page).toHaveURL(new RegExp(`/${locale}/weekend$`));
     await expect(
       page.locator(".living-events .editorial-activity-card"),
-    ).toHaveCount(activeEditorialActivities().length);
-    const archive = page.locator(
-      'section[aria-labelledby="recent-archive-heading"]',
-    );
-    await archive.locator("summary").click();
-    await expect(archive.locator(".editorial-activity-card")).toHaveCount(
-      archivedEditorialActivities().length,
-    );
-    await archive
-      .locator(".editorial-activity-body .text-link")
-      .first()
+    ).toHaveCount(recentEditorialActivities().length);
+    await expect(page.locator("#recent-archive-heading")).toHaveCount(0);
+    await expect(page.locator(".living-events details")).toHaveCount(0);
+    const past = archivedEditorialActivities()[0];
+    await page
+      .locator(`.editorial-activity-body a[href$="/${past.slug}"]`)
+      .last()
       .click();
     await expect(
       page.locator(".editorial-activity-detail .notice"),
-    ).toBeVisible();
+    ).toHaveCount(0);
+    await expect(page.locator(".editorial-activity-facts time")).toBeVisible();
     await expect(page.locator(".living-article-sources a")).toHaveAttribute(
       "href",
       /^https:\/\//,
-    );
-    await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
-      "content",
-      /noindex/,
     );
     expect(
       await page.evaluate(

@@ -13,7 +13,10 @@ import { type LivingGuide } from "@/lib/living";
 import { upcomingEvents } from "@/lib/living-server";
 import { loadTaxonomy } from "@/lib/taxonomy-server";
 import type { Locale } from "@/lib/catalog";
-import { activeEditorialActivities } from "@/lib/editorial-activities";
+import {
+  activeEditorialActivities,
+  recentEditorialActivities,
+} from "@/lib/editorial-activities";
 import { EditorialActivityCards } from "./editorial-activities";
 
 export function LivingGuideCard({
@@ -63,6 +66,10 @@ export async function LivingEvents({
     upcomingEvents(nearby),
     loadTaxonomy(),
   ]);
+  const editorialItems =
+    homepage && !nearby
+      ? activeEditorialActivities()
+      : recentEditorialActivities();
   return (
     <section
       className="living-events"
@@ -93,6 +100,7 @@ export async function LivingEvents({
       </div>
       <EditorialActivityCards
         locale={locale}
+        items={editorialItems}
         limit={homepage && !nearby ? 3 : undefined}
         label={(await getTranslations("editorialActivity"))("label")}
         view={t("viewEvent")}
@@ -138,7 +146,7 @@ export async function LivingEvents({
         </p>
       ) : (
         !events.items.length &&
-        !activeEditorialActivities().length && (
+        !editorialItems.length && (
           <p className="living-event-empty">{t("noEvents")}</p>
         )
       )}

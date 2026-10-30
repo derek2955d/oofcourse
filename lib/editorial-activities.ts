@@ -124,6 +124,14 @@ export function activeEditorialActivities(today = newYorkToday()) {
     .sort((a, b) => a.startsAt.localeCompare(b.startsAt));
 }
 
+// One browsing list: upcoming entries first, followed by recent source records.
+export function recentEditorialActivities(today = newYorkToday()) {
+  return [
+    ...activeEditorialActivities(today),
+    ...archivedEditorialActivities(today),
+  ];
+}
+
 // Date-only sources must not accidentally acquire midnight UTC or a made-up time.
 export function activityDateValue(value: string) {
   return new Date(value.length === 10 ? `${value}T12:00:00Z` : value);

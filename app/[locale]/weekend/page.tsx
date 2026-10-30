@@ -14,8 +14,6 @@ import {
   weekendQuery,
   filterWeekendPlaces,
 } from "@/lib/weekend";
-import { archivedEditorialActivities } from "@/lib/editorial-activities";
-import { EditorialActivityCards } from "@/components/editorial-activities";
 import { LivingEvents } from "@/components/living";
 import "../../living.css";
 import { pageMetadata } from "@/lib/seo";
@@ -69,37 +67,6 @@ export default async function WeekendPage({
       </header>
       <p className="weekend-note">{t("updateNote")}</p>
       <LivingEvents homepage nearby />
-      <section
-        style={{ marginTop: 32 }}
-        aria-labelledby="recent-archive-heading"
-      >
-        <h2 id="recent-archive-heading" style={{ marginBottom: 14 }}>
-          {locale === "zh"
-            ? "过去三个月 · 已结束活动"
-            : "Past three months · Ended events"}
-        </h2>
-        <p className="weekend-note">
-          {locale === "zh"
-            ? "按来源所列活动日期整理，不代表 OofCourse 当时已发布或现场参与。"
-            : "An archive of source-listed event dates, not a claim of past OofCourse publication or attendance."}
-        </p>
-        <details className="surface">
-          <summary style={{ cursor: "pointer" }}>
-            {locale === "zh"
-              ? "查看往期真实活动"
-              : "Browse sourced past events"}{" "}
-            ({archivedEditorialActivities().length})
-          </summary>
-          <div style={{ marginTop: 18 }}>
-            <EditorialActivityCards
-              locale={locale}
-              items={archivedEditorialActivities()}
-              label={locale === "zh" ? "已结束" : "Ended"}
-              view={locale === "zh" ? "查看档案" : "View archive"}
-            />
-          </div>
-        </details>
-      </section>
       <details
         className="weekend-destinations"
         open={!!(query.type || query.area)}

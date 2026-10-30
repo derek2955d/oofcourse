@@ -445,13 +445,13 @@
     "guides": "Make everyday life easier",
     "read": "Read the guide",
     "editorial": "OofCourse guide",
-    "events": "What could you do next?",
-    "eventsIntro": "Explore editorial picks and upcoming activities shared by the community.",
+    "events": "City activities",
+    "eventsIntro": "Browse sourced event information and community posts.",
     "official": "Official event calendars",
     "officialNote": "Check the organizer’s page for dates, fees, registration and cancellations. Calendar links are not individual event listings.",
     "opensNew": "{name} (opens in a new tab)",
     "communityEvents": "Community activities",
-    "upcoming": "Today and upcoming · New York",
+    "upcoming": "New York · Activities",
     "noEvents": "No upcoming community activities to show yet.",
     "eventError": "Community activities are temporarily unavailable. Please try again later.",
     "viewEvents": "Browse community activities",
@@ -468,7 +468,7 @@
     "newTab": "Opens in a new tab",
     "homeEventsHeading": "City activities",
     "communityEventsAll": "Community posts",
-    "nearbyHeading": "Upcoming nearby"
+    "nearbyHeading": "Nearby activities"
   },
   "homeFocus": {
     "title": "A little more New York.",

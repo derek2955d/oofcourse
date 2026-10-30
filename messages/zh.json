@@ -445,13 +445,13 @@
     "guides": "让日常生活，轻松一点",
     "read": "阅读指南",
     "editorial": "OofCourse 生活指南",
-    "events": "下一次出门，去哪里？",
-    "eventsIntro": "发现编辑整理的活动与社区发布的近期安排。",
+    "events": "城市活动",
+    "eventsIntro": "浏览已核对的活动资料和社区发布的信息。",
     "official": "官方活动日历",
     "officialNote": "时间、费用、预约及取消安排以主办方页面为准。以下是日历入口，并非具体活动推荐。",
     "opensNew": "{name}（在新标签页打开）",
     "communityEvents": "社区活动",
-    "upcoming": "今日及之后 · 纽约",
+    "upcoming": "纽约 · 活动",
     "noEvents": "暂时没有可展示的近期社区活动。",
     "eventError": "社区活动暂时无法加载，请稍后重试。",
     "viewEvents": "浏览社区活动",
@@ -468,7 +468,7 @@
     "newTab": "在新标签页打开",
     "homeEventsHeading": "城市活动",
     "communityEventsAll": "社区发布",
-    "nearbyHeading": "近期活动"
+    "nearbyHeading": "周边活动"
   },
   "homeFocus": {
     "title": "纽约，去发现一点新鲜。",

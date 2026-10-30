@@ -2,7 +2,7 @@ import Image from "next/image";
 import { CalendarDays, ArrowUpRight, MapPin } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import {
-  activeEditorialActivities,
+  recentEditorialActivities,
   activityDateValue,
   type EditorialActivity,
 } from "@/lib/editorial-activities";
@@ -20,7 +20,7 @@ export function EditorialActivityCards({
   items?: readonly EditorialActivity[];
   limit?: number;
 }) {
-  const activities = (items || activeEditorialActivities()).slice(0, limit);
+  const activities = (items || recentEditorialActivities()).slice(0, limit);
   if (!activities.length) return null;
   return (
     <div className="editorial-activity-cards" aria-label={label}>
@@ -67,6 +67,10 @@ export function EditorialActivityCards({
                     {new Intl.DateTimeFormat(
                       locale === "zh" ? "zh-CN" : "en-US",
                       {
+                        ...(activity.day.slice(0, 4) !==
+                        activity.startsAt.slice(0, 4)
+                          ? { year: "numeric" as const }
+                          : {}),
                         month: "short",
                         day: "numeric",
                         timeZone: "America/New_York",
