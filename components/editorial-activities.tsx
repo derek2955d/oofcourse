@@ -13,12 +13,14 @@ export function EditorialActivityCards({
   view,
   items,
   limit,
+  homepage = false,
 }: {
   locale: Locale;
   label: string;
   view: string;
   items?: readonly EditorialActivity[];
   limit?: number;
+  homepage?: boolean;
 }) {
   const activities = (items || recentEditorialActivities()).slice(0, limit);
   if (!activities.length) return null;
@@ -29,6 +31,19 @@ export function EditorialActivityCards({
           <Link
             href={`/activities/${activity.slug}`}
             className="editorial-art-link"
+            style={
+              homepage
+                ? {
+                    backgroundColor: activity.slug.includes("halloween")
+                      ? "#17335e"
+                      : "image" in activity && activity.image === "sports"
+                        ? "#e5f2ef"
+                        : "image" in activity && activity.image === "stage"
+                          ? "#263c67"
+                          : "#e7edf9",
+                  }
+                : undefined
+            }
             aria-label={`${activity.title[locale]} — ${locale === "zh" ? "主题插画" : "Editorial illustration"}`}
           >
             <Image
@@ -42,7 +57,11 @@ export function EditorialActivityCards({
               alt=""
               width={600}
               height={400}
-              sizes="(max-width: 760px) 100vw, (max-width: 1000px) 200px, 260px"
+              sizes={
+                homepage
+                  ? "(max-width: 600px) 100vw, (max-width: 1100px) 50vw, 38vw"
+                  : "(max-width: 760px) 100vw, (max-width: 1000px) 200px, 260px"
+              }
             />
             <span>
               {locale === "zh" ? "主题插画" : "Editorial illustration"}

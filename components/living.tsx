@@ -98,6 +98,7 @@ export async function LivingEvents({
         )}
       </div>
       <EditorialActivityCards
+        homepage={homepage && !nearby}
         locale={locale}
         items={editorialItems}
         limit={homepage && !nearby ? 3 : undefined}
