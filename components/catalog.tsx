@@ -1,151 +1,218 @@
-"use client";
-import Link from "next/link";
-import { SlidersHorizontal, ArrowRight, Heart } from "lucide-react";
-import { categories, retailers, selectProducts } from "@/lib/data";
-import type { Query } from "@/lib/query";
-import { ProductCard } from "./site";
-import { useSaved } from "./saved";
-export function Catalog({
-  query,
-  action = "/deals",
-  fixedCategory,
-  fixedRetailer,
-  onlySaved = false,
+import { catalogAvailability } from "@/lib/browse-presentation";
+import { CatalogUnavailable } from "./catalog-unavailable";
+import { getLocale, getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
+import { Suspense } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  categoryData,
+  parseQuery,
+  type CategoryKey,
+  type Locale,
+} from "@/lib/catalog";
+import { selectedState } from "@/lib/geography-server";
+import { stateLabel } from "@/lib/geography";
+import { browseListings } from "@/lib/listings";
+import { SearchBar } from "./navigation";
+import { FilterPanel, SortControl } from "./filters";
+import { ListingGrid } from "./cards";
+import { CategoryIcon } from "./icons";
+import { BusinessDirectory } from "./businesses";
+import { EmptyState } from "./ui";
+import { BrowseNavigation } from "./browse-navigation";
+import { EditorialActivityCards } from "./editorial-activities";
+import "@/app/living.css";
+import { supportsPriceFilters } from "@/lib/browse-presentation";
+export async function Catalog({
+  category,
+  raw,
 }: {
-  query: Query;
-  action?: string;
-  fixedCategory?: string;
-  fixedRetailer?: string;
-  onlySaved?: boolean;
+  category?: CategoryKey;
+  raw: Record<string, string | string[] | undefined>;
 }) {
-  const { ids, ready, error, clear } = useSaved();
-  const saved = onlySaved || query.saved === "1";
-  const results = selectProducts({
-    ...query,
-    category: fixedCategory || query.category,
-    retailer: fixedRetailer || query.retailer,
-  }).filter((p) => !saved || ids.includes(p.id));
+  const t = await getTranslations(),
+    l = (await getLocale()) as Locale,
+    q = parseQuery({
+      ...raw,
+      state: await selectedState(
+        typeof raw.state === "string" ? raw.state : undefined,
+      ),
+    });
+  if (!supportsPriceFilters(category)) {
+    q.min = "";
+    q.max = "";
+    q.sort = "newest";
+  }
+  // Community is a statewide hub; legacy area URLs must not hide posts.
+  if (category === "community") {
+    q.location = "";
+    q.subcategory = "";
+  }
+  if (category === "marketplace") {
+    q.condition = "";
+    q.free = "";
+  }
+  if (category === "jobs") {
+    q.subcategory = "";
+    q.industry = "";
+    q.workplace = "";
+    q.pay_period = "";
+    if (!["full-time", "part-time"].includes(q.employment)) q.employment = "";
+  }
+  const result = await browseListings(category, q);
+  const availability = catalogAvailability(result);
+  const unavailable =
+    availability === "unconfigured" || availability === "error";
+  const pages = Math.max(1, Math.ceil(result.total / 12));
+  const activeFilters = Object.entries(q).some(
+    ([k, v]) => !["page", "sort", "state"].includes(k) && v,
+  );
+  function pageHref(page: number) {
+    const params = new URLSearchParams();
+    Object.entries(q).forEach(([k, v]) => {
+      if (v && k !== "page") params.set(k, String(v));
+    });
+    if (!category && typeof raw.category === "string")
+      params.set("category", raw.category);
+    params.set("page", String(page));
+    return `${category ? `/${category}` : "/search"}?${params}`;
+  }
   return (
-    <>
-      <details className="filter-panel" open>
-        <summary>
-          <SlidersHorizontal size={17} />
-          Refine your finds<span>Search, categories & stores</span>
-        </summary>
-        <form action={action} className="filters" key={JSON.stringify(query)}>
-          <label className="filter-search">
-            Search finds
-            <input
-              type="search"
-              name="q"
-              placeholder="Try headphones, baby, or kitchen"
-              defaultValue={query.q || ""}
-              maxLength={200}
-            />
-          </label>
-          {!fixedCategory && (
-            <label>
-              Category
-              <select name="category" defaultValue={query.category || ""}>
-                <option value="">All categories</option>
-                {categories.map((c) => (
-                  <option value={c.slug} key={c.slug}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-          )}
-          {!fixedRetailer && (
-            <label>
-              Retailer
-              <select name="retailer" defaultValue={query.retailer || ""}>
-                <option value="">All retailers</option>
-                {retailers.map((r) => (
-                  <option key={r.slug} value={r.slug}>
-                    {r.name} · demo
-                  </option>
-                ))}
-              </select>
-            </label>
-          )}
-          <label>
-            Sort by
-            <select name="sort" defaultValue={query.sort || "newest"}>
-              <option value="newest">Recently added</option>
-              <option value="name">Name: A–Z</option>
-            </select>
-          </label>
-          {!onlySaved && (
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                name="saved"
-                value="1"
-                defaultChecked={query.saved === "1"}
-              />
-              <Heart size={15} />
-              Saved only
-            </label>
-          )}
-          <button className="button primary" type="submit">
-            Apply filters
-          </button>
-          <Link className="reset-link" href={action}>
-            Clear filters
-          </Link>
-        </form>
-        <p className="filter-note">
-          Price and discount sorting will be available only when authorized,
-          reliable live data is connected.
-        </p>
-      </details>
-      {error && (
-        <p className="storage-notice" role="status">
-          {error}
-        </p>
-      )}
-      <h2 className="sr-only">Search results</h2>
-      <div className="results-toolbar">
-        <p role="status">
-          {saved && !ready
-            ? "Loading your saved finds…"
-            : `${results.length} demo ${results.length === 1 ? "find" : "finds"}${query.q ? ` for “${query.q}”` : ""}`}
-          <span> · No live offers</span>
-        </p>
-        {onlySaved && ids.length > 0 && (
-          <button className="reset-link" type="button" onClick={clear}>
-            Clear saved finds
-          </button>
+    <div className="container page">
+      <nav className="breadcrumbs" aria-label={t("breadcrumb")}>
+        <Link href="/">{t("navHome")}</Link>
+        <span>/</span>
+        <span>{category ? categoryData[category][l] : t("navSearch")}</span>
+      </nav>
+      <div className="catalog-header">
+        <div>
+          <p className="eyebrow">{stateLabel(q.state, l)}</p>
+          <h1 className="page-title">
+            {category ? categoryData[category][l] : t("navSearch")}
+          </h1>
+          <p className="page-intro">
+            {category
+              ? categoryData[category][l === "zh" ? "tagZh" : "tagEn"]
+              : t("heroSubtitle")}
+          </p>
+        </div>
+        {category && (
+          <span
+            className="category-icon"
+            style={{
+              background: categoryData[category].background,
+              color: categoryData[category].color,
+            }}
+          >
+            <CategoryIcon category={category} size={30} />
+          </span>
         )}
       </div>
-      {saved && !ready ? (
-        <div className="product-grid" aria-label="Loading saved finds">
-          {[1, 2, 3, 4].map((i) => (
-            <div className="skeleton" key={i} />
-          ))}
-        </div>
-      ) : results.length ? (
-        <div className="product-grid catalog-grid">
-          {results.map((p) => (
-            <ProductCard key={p.id} product={p} />
-          ))}
-        </div>
-      ) : (
-        <div className="empty-state">
-          <Heart size={32} />
-          <h2>{saved ? "Your favorites start here." : "No finds just yet."}</h2>
-          <p>
-            {saved
-              ? "Tap the heart on a find to keep it here. Your collection stays in this browser."
-              : "Try another keyword, category, or retailer."}
-          </p>
-          <Link href={saved ? "/deals" : action} className="button primary">
-            {saved ? "Explore the collection" : "Reset search"}
-            <ArrowRight size={17} />
-          </Link>
-        </div>
+      {category === "community" && (
+        <section
+          className="living-events community-activities"
+          aria-labelledby="community-activities-heading"
+        >
+          <div className="living-section-heading">
+            <h2 id="community-activities-heading">
+              {t("living.homeEventsHeading")}
+            </h2>
+          </div>
+          <EditorialActivityCards
+            locale={l}
+            label={t("editorialActivity.label")}
+            view={t("living.viewEvent")}
+          />
+        </section>
       )}
-    </>
+      <Suspense>
+        <SearchBar category={category} />
+      </Suspense>
+      <BrowseNavigation
+        query={q}
+        category={category}
+        searchCategory={
+          typeof raw.category === "string" ? raw.category : undefined
+        }
+      />
+      <div
+        className={`catalog-shell${category === "community" ? " community-shell" : ""}`}
+      >
+        {category !== "community" && (
+          <Suspense>
+            <FilterPanel category={category} query={q} />
+          </Suspense>
+        )}
+        <section
+          className="catalog-results"
+          aria-label={
+            unavailable
+              ? t("catalogState.unavailable")
+              : t("results", { count: result.total })
+          }
+        >
+          {category === "community" && (
+            <h2>{t("living.communityEventsAll")}</h2>
+          )}
+          <div className="results-toolbar">
+            <p role="status">
+              {unavailable
+                ? t("catalogState.unavailable")
+                : t("results", { count: result.total })}
+            </p>
+            <SortControl category={category} query={q} />
+          </div>
+          {availability === "unconfigured" || availability === "error" ? (
+            <CatalogUnavailable reason={availability} />
+          ) : availability === "ready" ? (
+            <ListingGrid items={result.items} category={category} />
+          ) : (
+            <EmptyState
+              category={category}
+              filtered={!!activeFilters || q.page > 1}
+              state={q.state}
+            />
+          )}
+          {category === "businesses" && (
+            <BusinessDirectory
+              state={q.state}
+              location={q.location}
+              keyword={q.q}
+              subtype={q.subcategory}
+            />
+          )}
+          <Pagination pages={pages} page={q.page} href={pageHref} />
+        </section>
+      </div>
+    </div>
+  );
+}
+export async function Pagination({
+  pages,
+  page,
+  href,
+}: {
+  pages: number;
+  page: number;
+  href: (p: number) => string;
+}) {
+  const t = await getTranslations();
+  if (pages <= 1) return null;
+  return (
+    <nav className="pagination" aria-label={t("page", { page, pages })}>
+      {page > 1 && (
+        <Link className="button button-outline" href={href(page - 1)}>
+          <ChevronLeft size={16} />
+          {t("previous")}
+        </Link>
+      )}
+      <span>{t("page", { page, pages })}</span>
+      {page < pages && (
+        <Link href={href(page + 1)} className="button button-outline">
+          {t("next")}
+          <ChevronRight size={16} />
+        </Link>
+      )}
+    </nav>
   );
 }

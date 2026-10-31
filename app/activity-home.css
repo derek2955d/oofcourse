@@ -1,0 +1,300 @@
+/* Activities lead; classifieds remain useful, secondary navigation. */
+.activity-home {
+  padding-top: 34px;
+  padding-bottom: 44px;
+}
+.activity-intro {
+  padding: 16px 0 24px;
+}
+.activity-location {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #486859;
+  font-size: 12px;
+  margin-bottom: 16px;
+}
+.activity-location > span {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #819489;
+  margin-inline: 3px;
+}
+.activity-intro h1 {
+  font-size: clamp(30px, 3.2vw, 42px);
+  line-height: 1.35;
+  letter-spacing: -0.04em;
+}
+.activity-intro > p:last-child {
+  color: #607166;
+  margin-top: 14px;
+  font-size: 16px;
+}
+.activity-home-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 264px;
+  gap: 28px;
+  align-items: start;
+}
+.activity-home-main {
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  padding: 0;
+}
+.activity-home-main .living-events {
+  margin-top: 0;
+}
+.activity-home-main .living-events .living-section-heading h2 {
+  font-size: 24px;
+}
+.activity-home-main .living-section-heading {
+  margin-bottom: 20px;
+}
+.activity-home-main .living-upcoming {
+  grid-template-columns: minmax(0, 1fr);
+}
+.activity-home-main .living-upcoming article {
+  padding: 20px;
+}
+.activity-home-main .living-calendar-grid > a > svg:last-of-type {
+  margin-left: auto;
+  width: 14px;
+}
+.activity-home-aside {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+.activity-essentials {
+  padding: 18px;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  background: #fff;
+}
+.activity-essentials > h2 {
+  font-size: 15px;
+  color: #54667d;
+  margin-bottom: 12px;
+}
+.activity-essentials .category-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2px;
+}
+.activity-essentials .category-card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+  min-height: 48px;
+  border: 0;
+  border-radius: 8px;
+  box-shadow: none;
+  background: transparent;
+  text-align: left;
+}
+.activity-essentials .category-card:hover {
+  transform: none;
+  background: #f5f8fc;
+  box-shadow: none;
+}
+.activity-essentials .category-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  flex-shrink: 0;
+}
+.activity-essentials .category-icon > svg {
+  width: 18px;
+  height: 18px;
+}
+.activity-essentials .category-card h3 {
+  font-size: 14px;
+  font-weight: 550;
+  margin: 0;
+}
+.activity-essentials .category-card div > span {
+  display: none;
+}
+.activity-essentials .category-arrow {
+  position: static;
+  display: block;
+  width: 13px;
+  height: 13px;
+  margin-left: auto;
+  color: #718198;
+}
+.home-side-search {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px;
+  background: #fff;
+}
+.home-side-search > summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: #415a7b;
+  font-size: 13px;
+  min-height: 24px;
+}
+.home-side-search > summary::after {
+  content: "+";
+  margin-left: auto;
+  font-size: 18px;
+}
+.home-side-search[open] > summary::after {
+  content: "−";
+}
+.home-side-search .search-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: none;
+  margin-top: 16px;
+}
+.home-side-search .search-keyword,
+.home-side-search .search-category,
+.home-side-search .search-area {
+  width: 100%;
+  flex: auto;
+  min-width: 0;
+  border: 1px solid #dce5f1;
+  border-radius: 8px;
+  padding: 0 8px;
+}
+.home-side-search .search-keyword input {
+  width: 100%;
+  min-width: 0;
+  font-size: 13px;
+}
+.home-side-search .search-category select,
+.home-side-search .search-area select {
+  width: 100%;
+  font-size: 13px;
+}
+.home-side-search .search-bar .primary {
+  width: 100%;
+  min-height: 44px;
+  font-size: 13px;
+}
+.activity-side-resources {
+  display: grid;
+  gap: 2px;
+}
+.activity-side-resources > a {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13px;
+  color: #526783;
+  min-height: 42px;
+  padding: 6px 4px;
+}
+.activity-side-resources > a > svg:last-child {
+  margin-left: auto;
+}
+.activity-side-resources > a:hover {
+  color: #245dce;
+}
+.activity-post {
+  font-size: 13px;
+  width: 100%;
+  min-height: 44px;
+}
+.activity-loading {
+  min-height: 340px;
+  display: grid;
+  place-items: center;
+  color: #6f8e7d;
+}
+@media (max-width: 1000px) and (min-width: 761px) {
+  .activity-home-layout {
+    grid-template-columns: minmax(0, 1fr) 222px;
+    gap: 20px;
+  }
+  .activity-home-main {
+    padding: 0;
+  }
+  .activity-home-main .living-section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .activity-home-main .living-calendar-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 760px) {
+  .activity-home {
+    padding-top: 12px;
+    padding-bottom: 28px;
+  }
+  .activity-intro {
+    padding: 10px 0 18px;
+  }
+  .activity-location {
+    margin-bottom: 12px;
+    font-size: 11px;
+  }
+  .activity-intro h1 {
+    font-size: 27px;
+  }
+  .activity-intro > p:last-child {
+    font-size: 14px;
+    line-height: 1.85;
+    margin-top: 12px;
+  }
+  .activity-home-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+  .activity-home-main {
+    padding: 0;
+  }
+  .activity-home-main .living-events .living-section-heading h2 {
+    font-size: 21px;
+  }
+  .activity-home-main .living-section-heading {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+  }
+  .activity-home-main .living-calendar-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .activity-essentials {
+    padding: 16px;
+  }
+  .activity-essentials .category-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .activity-essentials .category-card {
+    flex-direction: column;
+    padding: 10px 4px;
+    gap: 8px;
+    align-items: center;
+    text-align: center;
+  }
+  .activity-essentials .category-card h3 {
+    font-size: 12px;
+    overflow-wrap: anywhere;
+  }
+  .activity-essentials .category-arrow {
+    display: none;
+  }
+  .activity-side-resources {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+}
