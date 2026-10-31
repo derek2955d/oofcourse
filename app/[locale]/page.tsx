@@ -1,3 +1,4 @@
+import { CityPoster } from "@/components/city-poster";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Suspense } from "react";
@@ -61,28 +62,7 @@ export default async function Home({
             <ArrowUpRight size={18} aria-hidden="true" />
           </Link>
         </div>
-        <div className="home-city-poster" aria-hidden="true">
-          <span className="city-poster-edition">OOFCOURSE / LOCAL LIFE</span>
-          <div className="city-poster-type">
-            NEW<span>YORK.</span>
-          </div>
-          <div className="city-poster-sun" />
-          <div className="city-poster-skyline">
-            <i />
-            <i />
-            <i />
-            <i />
-            <i />
-          </div>
-          <span className="city-poster-note">
-            A LITTLE CLOSER. A LITTLE MORE LOCAL.
-          </span>
-          <span className="city-poster-sticker">
-            GO
-            <br />
-            LOCAL ↗
-          </span>
-        </div>
+        <CityPoster />
       </header>
       <div className="activity-home-layout">
         <div className="activity-home-main">

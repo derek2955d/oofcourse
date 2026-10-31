@@ -284,7 +284,7 @@ export function PublishingWizard({
         )}
         <p
           className="small-note"
-          style={{ marginBottom: 20, color: "#64748B" }}
+          style={{ marginBottom: 20, color: "var(--muted)" }}
         >
           {t("localDraft")}
         </p>

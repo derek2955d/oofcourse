@@ -56,8 +56,8 @@
   overflow: hidden;
   display: grid;
   place-items: center;
-  color: #295cb5;
-  background: #eaf1ff;
+  color: #415f48;
+  background: #e9ecdf;
 }
 .living-topic-marketplace .living-guide-art {
   background: #fff2dc;
@@ -220,7 +220,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #64748b;
+  color: #59665c;
   font-size: 13px;
   margin: 10px 0;
 }
@@ -256,7 +256,7 @@
   max-width: 860px;
   margin: 24px auto 0;
   background: #fff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #dedfd5;
   border-radius: 20px;
   padding: 44px;
 }
@@ -272,7 +272,7 @@
 .living-article-summary {
   font-size: 17px;
   line-height: 1.9;
-  color: #53677c;
+  color: #536357;
   margin-top: 18px;
 }
 .living-byline {
@@ -305,7 +305,7 @@
 .living-article-sources {
   padding: 22px;
   border-radius: 13px;
-  background: #f3f7fb;
+  background: #eeeee5;
   margin-top: 34px;
 }
 .living-article-sources h2 {
@@ -316,7 +316,7 @@
   margin-top: 10px;
 }
 .living-article-sources a {
-  color: #245dce;
+  color: #254e43;
   overflow-wrap: anywhere;
 }
 .living-article-sources a > svg {
@@ -331,7 +331,7 @@
 }
 .living-article-action {
   margin-top: 28px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid #dedfd5;
   padding-top: 24px;
   display: flex;
   align-items: center;

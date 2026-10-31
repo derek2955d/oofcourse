@@ -9,7 +9,7 @@
   margin: 24px 0;
   border: 1px solid #dce8ef;
   border-radius: 22px;
-  background: linear-gradient(115deg, #edf5ff, #f0faf4);
+  background: linear-gradient(115deg, #f1f0e5, #f0faf4);
 }
 .weekend-hero-icon {
   display: grid;
@@ -28,7 +28,7 @@
   letter-spacing: -0.7px;
 }
 .weekend-hero p:last-child {
-  color: #51617a;
+  color: #536357;
   max-width: 640px;
   line-height: 1.8;
 }
@@ -54,7 +54,7 @@
 }
 .weekend-results {
   margin: 22px 0 16px;
-  color: #51617a;
+  color: #536357;
   font-size: 14px;
 }
 .weekend-grid {
@@ -80,7 +80,7 @@
   height: 100%;
 }
 .weekend-card a:focus-visible {
-  outline: 3px solid #3478f6;
+  outline: 3px solid #254e43;
   outline-offset: -4px;
 }
 .weekend-art {
@@ -120,7 +120,7 @@
 .weekend-card-body > p:not(.eyebrow) {
   font-size: 14px;
   line-height: 1.85;
-  color: #52627a;
+  color: #536357;
   min-height: 76px;
 }
 .weekend-card .text-link {
@@ -149,7 +149,7 @@
   display: flex;
   gap: 7px;
   align-items: center;
-  color: #52627a;
+  color: #536357;
   font-size: 14px;
 }
 .weekend-detail .page-intro {
@@ -237,7 +237,7 @@
 .weekend-submit p,
 .weekend-shared > p {
   font-size: 14px;
-  color: #52627a;
+  color: #536357;
   line-height: 1.8;
 }
 .weekend-shared {
@@ -266,6 +266,6 @@
   margin-bottom: 20px;
 }
 .weekend-destinations > summary:focus-visible {
-  outline: 3px solid #3478f6;
+  outline: 3px solid #254e43;
   outline-offset: 3px;
 }

@@ -1,7 +1,7 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
-import Image from "next/image";
-import { ArrowLeft, Heart, MapPin, Plus, Sparkles } from "lucide-react";
+import { CityPoster } from "./city-poster";
+import { ArrowLeft, MapPin, Plus, Sparkles } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { configured } from "@/lib/supabase/server";
 import { AuthForm } from "./auth-form";
@@ -52,21 +52,7 @@ export async function AuthPage({
             <p className="auth-story-intro">{t("authDesign.intro")}</p>
           </div>
           <div className="auth-illustration">
-            <div className="auth-art-orbit" />
-            <Image
-              src="/art/neighborhood.svg"
-              alt=""
-              width={640}
-              height={430}
-              priority
-            />
-            <span className="auth-art-spark">
-              <Sparkles size={22} />
-            </span>
-            <div className="auth-art-tag">
-              <Heart size={17} />
-              {t("authDesign.saved")}
-            </div>
+            <CityPoster />
           </div>
           <div className="auth-story-bottom">
             <MapPin size={16} />
