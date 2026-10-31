@@ -17,6 +17,19 @@ test("responsive home, category-specific lists, detail layouts, posting and lock
     const r = await page.goto(route);
     expect(r?.status(), route).toBe(200);
     await expect(page.locator("h1")).toHaveCount(1);
+    await expect(page.locator(".site-header")).toBeVisible();
+    if (!(await page.locator(".desktop-categories").isVisible()))
+      await expect(page.locator(".menu-button")).toBeVisible();
+    if (width === 768 && route === "/en") {
+      await page.locator(".menu-button").focus();
+      await page.keyboard.press("Enter");
+      await expect(page.locator("#mobile-menu")).toBeVisible();
+      await page.keyboard.press("Tab");
+      await expect(page.locator("#mobile-menu a").first()).toBeFocused();
+      await page.keyboard.press("Enter");
+      await expect(page).toHaveURL(/\/en\/weekend$/);
+      await expect(page.locator("#mobile-menu")).toHaveCount(0);
+    }
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,

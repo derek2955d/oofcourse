@@ -32,3 +32,14 @@ export function publishedDate(
   const date = new Date(listing.published_at);
   return Number.isNaN(date.getTime()) ? null : date;
 }
+
+// An unavailable service must never be presented as a successful empty query.
+export function catalogAvailability(result: {
+  configured: boolean;
+  error: boolean;
+  items: readonly unknown[];
+}): "unconfigured" | "error" | "empty" | "ready" {
+  if (!result.configured) return "unconfigured";
+  if (result.error) return "error";
+  return result.items.length ? "ready" : "empty";
+}

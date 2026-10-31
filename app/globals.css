@@ -3680,3 +3680,21 @@ select {
 @media (max-width: 360px) {
   .site-header .wordmark { font-size: 22px; }
 }
+
+/* The compact menu must replace desktop navigation throughout the tablet range. */
+@media (min-width: 761px) and (max-width: 1050px) {
+  .site-header .menu-button { display: inline-flex; }
+  .site-header .header-actions { gap: 8px; }
+  .site-header .header-account { max-width: 136px; }
+  .site-header .header-account-name { max-width: 72px; }
+  .mobile-menu { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 24px; padding-block: 10px 16px; border-top: 1px solid var(--line); }
+  .mobile-menu > a { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 0; min-height: 44px; border-bottom: 1px solid var(--line); font-size: 14px; }
+}
+.catalog-service-state { padding: 28px; }
+.catalog-service-state > svg { color: var(--blue); margin-bottom: 14px; }
+.catalog-service-state h2 { font-size: 21px; line-height: 1.5; }
+.catalog-service-state > p { max-width: 640px; color: var(--muted); line-height: 1.8; margin: 12px 0 20px; }
+@media (max-width: 760px) {
+  .catalog-service-state { padding: 22px; }
+  .catalog-service-state h2 { font-size: 19px; }
+}

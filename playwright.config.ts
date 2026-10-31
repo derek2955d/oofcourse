@@ -46,11 +46,13 @@ export default defineConfig({
       testMatch: "auth-design.spec.ts",
       use: { viewport: { width: 390, height: 844 } },
     },
-    ...[375, 390, 430, 768, 1024, 1440, 1920].map((width) => ({
-      name: `responsive-${width}`,
-      testMatch: "responsive.spec.ts",
-      use: { viewport: { width, height: width < 761 ? 844 : 1000 } },
-    })),
+    ...[375, 390, 430, 760, 761, 768, 1024, 1050, 1051, 1440, 1920].map(
+      (width) => ({
+        name: `responsive-${width}`,
+        testMatch: "responsive.spec.ts",
+        use: { viewport: { width, height: width < 761 ? 844 : 1000 } },
+      }),
+    ),
     {
       name: "desktop-flows",
       testMatch: "flows.spec.ts",

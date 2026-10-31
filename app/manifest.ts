@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "OofCourse — Your Local Life, Simplified.",
     short_name: "OofCourse",
     description:
-      "Housing, jobs, marketplace and everyday local life in New York.",
+      "Nearby events, housing, jobs and everyday local life in New York.",
     start_url: "/en",
     scope: "/",
     display: "standalone",

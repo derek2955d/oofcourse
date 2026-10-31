@@ -483,11 +483,11 @@
   },
   "editorialActivity": {
     "label": "OofCourse editorial",
-    "when": "Opening",
+    "when": "Event dates and times",
     "place": "Location",
     "timezone": "New York time",
     "fees": "Before you book",
-    "dates": "Opening day and rink season",
+    "dates": "Schedule notes",
     "source": "Official source",
     "checked": "Information checked: {date}",
     "note": "An independently written summary of public facts, not organizer-authorized promotional copy. Check current arrangements with the organizer. OofCourse does not sell tickets, make reservations or guarantee availability.",
@@ -582,5 +582,12 @@
     "services": "Search local services…",
     "businesses": "Search businesses or services…",
     "community": "Search activities or posts…"
+  },
+  "catalogState": {
+    "unavailable": "Listings are unavailable",
+    "unconfiguredTitle": "The listing service is not ready",
+    "unconfiguredDescription": "Listings cannot be read yet. This does not mean there are no published posts. Nearby activities and guides are still available.",
+    "errorTitle": "Listings could not be loaded",
+    "errorDescription": "Please try again. Reloading keeps the search and filter conditions in your current URL."
   }
 }

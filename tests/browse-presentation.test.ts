@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import type { Listing } from "../lib/catalog";
 import {
+  catalogAvailability,
   salaryRange,
   publishedDate,
   supportsPriceFilters,
@@ -40,5 +41,28 @@ test("publication date does not substitute draft creation or invalid timestamps"
       created_at: "2026-10-01T12:00:00Z",
     })?.toISOString(),
     "2026-10-26T12:00:00.000Z",
+  );
+});
+
+test("unavailable services are distinct from successful empty and populated queries", () => {
+  assert.equal(
+    catalogAvailability({ configured: false, error: false, items: [] }),
+    "unconfigured",
+  );
+  assert.equal(
+    catalogAvailability({ configured: true, error: true, items: [] }),
+    "error",
+  );
+  assert.equal(
+    catalogAvailability({ configured: true, error: true, items: [{}] }),
+    "error",
+  );
+  assert.equal(
+    catalogAvailability({ configured: true, error: false, items: [] }),
+    "empty",
+  );
+  assert.equal(
+    catalogAvailability({ configured: true, error: false, items: [{}] }),
+    "ready",
   );
 });

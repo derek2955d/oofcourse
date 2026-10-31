@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     template: "%s | OofCourse",
   },
   description:
-    "Discover housing, jobs, secondhand finds, local services and community life in New York.",
+    "Discover nearby events, housing, jobs, secondhand finds, local services and businesses in New York.",
   robots: { index: false, follow: true },
   icons: { icon: "/icon.svg" },
   manifest: "/manifest.webmanifest",

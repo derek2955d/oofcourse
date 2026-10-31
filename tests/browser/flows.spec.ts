@@ -62,12 +62,12 @@ test("category-specific filters submit real URL state and empty results remain h
   await expect(page).toHaveURL(/bedrooms=2/);
   await expect(page).toHaveURL(/location=queens/);
   await expect(
-    page.getByRole("heading", { name: "Nothing matched this time." }),
+    page.locator('[data-catalog-state="unconfigured"]'),
   ).toBeVisible();
-  await page
-    .locator(".empty-state")
-    .getByRole("link", { name: "Clear filters" })
-    .click();
+  await expect(page.locator(".empty-state")).toHaveCount(0);
+  if (mobile)
+    await page.getByRole("button", { name: "Filters", exact: true }).click();
+  await form.locator(".filter-buttons a").click();
   await expect(page).toHaveURL("/en/housing?state=NY");
   await page.goto(
     "/en/jobs?subcategory=tech&industry=IT&workplace=remote&pay_period=hour",
@@ -852,5 +852,39 @@ test("activity-first polish keeps navigation direct and search singular", async 
         () => document.documentElement.scrollWidth <= innerWidth,
       ),
     ).toBe(true);
+  }
+});
+
+test("unconfigured catalogs offer honest retry and activity labels stay general", async ({
+  page,
+}) => {
+  for (const locale of ["en", "zh"]) {
+    await page.goto(
+      `/${locale}/housing?state=NY&q=studio&location=queens&sort=price-low`,
+    );
+    await expect(
+      page.locator('[data-catalog-state="unconfigured"]'),
+    ).toBeVisible();
+    await expect(page.locator(".empty-state")).toHaveCount(0);
+    await expect(page.locator(".results-toolbar")).not.toContainText(
+      locale === "zh" ? "0 条信息" : "0 listings",
+    );
+    const current = page.url();
+    await Promise.all([
+      page.waitForEvent("load"),
+      page.locator(".catalog-service-state button").click(),
+    ]);
+    await expect(
+      page.locator('[data-catalog-state="unconfigured"]'),
+    ).toBeVisible();
+    expect(page.url()).toBe(current);
+    await page.goto(`/${locale}/activities/new-york-city-marathon-2026`);
+    await expect(
+      page.locator(".editorial-activity-facts dt").first(),
+    ).toHaveText(locale === "zh" ? "活动时间" : "Event dates and times");
+    await page.goto(`/${locale}/help`);
+    await expect(page.locator("main")).not.toContainText(
+      locale === "zh" ? "六大分类" : "six categories",
+    );
   }
 });

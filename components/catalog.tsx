@@ -1,3 +1,5 @@
+import { catalogAvailability } from "@/lib/browse-presentation";
+import { CatalogUnavailable } from "./catalog-unavailable";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Suspense } from "react";
@@ -58,6 +60,9 @@ export async function Catalog({
     if (!["full-time", "part-time"].includes(q.employment)) q.employment = "";
   }
   const result = await browseListings(category, q);
+  const availability = catalogAvailability(result);
+  const unavailable =
+    availability === "unconfigured" || availability === "error";
   const pages = Math.max(1, Math.ceil(result.total / 12));
   const activeFilters = Object.entries(q).some(
     ([k, v]) => !["page", "sort", "state"].includes(k) && v,
@@ -140,20 +145,26 @@ export async function Catalog({
         )}
         <section
           className="catalog-results"
-          aria-label={t("results", { count: result.total })}
+          aria-label={
+            unavailable
+              ? t("catalogState.unavailable")
+              : t("results", { count: result.total })
+          }
         >
           {category === "community" && (
             <h2>{t("living.communityEventsAll")}</h2>
           )}
           <div className="results-toolbar">
-            <p role="status">{t("results", { count: result.total })}</p>
+            <p role="status">
+              {unavailable
+                ? t("catalogState.unavailable")
+                : t("results", { count: result.total })}
+            </p>
             <SortControl category={category} query={q} />
           </div>
-          {result.error ? (
-            <p className="notice error-notice" role="alert">
-              {t("dataError")}
-            </p>
-          ) : result.items.length ? (
+          {availability === "unconfigured" || availability === "error" ? (
+            <CatalogUnavailable reason={availability} />
+          ) : availability === "ready" ? (
             <ListingGrid items={result.items} category={category} />
           ) : (
             <EmptyState
