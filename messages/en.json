@@ -472,14 +472,17 @@
   },
   "homeFocus": {
     "title": "A little more New York.",
-    "eyebrow": "DISCOVER LOCAL LIFE",
-    "intro": "Discover local activities and plan your next day out.",
+    "eyebrow": "THE LOCAL LIFE EDIT",
+    "intro": "A new plan. A familiar neighborhood. A little more to look forward to.",
     "essentials": "Local essentials",
     "search": "Search housing, jobs & more",
     "resources": "Useful links",
     "guides": "Life guides",
     "safety": "Safety tips",
-    "postEvent": "Share an activity"
+    "postEvent": "Share an activity",
+    "headlineFirst": "Your city.",
+    "headlineSecond": "A little closer.",
+    "discover": "Find your next day out"
   },
   "editorialActivity": {
     "label": "OofCourse editorial",

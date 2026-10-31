@@ -5,7 +5,6 @@ import {
   ArrowUpRight,
   BookOpen,
   CalendarDays,
-  MapPin,
   Plus,
   Search,
   ShieldCheck,
@@ -44,14 +43,46 @@ export default async function Home({
   return (
     <div className="container activity-home">
       <header className="activity-intro">
-        <p className="activity-location">
-          <MapPin size={14} aria-hidden="true" />
-          {stateLabel(state, locale)}
-          <span />
-          {t("eyebrow")}
-        </p>
-        <h1>{t("title")}</h1>
-        <p>{t("intro")}</p>
+        <div className="activity-intro-copy">
+          <p className="activity-location">
+            <span className="home-location-dot" />
+            {stateLabel(state, locale)}
+            <span className="home-location-divider" />
+            {t("eyebrow")}
+          </p>
+          <h1>
+            {t("headlineFirst")}
+            <br />
+            <em>{t("headlineSecond")}</em>
+          </h1>
+          <p className="activity-intro-description">{t("intro")}</p>
+          <Link href="/weekend" className="home-discover-link">
+            {t("discover")}
+            <ArrowUpRight size={18} aria-hidden="true" />
+          </Link>
+        </div>
+        <div className="home-city-poster" aria-hidden="true">
+          <span className="city-poster-edition">OOFCOURSE / LOCAL LIFE</span>
+          <div className="city-poster-type">
+            NEW<span>YORK.</span>
+          </div>
+          <div className="city-poster-sun" />
+          <div className="city-poster-skyline">
+            <i />
+            <i />
+            <i />
+            <i />
+            <i />
+          </div>
+          <span className="city-poster-note">
+            A LITTLE CLOSER. A LITTLE MORE LOCAL.
+          </span>
+          <span className="city-poster-sticker">
+            GO
+            <br />
+            LOCAL ↗
+          </span>
+        </div>
       </header>
       <div className="activity-home-layout">
         <div className="activity-home-main">
