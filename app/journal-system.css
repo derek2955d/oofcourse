@@ -1055,3 +1055,26 @@ html[lang="en-US"] body .weekend-hero h1 {
 body .auth-redesign .field input::placeholder {
   color: #657162;
 }
+
+body .owner-review-feedback {
+  max-width: 440px;
+  margin-top: 9px;
+  font-size: 12px;
+}
+body .owner-review-feedback > summary {
+  color: #80503a;
+  cursor: pointer;
+  padding-block: 7px;
+}
+body .owner-review-feedback > p {
+  margin: 7px 0;
+  color: #425541;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.8;
+}
+body .owner-review-feedback > small {
+  display: block;
+  color: #59665c;
+  line-height: 1.8;
+}

@@ -27,3 +27,4 @@ docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 < tests/database
 docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 < tests/database/weekend-submissions.sql
 docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 < tests/database/assistant.sql
 docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 < tests/database/admin-summary.sql
+docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 < tests/database/review-feedback.sql

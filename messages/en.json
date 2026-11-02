@@ -505,7 +505,10 @@
     "expires": "Expires",
     "emptyStatus": "No listings with this status yet.",
     "backAll": "View all my listings",
-    "missingPage": "No listings on this page."
+    "missingPage": "No listings on this page.",
+    "reviewFeedback": "Why this listing was returned",
+    "reviewFeedbackUnavailable": "Review feedback is not available yet. Please try again later.",
+    "reviewNextStep": "Use Edit to make the requested changes, then submit for review again."
   },
   "passwordSecurity": {
     "current": "Current password",

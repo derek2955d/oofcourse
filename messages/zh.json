@@ -505,7 +505,10 @@
     "expires": "到期日",
     "emptyStatus": "此状态下暂无信息",
     "backAll": "查看全部信息",
-    "missingPage": "这一页暂时没有信息"
+    "missingPage": "这一页暂时没有信息",
+    "reviewFeedback": "查看退回原因",
+    "reviewFeedbackUnavailable": "暂时无法读取审核反馈，请稍后重试。",
+    "reviewNextStep": "点击“编辑”按反馈修改，再重新提交审核。"
   },
   "passwordSecurity": {
     "current": "当前密码",

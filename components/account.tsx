@@ -83,8 +83,16 @@ export async function AccountDashboard({
     const now = new Date().toISOString();
     let q = db
       .from("listings")
-      .select("*", { count: "exact" })
-      .eq("user_id", user.id);
+      .select("*,moderation_actions(reason,created_at,action)", {
+        count: "exact",
+      })
+      .eq("user_id", user.id)
+      .eq("moderation_actions.action", "rejected")
+      .order("created_at", {
+        referencedTable: "moderation_actions",
+        ascending: false,
+      })
+      .limit(1, { referencedTable: "moderation_actions" });
     if (filter.status === "expired") {
       q = q.or(
         `status.eq.expired,and(status.eq.approved,expires_at.lte.${now})`,
@@ -147,7 +155,19 @@ export async function AccountDashboard({
               <tbody>
                 {data.map((row) => (
                   <tr key={row.id}>
-                    <td>{row.title || t("draft")}</td>
+                    <td>
+                      {row.title || t("draft")}
+                      {row.status === "rejected" && (
+                        <details className="owner-review-feedback">
+                          <summary>{t("ownerListings.reviewFeedback")}</summary>
+                          <p>
+                            {row.moderation_actions?.[0]?.reason ||
+                              t("ownerListings.reviewFeedbackUnavailable")}
+                          </p>
+                          <small>{t("ownerListings.reviewNextStep")}</small>
+                        </details>
+                      )}
+                    </td>
                     <td>
                       <StatusBadge
                         status={ownerListingDisplayStatus(
