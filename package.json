@@ -11,6 +11,7 @@
     "test": "tsx --test tests/*.test.ts",
     "test:e2e": "playwright test",
     "test:db": "bash scripts/test-database.sh",
+    "test:auth-security": "tsx scripts/test-auth-security.ts",
     "test:header": "playwright test --config=playwright.header.config.ts"
   },
   "dependencies": {

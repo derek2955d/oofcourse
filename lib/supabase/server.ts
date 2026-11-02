@@ -1,8 +1,9 @@
 import "server-only";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 import { createClient } from "@supabase/supabase-js";
 import { supabaseConfig } from "./config";
+import { sessionCookieOptions } from "./cookie-policy";
 export const configured = () => Boolean(supabaseConfig());
 export function publicDB() {
   const config = supabaseConfig();
@@ -17,8 +18,12 @@ export function publicDB() {
 export async function sessionDB() {
   const config = supabaseConfig();
   if (!config) throw new Error("setupMessage");
-  const jar = await cookies();
+  const [jar, requestHeaders] = await Promise.all([cookies(), headers()]);
   return createServerClient(config.url, config.key, {
+    cookieOptions: sessionCookieOptions({
+      vercel: process.env.VERCEL,
+      forwardedProto: requestHeaders.get("x-forwarded-proto"),
+    }),
     // Session-scoped rows, including the current profile, must never be cached.
     global: {
       fetch: (input, init) => fetch(input, { ...init, cache: "no-store" }),

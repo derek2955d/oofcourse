@@ -16,6 +16,8 @@ docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 < tests/database
 for migration in supabase/migrations/*.sql; do
  docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 < "$migration"
 done
+# The targeted repair must also be safe to reapply after the existing schema.
+docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 < supabase/migrations/202611020012_admin_summary_access.sql
 docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 < tests/database/rls.sql
 docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 < tests/database/workflows.sql
 docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 < tests/database/geography.sql
@@ -24,3 +26,4 @@ docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 < tests/database
 docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 < tests/database/owner-pagination.sql
 docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 < tests/database/weekend-submissions.sql
 docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 < tests/database/assistant.sql
+docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 < tests/database/admin-summary.sql

@@ -4,6 +4,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { activeState } from "./lib/geography";
 import { supabaseConfig } from "./lib/supabase/config";
+import { sessionCookieOptions } from "./lib/supabase/cookie-policy";
 export default async function proxy(request: NextRequest) {
   const requestedState = request.nextUrl.searchParams.get("state");
   if (requestedState && requestedState !== activeState(requestedState)) {
@@ -24,6 +25,11 @@ export default async function proxy(request: NextRequest) {
   ) {
     try {
       const client = createServerClient(connection.url, connection.key, {
+        cookieOptions: sessionCookieOptions({
+          vercel: process.env.VERCEL,
+          protocol: request.nextUrl.protocol,
+          forwardedProto: request.headers.get("x-forwarded-proto"),
+        }),
         cookies: {
           getAll: () => request.cookies.getAll(),
           setAll: (items) => {
