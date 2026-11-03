@@ -26,7 +26,7 @@ import {
   type Listing,
 } from "@/lib/catalog";
 import { detailFields } from "@/lib/fields";
-import { listingInput, draftInput } from "@/lib/validation";
+import { listingInput, draftInput, optionalPriceValue } from "@/lib/validation";
 import {
   saveListing,
   uploadListingPhoto,
@@ -427,7 +427,7 @@ export function PublishingWizard({
                       min="0"
                       step="0.01"
                       {...form.register("price", {
-                        setValueAs: (v) => (v === "" ? null : Number(v)),
+                        setValueAs: optionalPriceValue,
                       })}
                     />
                   </label>

@@ -3,6 +3,15 @@ import { categoryKeys, type CategoryKey } from "./catalog";
 const choice = (v: readonly string[]) =>
   z.string().refine((x) => v.includes(x), "invalidChoice");
 const number = z.number().finite().min(0).max(100000000);
+// React Hook Form can pass initial null values through setValueAs as well.
+// Number(null) is 0, which would silently turn an unspecified price into free.
+export function optionalPriceValue(value: unknown): number | null {
+  if (value == null || (typeof value === "string" && value.trim() === ""))
+    return null;
+  return typeof value === "number" || typeof value === "string"
+    ? Number(value)
+    : Number.NaN;
+}
 const text = z.string().trim().max(500);
 export const detailSchemas = {
   housing: z.object({
