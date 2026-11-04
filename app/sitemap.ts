@@ -52,7 +52,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         languages: {
           "en-US": `https://oofcourse.com/en${path}`,
           "zh-CN": `https://oofcourse.com/zh${path}`,
-          "x-default": `https://oofcourse.com/en${path}`,
+          "x-default": `https://oofcourse.com/zh${path}`,
         },
       },
     })),

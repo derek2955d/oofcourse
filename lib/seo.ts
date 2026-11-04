@@ -18,7 +18,7 @@ export function pageMetadata(
       languages: {
         "en-US": `/en${p}`,
         "zh-CN": `/zh${p}`,
-        "x-default": `/en${p}`,
+        "x-default": `/zh${p}`,
       },
     },
     openGraph: {
