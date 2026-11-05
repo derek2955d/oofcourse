@@ -1,92 +1,90 @@
-# OofCourse — family-friendly shopping discovery
+# OofCourse — Your Local Life, Simplified.
 
-**Great Deals? Of Course!** A US English, multi-retailer discovery website. The Family Friendly redesign uses Next.js 16 App Router, React 19, TypeScript and Tailwind CSS 4, with optional Supabase Auth and database administration.
+A new English / Simplified Chinese local-classifieds platform for New York. This replaces the previous affiliate-shopping application after the owner explicitly cleared it. The old source is archived outside this checkout; its database migrations are **not compatible** with this project.
 
-## Start
+## Run
 
-Verified toolchain: Node.js 24 LTS, npm 11.
+Node.js 24 LTS and npm 11 were used in this cloud environment.
 
-```bash
-cd /workspace/oofcourse
-npm ci --cache /workspace/.npm-cache
+```sh
+npm ci
 npm run dev
 ```
 
-Production: `npm run build` then `npm run start`. The normal port is 3000. Public browsing and the local demo admin need **no credentials**. This cloud task is already isolated: use the existing checkout; do not create a Git worktree unless requested.
+Open `/en` or `/zh` on port 3000. Production uses `npm run build` then `npm run start`. The npm cache is kept in the writable cloud workspace. No paid service, DNS change, external image purchase or personal computer is needed to browse this cloud implementation.
 
-## Implemented experience
+## Product and design
 
-- Original navy/blue/green identity, double-o wordmark, SVG favicon, mobile-first design.
-- Homepage with original family lifestyle image, working hero search, eight categories, featured concepts, independent retailer collections, editorial guides and a non-collecting newsletter placeholder.
-- `/deals`, `/search`: real keyword/category/retailer filtering, newest/name sorting, URL state, clear filters, empty states and saved-only filtering.
-- `/categories`, `/category/[slug]`: Home & Kitchen, Electronics, Toys & Kids, Baby, Beauty & Personal Care, Sports & Outdoors, Pet Supplies, Everyday Essentials.
-- `/stores`, `/stores/amazon`, `/stores/walmart`: internal **demo collections**, never represented as official stores or approved affiliate offers. Future retailer card has no fake shopping link.
-- `/deals/[slug]`: original illustrations, descriptions, considerations, retailer/source/status details, honest verification state, saves and related ideas.
-- `/saved`: localStorage favorites across reloads, un-save, clear, filtering, empty and storage-failure states. No account needed; saves stay in this browser.
-- `/guides` plus five substantive original guides: kitchens, smart homes, family shopping, small spaces, seasonal planning. No invented product tests or rankings.
-- `/about`, `/contact`, `/privacy`, `/affiliate-disclosure`, `/terms`.
-- `/admin`: interactive local demo workspace by default; optional authenticated database workspace when explicitly configured.
+- Six unified categories: Housing, Jobs, Marketplace, Services, Businesses, Community; no separate student mode or social feed.
+- Original blue/mint/purple/orange/coral design tokens, Inter and Noto Sans SC served locally, original neighborhood and posting illustrations.
+- Responsive header, location picker, language switch, mobile bottom navigation, category-specific filter drawer, URL filters, real server-backed pagination and professional empty states.
+- Shared detail layout with category facts, rental fee disclosures, structured salary ranges, private publisher contact, reports, database favorites and sharing.
+- Category data is read from Supabase when configured. The seed contains real taxonomies and geographical names only, **zero housing, job, merchant, user, price or review records**.
+- `/en/preview/housing` (and the other five category keys) are explicitly labeled noindex **layout previews**, not available listings. They contain no invented prices, salaries, addresses or businesses and cannot be contacted or published. Set `ENABLE_LAYOUT_PREVIEWS=false` to remove them.
 
-## Demo integrity and sourcing
+## Routes
 
-All 16 public records are original concepts, not retailer products. Prices, discounts, verification times, expiration dates, ratings, inventory and affiliate URLs are null. No fictitious commerce numbers are rendered. The two retailer labels only demonstrate organization and filtering. Every record carries an original-artwork license and its own retailer-specific demo source ID.
+All UI routes use `/en` and `/zh`; `/` defaults to English. Switching language preserves the route/query. Publisher text remains in its original language.
 
-`public/images/family-kitchen.webp` is an original AI-generated lifestyle illustration, optimized to WebP (about 201 KB). It is not a real customer testimonial or retailer photograph. Product SVGs are self-authored original concept illustrations; no merchant photography, scraped content, paid fonts, or third-party image hotlinks are used. Lucide icons retain their package's ISC license.
+- `/`, `/categories`, `/housing`, `/jobs`, `/marketplace`, `/services`, `/businesses`, `/community`, `/search`.
+- `/{category}/{id}`: only publicly eligible real records; unavailable records are 404. Private drafts are accessed through the account editor.
+- `/post`: four-step category → details → photos → preview/submission workflow.
+- `/login`, `/signup`, `/reset-password`; confirmation callback at `/auth/confirm`.
+- `/account` plus `/listings`, `/drafts`, `/pending`, `/saved`, `/messages`, `/profile`, `/business`, `/security`; `/saved` opens the saved-account view.
+- `/businesses/profiles/{id}`: approved business profiles, including optional owned logo and reviewed website.
+- `/admin` plus `/listings`, `/users`, `/reports`, `/categories`, `/locations`, `/businesses`, `/promotions`, `/settings`, `/audit`.
+- `/about`, `/contact`, `/help`, `/terms`, `/privacy`, `/safety`, `/guidelines`.
 
-`safeAffiliateUrl` rejects demo/unpublished records, absent approval, expired or stale/future verification, unsafe schemes, URL credentials and cross-retailer hosts. Only approved exact Amazon/Walmart HTTPS destinations are prepared. Future actual links are named “View at Amazon” or “View at Walmart”, with an external indicator, `sponsored nofollow noopener noreferrer`, and nearby commission disclosure. This gate is a safeguard, not proof of affiliate enrollment. Review official program material usage, API/caching/time rules and approved hosts before enabling any live record. The public data adapter intentionally remains demo-only even if administration is connected.
+## Supabase setup
 
-## Supabase: implemented versus pending
+Follow [the Chinese setup guide](docs/supabase-setup.zh.md). Use a **new independent development project** and apply every migration in filename order. Never run test fixtures or the archived shopping migrations on it.
 
-No remote Supabase project, account, or database has been created or connected in this session. `.env.example` contains names only, never credentials.
+Configure the Project URL and Publishable key using `.env.example`. `SITE_URL` sets the trusted callback origin (local development defaults to localhost; Vercel previews use their deployment origin). Allow the actual `/auth/confirm` URLs in Supabase Auth. Keep email verification enabled and configure appropriate password strength, SMTP, abuse protection and rate limits before launch. Ordinary signups create only a profile; an operator must provision `user_roles(role='admin')` through trusted SQL. No client can assign itself a role. Auth and administration use the signed-in user's session and RLS, **not a service-role key**.
 
-Apply both SQL migrations, in order, to a **new development project**:
+Without configuration, catalogs show genuine empty states and account controls explain the missing connection. They never simulate authentication, upload, submission or moderation success. When a configured database cannot be read, queries return an error state rather than pretending the catalog is empty.
 
-1. `202610210001_initial_schema.sql`: categories, products, sources, checks, protected admin membership.
-2. `202610210002_multi_retailer.sql`: retailers, affiliate links, explicit product lifecycle, administrator roles, source/retailer foreign keys, link-host enforcement, public-offer freshness gates, private event schema and admin audit log. Legacy active records become unverified for review.
+## Implemented workflows
 
-Then supply `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` securely through environment settings. Create an administrator through Supabase Auth, and provision `admin_users(user_id, role='admin')` through a trusted SQL/server path. Never offer public self-registration for privileged membership. The implemented admin uses the publishable client with the user's session and RLS, **not a service-role key**.
+- React Hook Form + Zod, category-specific validated fields. Partial private drafts can be saved before content is complete. Browser progress is saved separately and can be explicitly restored or cleared; valid signed-in progress also autosaves a real account draft after inactivity. Submission and autosave are serialized to avoid a late autosave reverting submitted status.
+- Submissions require email verification, truthful category facts, full descriptions and structured housing/job details. They enter `pending`, never automatic approval. Owner edits remove public visibility and require resubmission/re-review. Users can archive their own listings.
+- Photos: up to 8, input JPEG/PNG/WebP under 10 MB; client resize plus server-side byte validation, 40-million-pixel decode limit, orientation correction, resizing and WebP re-encoding that strips metadata. Private storage caps objects at 4 MB. Cover selection and ordering persist through a transaction-checked RPC. Deletion checks draft ownership. Public image signatures expire after five minutes; an already-issued signature may remain usable until then after unpublishing.
+- Private contact conversations/messages; only participants can read them. Reports are visible to reporter and moderators, not automatically to the reported publisher. Database-backed favorites remain private to their owner.
+- Free business profiles, logos, categories/areas, publisher listings and review. Paid promotion/payment tables are reserved and client writes are denied; there is no checkout or fake success flow.
+- Server-verified administrator moderation (up to 25 visible records per bulk action), reasons, risk flags, user posting restrictions, report resolution, category/subcategory/location editing, posting limits/lifetimes, real summary counts/trends, audit records. Bulk operations are individually audited; an error can leave earlier decisions completed, which must be reviewed before retrying.
+- Duplicate owner submissions are rejected; cross-publisher duplicates and explicit payment/contact/fairness/broker-fee language are risk flags for human review. These checks are limited heuristics, **not a legal-compliance guarantee**.
+- Public RLS checks approval, publisher/category/location state and expiry on every read. A scheduled task is optional for updating stored expiry status. Auth email verification/reset notices and database in-app contact/moderation notices are implemented; extra outbound notification emails require provider configuration.
 
-When both values are configured, `/admin` requires Supabase Auth sign-in, calls `auth.getUser()` server-side, and verifies an explicit admin role. All save/archive server actions repeat authorization and validate input with Zod. Product, category, retailer, affiliate-link and source editors support create/update; products support review statuses and archive. The lifecycle is Draft, Pending Review, Published, Unverified, Expired and Archived. Public reads require source/retailer approval, same-retailer provenance, a current approved link, a licensed non-demo product, and a check within 24 hours. RLS denies public writes and nonadmin management. Source and link tables contain no credentials. Privileged writes are audited privately.
+## Security and data
 
-**Hosted Auth integration has not been exercised without a real project and provisioned administrator.** Isolated PostgreSQL tests validate actual migrations and RLS against a minimal auth fixture, not the entire hosted auth service. Do not apply `tests/database/auth-fixture.sql` to Supabase. Production activation still needs session-expiry/refresh testing, rate-limiting/CAPTCHA policy for privileged login, operational alerts, backups, an explicit expiry-checking job, and program-specific price permissions. Public ingestion is deliberately not wired to the database yet.
+Migrations define profiles, roles, categories/subcategories, locations, listings, normalized housing/job detail tables, media, favorites, business profiles, conversations/messages, reports, moderation/check records, user restrictions, notifications, promotions/payments, audit logs and settings. RLS is enabled throughout. Publishing requires a verified publisher's submitted record and an audited moderation RPC; changing a URL or directly editing status cannot grant admin rights or approve a listing. Profile restriction fields, owner identities and timestamps are guarded. Category extensions are validated at both the action and database boundary before publication.
 
-### Local admin mode
+Privileged operations re-check server identity; SQL helpers use fixed search paths. Public queries use the anonymous client to avoid accidentally returning an owner's private drafts on public pages. Rendering escapes publisher content, and JSON-LD escapes script delimiters. Image MIME labels alone are not trusted by the server upload handler. Sensitive headers protect framing, content types and referrers. No credentials are committed.
 
-If Supabase is absent, a clearly labeled sandbox supports create/edit/review/archive for demo products and management of categories, retailers, sources and links. It stores data under `oofcourse:admin-demo:v2`, never changes the public catalog, never authenticates a user, and never sends mutations to a server/database. “Published” in this mode is a **local demo state only**. Reset restores the original sandbox fixtures. Do not enter personal information or credentials in demo fields.
+Keep `SITE_INDEXABLE=false` on previews. Canonical, hreflang, Open Graph and sitemap use `https://oofcourse.com`. Only eligible real current jobs get JobPosting JSON-LD; previews, expired records and private pages do not. Indexable sitemaps include public real listings/businesses with launch-size limits; expand to paged sitemaps before exceeding 5,000 listings. Web manifest/icon provide installable-web foundations, with no offline-price or full PWA claim.
 
-## Privacy and analytics
+## Checks
 
-Favorites use `oofcourse:saved:v1`; local admin edits use `oofcourse:admin-demo:v2`. Both stay on the device. The Privacy page explains use and deletion. Normal visitors have no accounts or session cookies; future connected administrator auth uses necessary Supabase session cookies.
-
-No analytics SDK, provider, event sink, tracking cookies, newsletter intake or marketing script is enabled. `lib/analytics.ts` defines a future consent-gated event contract; SQL prepares private page/search/product/category/save/merchant-click event storage without raw search terms, IPs, emails or stable visitor IDs. No events are currently emitted. Admin shows **Not collecting**, not fake statistics. Merchant clicks must never be treated as orders or commission; official program reports are the source of those outcomes. Any provider or Google Search Console setup requires verified ownership, privacy review and applicable notice/consent. Search terms in URLs can appear in browser history and hosting logs.
-
-## SEO and accessibility
-
-Canonical origin: `https://oofcourse.com`. Unique metadata, Open Graph image, sitemap, robots, semantic navigation, visible focus, skip link, accessible forms/buttons/dialog, reduced-motion handling and mobile layouts are included. `WebSite` JSON-LD is truthful; no fabricated Product/Offer/Review markup is generated.
-
-Keep `SITE_INDEXABLE=false` on demos and previews. It defaults to noindex and disallows crawling. Deal/category/retailer collection/search/saved/admin routes remain noindex, and demo records never enter the sitemap. Editorial guides contain original content. Before production indexing, review content and update live-data indexing rules, policies and operator/support details. Index flags are build-time settings and require rebuilding. Noindex is not access control.
-
-Automated axe WCAG 2 A/AA and 2.1 A/AA checks complement interaction and overflow tests. These checks do not establish full WCAG conformance: manual assistive-technology, zoom, real-device and usability review remains necessary.
-
-## Verification
-
-```bash
+```sh
 npm run typecheck
 npm run lint
 npm test
 npm run build
-npm run test:e2e
 npm run test:db
+npm run test:e2e
+# After npm run build; isolated navigation/Auth-provider fixtures only:
+npm run test:header
 ```
 
-`typecheck` generates Next route types first, including on a clean checkout; generated `next-env.d.ts` is ignored. Browser tests launch the production server on **3100** to avoid a dev server on 3000. Chromium defaults to `/usr/bin/chromium`; override `PLAYWRIGHT_EXECUTABLE_PATH` if needed. Tests run at **390, 768 and 1440 px**, including saved persistence, real filters, retailer collections, details, guides, local admin isolation and accessibility. Screenshots are saved in ignored `test-results/family-home-{mobile,tablet,desktop}.png` and `family-admin-*.png`.
+The database suite creates an isolated PostgreSQL 17 Docker container with no network/published ports. A minimal auth/storage fixture lets it execute the **real migrations and RLS**; it does not exercise hosted Supabase Auth, email delivery or Storage HTTP behavior. The container is removed on success/failure. Browser checks start the production build on port 3100, use system Chromium, run serially on shared cloud CPU, cover the seven requested widths and check bilingual navigation, filters, publishing validation, browser draft restoration, locked service states, server-action authorization, metadata, 404s, screenshots and automated axe AA checks.
 
-Database tests require Docker, run in a disposable PostgreSQL 17 container without network/exposed ports, apply both actual migrations, and check RLS, administrator isolation, cross-retailer rejection, exact destination hosts, stale links, program approval revocation and private audit records. The auth fixture never touches a real Supabase project.
+## Deployment
 
-## Deployment and permissions
+Use the existing private GitHub repository and an isolated feature branch. Vercel defaults: Node 24, `npm ci`, `npm run build`, root `.`. Add development Supabase values to Preview only and rebuild. Do not merge to the production branch or modify Cloudflare DNS without explicit approval. Configure `SITE_URL` and Auth redirect allowlists for the actual preview domain.
 
-Repository: `https://github.com/derek2955d/oofcourse` (private status verified through GitHub API during this upgrade). Existing production: `https://oofcourse.vercel.app/`, originally deployed from `main`.
+Optional expiry automation: configure **server-only** `SUPABASE_SERVICE_ROLE_KEY` and a random `CRON_SECRET` of at least 32 characters. A trusted scheduler can GET `/api/cron/expire` with a Bearer secret. Missing configuration returns 503; unauthorized callers receive 401; no schedule or paid plan is activated automatically. Public expiry filtering remains effective without this job.
 
-This upgrade belongs on `feat/family-friendly-shopping` so the connected `main` branch does not automatically change production before approval. Vercel may create a branch preview automatically. Deployment URLs must be obtained from actual GitHub/Vercel status, never guessed. Review the preview before merging. No Cloudflare DNS changes, new production domains or paid subscriptions are authorized by this upgrade.
+See [launch blockers and operational limits](docs/readiness.md). This repository is a runnable foundation with implemented real-service code, not a declaration that commercial readiness or hosted integration has been verified.
 
-Use Vercel Next.js defaults, Node 24, root `.`, `npm ci`, `npm run build`, and `SITE_INDEXABLE=false`. No Supabase credentials are needed for preview. Before commercial operation, confirm hosting-plan eligibility and affiliate approvals, finish real auth/content integration and legal/support details, and perform a production readiness review.
+## State and local-area scope
+
+The consumer rollout currently opens New York only. The full 50-state plus DC reference is retained for future launches; `enabledStateCodes` in `lib/geography.ts` controls availability. A functional preference cookie remembers the available selection. Category filters then list only enabled cities/areas in that state. A changed state clears the prior local area; locale switches preserve state and filters. The New York reference seed remains unchanged; unopened states are hidden and older closed-state URLs/preferences resolve to New York. Apply `202610250007_state_geography.sql` to add SQL-level state filtering before adding mixed-state regions. Existing NY-only databases retain a strictly checked compatibility path. Publishing has its own explicit state → area fields so editing/restoring an existing draft preserves its real location.

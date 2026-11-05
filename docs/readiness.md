@@ -1,0 +1,63 @@
+# Launch blockers and remaining operational work
+
+## External integration still required
+
+- The owner reports creating the independent Supabase project, applying migrations 001–009, setting Preview configuration and completing signup/verification/login. Independently verify administrator provisioning, password reset, cookie refresh, private Storage uploads and the entire hosted two-account submit → review → publish → contact cycle. The current execution environment has no Supabase credentials; local PostgreSQL fixtures do not prove these provider-specific flows.
+- Configure authenticated SMTP, appropriate Auth rate limits/password rules and anti-bot protection. Optional Google OAuth has not been activated.
+- Set correct callback origins/allowlists in each environment. Preview Vercel access may require the project owner's login.
+
+## Before public commercial use
+
+- **Deferred requirement — login session limits (owner requested 2026-10-26):** Implement and verify before project completion/public launch. Proposed defaults are a seven-day maximum session for ordinary members and reauthentication after 30 minutes of administrator inactivity; finalize the policy during implementation. The current Supabase Free project cannot configure provider session time-box/inactivity limits, so leave current settings unchanged and do not purchase an upgrade without approval. Choose a supported provider configuration or server-enforced application policy; a frontend timer alone is insufficient. Verify expiry, refresh, multiple tabs, browser reopening and protection of privileged actions. Closing a tab is not a reliable logout trigger; the 3,600-second access-token lifetime is not the login-session lifetime. This requirement is recorded, not implemented.
+- Complete verified operator identity, support email, legal address, privacy retention/deletion procedures and privacy-rights handling. Policies are clearly marked review drafts and need appropriate professional review, especially New York housing fees/FARE Act, fair housing and salary transparency.
+- Define moderation coverage, escalation/appeal procedures, prohibited-content rules, retention and operational incident response. Heuristic flags cannot ensure that all fraud or unlawful advertising is caught.
+- Exercise accessibility with assistive technology and real devices; automated axe checks are not certification. Measure production Core Web Vitals with the actual database region and real authorized images.
+- Review CSP against actual production asset/auth hosts; set monitoring, alerts, backup/restore and storage quota/orphan-cleanup policies. Enable optional expiry scheduling only after secrets and ownership are verified.
+- Formal account deletion/export and operator support workflows require operational completion. Archives are implemented; they are not presented as permanent account erasure.
+
+## Launch-size limits
+
+- Category catalogs have true SQL-backed counting and pagination, 12 records/page (up to page 1,000); broad public searches are not a client-side demo array.
+- Owner listing management now uses exact counts and 12 records/page with a maximum page of 1,000; favorites still load the latest 100 records, messages 50 conversations and 500 messages; admin worklists load 25 listings, 50 members/reports/businesses and 100 audit entries per filtered view. Add paginated drill-downs before sustained high-volume operation; do not describe these views as a complete data export.
+- The public business-profile directory displays a small latest subset; listing-category filters remain separate from the free business-profile directory.
+- Sitemaps cap listing URLs at 5,000 and businesses at 1,000; add paginated sitemap generation as volume grows.
+- Image signatures are short-lived and should be refreshed for long editor sessions. Storage cleanup and strict cross-request byte quotas need ongoing operational monitoring.
+
+## Deliberately disabled commercial features
+
+Stripe, purchases, paid promotion activation, ad networks and affiliate marketing are not active. Payment/order/event structures are reserved with no client write permission. Any future implementation needs verified server orders, signed/idempotent webhooks, appropriate disclosures and actual payment-provider testing before activation.
+
+Administrator member controls currently restrict posting/contact and hide the member's public content; they do not claim to delete or ban the Supabase Auth identity. A full identity ban, session revocation and verified account-erasure workflow require a separately reviewed server-only Auth administration integration before enabling those controls.
+
+Geography: the consumer header currently opens only New York; the full 50-state plus DC reference remains available for future launches. Detailed areas come only from enabled database records; the enabled reference records include NYC areas and five near-Manhattan NJ cities. The header remains New York-only while browse controls combine those areas. The owner reports migrations 007–009 applied for state and selectable-region search. Operators must add factual city/borough/neighborhood records for future regions. Taxonomy and directory area lists currently need pagination beyond 1,000 enabled records in a request scope; compatibility checks fail closed when the registry is truncated.
+
+## Next local-discovery improvements
+
+- Local areas now have grouped options and quick links, with individual removable filter chips. Matching retains the existing exact-area semantics (and existing NYC-wide aggregation). A borough selection does not yet aggregate all neighborhood records; implement a factual parent/descendant geography model and database-side filtering before claiming cascading city/borough/neighborhood search.
+- Generic price filtering/sorting is offered only for housing, marketplace and services. Jobs offer full-time/part-time filtering and display validated salary ranges; true salary-overlap filtering/sorting needs a dedicated database query and tests, rather than filtering the generic price column.
+- Next operational work: unread/read message tracking and notifications, explicit category-specific completion statuses, and verified hosted account workflows. The deferred session-limit requirement above remains open.
+
+## New York life editorial content
+
+Three original bilingual guides are maintained in `lib/living.ts`; the official-calendar directory is disabled at the owner’s request. see `docs/local-life-content.zh.md`. Community activities use existing approved listings with date/geography/expiry filtering before limiting. Editorial guides currently deploy through source control, not an admin CMS; no automatic news/event scraping or live organizer availability is claimed. Schedule periodic source/content review before commercial operation.
+
+
+## Member listing management checkpoint (2026-10-29)
+
+Owner listing tables now have All / Draft / Pending / Approved / Rejected / Expired / Archived filters, exact counts and stable server pagination. Draft/pending sidebar scopes cannot be overridden by query parameters. Approved records past their expiry date appear under Expired even before the scheduler changes the stored status; the Approved filter and overview count exclude those overdue records. Timestamps use New York time. Existing archive confirmation remains, with no redundant archive action on already archived rows.
+
+No migration is needed for this checkpoint. Local PostgreSQL verifies owner boundaries, matching counts and pages, more than 100 records and expiry behavior; unauthenticated browser flows remain closed. The current execution environment still lacks Supabase configuration, so positive hosted login/management interactions require an owner test account check before claiming operational completion.
+
+
+## Password changes (2026-10-29)
+
+Website password changes now require verified current-password authentication for the same member plus matching new-password confirmation. Recent provider-verified OTP/recovery AMR can support the existing email recovery flow for ten minutes; plain URL/client flags cannot grant that exception. Successful changes request provider global sign-out, clear temporary verification sessions and route back to login. Details and required provider checks: `docs/password-security.zh.md`.
+
+The Supabase Auth setting `security_update_password_require_current_password` must still be confirmed enabled by the project owner to protect direct Auth API calls as well as the website. Its value has not been read or changed from this environment. The reauthentication/secure-password-change setting alone exempts recently signed-in sessions and does not replace the current-password requirement. Live old-password/new-password and email-recovery checks remain unverified without hosted credentials. No SQL migration is needed.
+
+
+## Nearby-events prototype (2026-10-29)
+
+The former Weekend entry is now Nearby events / 周边活动 at the compatible /weekend path. Dated editorial and approved upcoming local events lead; destination guides are a collapsed secondary resource. New source-checked editorial examples show Halloween (Oct 31) and the Queens World First Amendment film/arts event (Nov 13–14), with date-only display when no exact time was confirmed and inclusive last-day expiry. Editor updates can use the existing community/events publishing/review flow; website submissions of that type now require a valid date. There is no scheduled scraping or automatic publishing job.
+
+Public outings submissions remain a paused prototype pending owner review. WEEKEND_SUBMISSIONS_ENABLED defaults false, removes that form choice/entry and blocks website saving of outings. Existing schema/data and original category workflows remain. No new migration is required for the nearby-events sample, and migration 010 should not be requested just to review it. Hosted account/provider workflows still require testing under real configuration.
